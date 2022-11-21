@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express'
+import setupDb from './db/db.setup'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
@@ -11,6 +12,8 @@ app.get('/', (req: Request, res: Response) =>
 
 const start = async () => {
   try {
+    setupDb()
+
     dotenv.config()
 
     const port = process.env.PORT || 8000

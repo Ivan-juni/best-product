@@ -1,0 +1,1 @@
+{"version":3,"file":"db.setup.js","sourceRoot":"","sources":["../../src/db/db.setup.ts"],"names":[],"mappings":";;;;;AAAA,gDAAuB;AACvB,0DAAiC;AACjC,yCAAiC;AAEjC,SAAS,OAAO;IACd,MAAM,EAAE,GAAG,IAAA,cAAI,EAAC,kBAAQ,CAAC,WAAW,CAAC,CAAA;IAErC,iBAAK,CAAC,IAAI,CAAC,EAAE,CAAC,CAAA;AAChB,CAAC;AAED,kBAAe,OAAO,CAAA"}
