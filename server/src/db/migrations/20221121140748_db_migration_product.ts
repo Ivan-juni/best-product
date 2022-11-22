@@ -17,7 +17,6 @@ export async function up(knex: Knex): Promise<void> {
     table.integer('dislikes').defaultTo(0)
     table.integer('views').defaultTo(0)
     table.integer('favoriteStars').defaultTo(0)
-    table.string('description', 500).notNullable()
     table
       .integer('characteristicsId', 5)
       .notNullable()
@@ -25,7 +24,7 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('product_characteristics')
 
-    table.timestamps(true, true)
+    table.timestamps(true, true, true)
   })
 }
 

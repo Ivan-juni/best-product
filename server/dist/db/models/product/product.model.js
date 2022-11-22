@@ -40,9 +40,6 @@ class Product extends objection_1.Model {
     static get favoriteStarsColumn() {
         return 'favoriteStars';
     }
-    static get decriptionColumn() {
-        return 'decription';
-    }
     static get charasteristicsIdColumn() {
         return 'charasteristicsId';
     }
@@ -55,7 +52,6 @@ class Product extends objection_1.Model {
                 'image',
                 'categoryId',
                 'favoriteStars',
-                'decription',
                 'charasteristicsId',
             ],
             properties: {
@@ -68,7 +64,6 @@ class Product extends objection_1.Model {
                 dislikes: { type: 'integer', defalut: 0 },
                 views: { type: 'integer', defalut: 0 },
                 favoriteStars: { type: 'integer', defalut: 0 },
-                decription: { type: 'string', maxLength: 500 },
                 charasteristicsId: { type: 'integer', maxLength: 5 },
             },
         };

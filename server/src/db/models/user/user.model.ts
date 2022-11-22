@@ -1,6 +1,7 @@
 import { Model, RelationMappings, RelationMappingsThunk } from 'objection'
 import Comment from '../comment/comment.model'
 import Favorite from '../favorite/favorite.model'
+import Token from '../token/token.model'
 
 export default class User extends Model {
   static get tableName() {
@@ -96,6 +97,15 @@ export default class User extends Model {
           to: 'comments.productId',
         },
         to: 'products.id',
+      },
+    },
+
+    tokens: {
+      relation: Model.HasOneRelation,
+      modelClass: Token,
+      join: {
+        from: 'users.id',
+        to: 'tokens.userId',
       },
     },
   }

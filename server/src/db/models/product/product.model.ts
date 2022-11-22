@@ -16,7 +16,6 @@ export default class Product extends Model {
   dislikes: number
   views: number
   favoriteStars: number
-  decription: string
   charasteristicsId: number
   createdAt: Date
   updatedAt: Date
@@ -61,10 +60,6 @@ export default class Product extends Model {
     return 'favoriteStars'
   }
 
-  static get decriptionColumn(): string {
-    return 'decription'
-  }
-
   static get charasteristicsIdColumn(): string {
     return 'charasteristicsId'
   }
@@ -78,7 +73,6 @@ export default class Product extends Model {
         'image',
         'categoryId',
         'favoriteStars',
-        'decription',
         'charasteristicsId',
       ],
 
@@ -92,7 +86,6 @@ export default class Product extends Model {
         dislikes: { type: 'integer', defalut: 0 },
         views: { type: 'integer', defalut: 0 },
         favoriteStars: { type: 'integer', defalut: 0 },
-        decription: { type: 'string', maxLength: 500 },
         charasteristicsId: { type: 'integer', maxLength: 5 },
       },
     }

@@ -7,6 +7,7 @@ export default class ProductCharacteristics extends Model {
 
   id: number
   purpose: string
+  decription: string
   design: string | null
   connectionType: string | null
   microphone: boolean | null
@@ -25,6 +26,10 @@ export default class ProductCharacteristics extends Model {
 
   static get purposeColumn(): string {
     return 'purpose'
+  }
+
+  static get decriptionColumn(): string {
+    return 'decription'
   }
 
   static get designColumn(): string {
@@ -50,11 +55,12 @@ export default class ProductCharacteristics extends Model {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['purpose'],
+      required: ['purpose', 'decription'],
 
       properties: {
         id: { type: 'integer' },
         purpose: { type: 'string' },
+        decription: { type: 'string', maxLength: 500 },
         design: { type: ['string', 'null'] },
         connectionType: { type: ['string', 'null'] },
         microphone: { type: ['boolean', 'null'] },

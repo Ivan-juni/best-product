@@ -29,7 +29,7 @@ function up(knex) {
                 .inTable('products')
                 .onDelete('CASCADE');
             table.string('text', 300).notNullable();
-            table.timestamps(true, true);
+            table.timestamps(true, true, true);
         });
     });
 }

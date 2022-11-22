@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class UserDto {
-    //   !todo model type
     constructor(model) {
         this.email = model.email;
         this.phone = model.phone;
@@ -9,6 +8,8 @@ class UserDto {
         this.firstName = model.firstName;
         this.lastName = model.lastName;
         this.role = model.role;
+        this.createdAt = model.createdAt;
+        this.updatedAt = model.updatedAt;
     }
 }
 exports.default = UserDto;

@@ -21,7 +21,7 @@ export async function up(knex: Knex): Promise<void> {
 
     table.string('text', 300).notNullable()
 
-    table.timestamps(true, true)
+    table.timestamps(true, true, true)
   })
 }
 

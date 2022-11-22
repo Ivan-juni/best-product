@@ -12,7 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.down = exports.up = void 0;
 function up(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        return knex.schema.createTableIfNotExists('users', (table) => {
+        return knex.schema
+            .createTableIfNotExists('users', (table) => {
             table.increments();
             table.string('email').notNullable().unique();
             table.bigInteger('phone').unsigned().nullable();
@@ -20,14 +21,20 @@ function up(knex) {
             table.string('firstName', 255).notNullable();
             table.string('lastName', 255).notNullable();
             table.string('role', 5).defaultTo('USER');
-            table.timestamps(true, true);
+            table.timestamps(true, true, true);
+        })
+            .createTableIfNotExists('tokens', (table) => {
+            table.increments();
+            table.text('refreshToken').notNullable();
+            table.integer('userId').notNullable().unique();
+            table.timestamps(true, true, true);
         });
     });
 }
 exports.up = up;
 function down(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        return knex.schema.dropTableIfExists('users');
+        return knex.schema.dropTableIfExists('tokens').dropTableIfExists('users');
     });
 }
 exports.down = down;

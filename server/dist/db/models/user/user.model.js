@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const objection_1 = require("objection");
 const comment_model_1 = __importDefault(require("../comment/comment.model"));
 const favorite_model_1 = __importDefault(require("../favorite/favorite.model"));
+const token_model_1 = __importDefault(require("../token/token.model"));
 class User extends objection_1.Model {
     static get tableName() {
         return 'users';
@@ -79,6 +80,14 @@ User.relationMappings = {
                 to: 'comments.productId',
             },
             to: 'products.id',
+        },
+    },
+    tokens: {
+        relation: objection_1.Model.HasOneRelation,
+        modelClass: token_model_1.default,
+        join: {
+            from: 'users.id',
+            to: 'tokens.userId',
         },
     },
 };

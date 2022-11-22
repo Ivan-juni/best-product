@@ -28,7 +28,7 @@ function up(knex) {
                 .references('id')
                 .inTable('products')
                 .onDelete('CASCADE');
-            table.timestamps(true, true);
+            table.timestamps(true, true, true);
         });
     });
 }
