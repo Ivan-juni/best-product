@@ -19,6 +19,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const router_1 = __importDefault(require("./routes/router"));
 const error_handling_middleware_1 = __importDefault(require("./middlewares/error-handling.middleware"));
+const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 app.get('/', (req, res) => res.status(200).json({ message: 'Server is working' }));
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -31,7 +32,7 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
         app.use(express_1.default.urlencoded({ extended: false }));
         app.use((0, cookie_parser_1.default)());
         // Path to images folder
-        app.use('/static', express_1.default.static(__dirname + '/../assets'));
+        app.use('/static', express_1.default.static(path_1.default.join(__dirname, '..', 'assets')));
         // main router
         app.use('/api', router_1.default);
         // Обработка ошибок, последний middleware

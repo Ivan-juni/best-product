@@ -35,6 +35,9 @@ class User extends objection_1.Model {
     static get roleColumn() {
         return 'role';
     }
+    static get photoColumn() {
+        return 'photo';
+    }
     fullName() {
         return this.firstName + ' ' + this.lastName;
     }
@@ -50,6 +53,7 @@ class User extends objection_1.Model {
                 firstName: { type: 'string', minLength: 1, maxLength: 255 },
                 lastName: { type: 'string', minLength: 1, maxLength: 255 },
                 role: { type: 'string', default: 'USER', minLength: 4, maxLength: 5 },
+                photo: { type: ['string', 'null'], default: null, maxLength: 255 },
                 createdAt: { type: 'string' },
                 updatedAt: { type: 'string' },
             },

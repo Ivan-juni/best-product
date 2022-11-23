@@ -1,6 +1,6 @@
 import express from 'express'
 import authRouter from './auth.router'
-import goodsRouter from './goods.router'
+import goodsRouter from './products.router'
 import usersRouter from './users.router'
 const router = express.Router()
 

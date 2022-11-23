@@ -7,6 +7,7 @@ class UserDto {
   firstName: string
   lastName: string
   role: string
+  photo: string | null
   createdAt: Date
   updatedAt: Date
 
@@ -17,6 +18,7 @@ class UserDto {
     this.firstName = model.firstName
     this.lastName = model.lastName
     this.role = model.role
+    this.photo = model.photo
     this.createdAt = model.createdAt
     this.updatedAt = model.updatedAt
   }

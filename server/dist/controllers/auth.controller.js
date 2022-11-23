@@ -57,6 +57,7 @@ const registrationSchema = yup.object({
         .max(255, 'Lastname should be shorter than 3 symbols')
         .required(),
     role: yup.string().nullable().default('USER').min(4).max(5),
+    photo: yup.string().nullable().default(null),
     createdAt: yup.date(),
     updatedAt: yup.date(),
 });
@@ -70,18 +71,14 @@ class AuthController {
                 return next(ApiError_1.default.internal(`Validation error: ${err.message}`));
             }
             // достаем введенные пользователем данные
-            const { email, password, phone, firstName, lastName, 
-            // role,
-            createdAt, updatedAt, } = req.body;
+            const { email } = req.body;
             // проверяем есть ли такой пользователь в базе
             const candidate = yield user_model_1.default.query().findOne({ email });
             if (candidate !== undefined) {
                 return next(ApiError_1.default.badRequest(`User with the e-mail ${email} already exists`));
             }
             //
-            const userData = yield auth_service_1.default.registration(email, password, firstName, lastName, 
-            // role,
-            createdAt, updatedAt, phone);
+            const userData = yield auth_service_1.default.registration(req.body);
             if (!userData) {
                 return next(ApiError_1.default.badRequest(`Registration error`));
             }

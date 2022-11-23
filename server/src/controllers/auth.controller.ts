@@ -22,6 +22,7 @@ const registrationSchema = yup.object({
     .max(255, 'Lastname should be shorter than 3 symbols')
     .required(),
   role: yup.string().nullable().default('USER').min(4).max(5),
+  photo: yup.string().nullable().default(null),
   createdAt: yup.date(),
   updatedAt: yup.date(),
 })
@@ -41,16 +42,7 @@ class AuthController {
     }
 
     // достаем введенные пользователем данные
-    const {
-      email,
-      password,
-      phone,
-      firstName,
-      lastName,
-      // role,
-      createdAt,
-      updatedAt,
-    }: IUser = req.body
+    const { email }: IUser = req.body
 
     // проверяем есть ли такой пользователь в базе
     const candidate = await User.query().findOne({ email })
@@ -62,16 +54,7 @@ class AuthController {
     }
     //
 
-    const userData = await userService.registration(
-      email,
-      password,
-      firstName,
-      lastName,
-      // role,
-      createdAt,
-      updatedAt,
-      phone
-    )
+    const userData = await userService.registration(req.body)
 
     if (!userData) {
       return next(ApiError.badRequest(`Registration error`))

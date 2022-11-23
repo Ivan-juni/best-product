@@ -1,11 +1,10 @@
 import User from '../db/models/user/user.model'
+import { IUsersQuery } from '../types/users.type'
 
 class UserService {
-  static async getUsers(searchCriteria: {
-    id?: string
-    limit?: string
-    page?: string
-  }): Promise<User | User[] | null> {
+  static async getUsers(
+    searchCriteria: IUsersQuery
+  ): Promise<User | User[] | null> {
     const limit = +searchCriteria.limit || 5
     const page = +searchCriteria.page || 0
 
@@ -38,6 +37,26 @@ class UserService {
     try {
       return User.query().patchAndFetchById(id, { role: role })
     } catch (error) {
+      console.log(error)
+      return null
+    }
+  }
+
+  static async editProfile(
+    id: number,
+    changingValues: {
+      email?: string | null
+      firstName?: string | null
+      lastName?: string | null
+      phone?: number | null
+      photo?: string | null
+      password?: string | null
+    }
+  ): Promise<User | null> {
+    try {
+      return User.query().patchAndFetchById(id, changingValues)
+    } catch (error) {
+      console.log('Error: ', error)
       return null
     }
   }

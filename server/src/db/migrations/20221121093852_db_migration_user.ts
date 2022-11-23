@@ -11,6 +11,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('firstName', 255).notNullable()
       table.string('lastName', 255).notNullable()
       table.string('role', 5).defaultTo('USER')
+      table.string('photo', 255).nullable().defaultTo(null)
 
       table.timestamps(true, true, true)
     })

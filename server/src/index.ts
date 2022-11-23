@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 import router from './routes/router'
 import errorHandler from './middlewares/error-handling.middleware'
+import path from 'path'
 
 const app = express()
 
@@ -26,7 +27,7 @@ const start = async () => {
     app.use(cookieParser())
 
     // Path to images folder
-    app.use('/static', express.static(__dirname + '/../assets'))
+    app.use('/static', express.static(path.join(__dirname, '..', 'assets')))
 
     // main router
     app.use('/api', router)

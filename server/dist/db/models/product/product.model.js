@@ -60,7 +60,7 @@ class Product extends objection_1.Model {
                 price: { type: 'integer' },
                 image: { type: 'string' },
                 categoryId: { type: 'integer', maxLength: 5 },
-                likes: { type: 'integer', defalut: 0 },
+                likes: { type: 'integer', defalut: 0, min: 0 },
                 dislikes: { type: 'integer', defalut: 0 },
                 views: { type: 'integer', defalut: 0 },
                 favoriteStars: { type: 'integer', defalut: 0 },

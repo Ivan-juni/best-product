@@ -23,10 +23,10 @@ function up(knex) {
                 .unsigned()
                 .references('id')
                 .inTable('categories');
-            table.integer('likes').defaultTo(0);
-            table.integer('dislikes').defaultTo(0);
-            table.integer('views').defaultTo(0);
-            table.integer('favoriteStars').defaultTo(0);
+            table.integer('likes').defaultTo(0).unsigned();
+            table.integer('dislikes').defaultTo(0).unsigned();
+            table.integer('views').defaultTo(0).unsigned();
+            table.integer('favoriteStars').defaultTo(0).unsigned();
             table
                 .integer('characteristicsId', 5)
                 .notNullable()

@@ -6,7 +6,7 @@ const router = express.Router()
 
 // Where store download files
 const storage = multer.diskStorage({
-  destination: '../assets/',
+  destination: './assets/products',
   filename: (req: Request, file, callback) => {
     callback(
       null,

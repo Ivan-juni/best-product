@@ -10,11 +10,12 @@ export default class User extends Model {
 
   id: number
   email: string
-  phone: number
+  phone: number | null
   password: string
   firstName: string
   lastName: string
   role: string
+  photo: string | null
   createdAt: Date
   updatedAt: Date
 
@@ -50,6 +51,10 @@ export default class User extends Model {
     return 'role'
   }
 
+  static get photoColumn(): string {
+    return 'photo'
+  }
+
   fullName(): string {
     return this.firstName + ' ' + this.lastName
   }
@@ -67,6 +72,7 @@ export default class User extends Model {
         firstName: { type: 'string', minLength: 1, maxLength: 255 },
         lastName: { type: 'string', minLength: 1, maxLength: 255 },
         role: { type: 'string', default: 'USER', minLength: 4, maxLength: 5 },
+        photo: { type: ['string', 'null'], default: null, maxLength: 255 },
         createdAt: { type: 'string' },
         updatedAt: { type: 'string' },
       },

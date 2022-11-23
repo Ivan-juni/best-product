@@ -8,7 +8,8 @@ function default_1(err, req, res, next) {
     if (err instanceof ApiError_1.default) {
         return res.status(err.status).json({ message: err.message });
     }
-    return res.status(500).json({ message: 'Unexpected error' });
+    console.log(err);
+    return res.status(500).json({ message: `Unexpected error: ${err.message}` });
 }
 exports.default = default_1;
 //# sourceMappingURL=error-handling.middleware.js.map
