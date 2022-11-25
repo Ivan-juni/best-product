@@ -34,8 +34,8 @@ export default class Category extends Model {
 
       properties: {
         id: { type: 'integer' },
-        parent: { type: 'integer', maxLength: 5 },
-        name: { type: 'integer', maxLength: 20 },
+        parent: { type: 'integer' },
+        name: { type: 'integer' },
         createdAt: { type: 'string' },
         updatedAt: { type: 'string' },
       },

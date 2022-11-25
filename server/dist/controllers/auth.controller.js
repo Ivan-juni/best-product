@@ -83,10 +83,18 @@ class AuthController {
                 return next(ApiError_1.default.badRequest(`Registration error`));
             }
             // храним refreshToken в куках
-            res.cookie('refreshToken', userData.refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-                httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
-            });
+            if (req.body.remember) {
+                res.cookie('refreshToken', userData.refreshToken, {
+                    maxAge: 30 * 24 * 60 * 60 * 1000,
+                    httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
+                });
+            }
+            else {
+                res.cookie('refreshToken', userData.refreshToken, {
+                    maxAge: 3 * 60 * 1000,
+                    httpOnly: true,
+                });
+            }
             return res.json(userData);
         });
     }
@@ -102,7 +110,7 @@ class AuthController {
             if (!isPassEquals) {
                 return next(ApiError_1.default.badRequest(`Incorrect password`));
             }
-            const userData = yield auth_service_1.default.login(email, password);
+            const userData = yield auth_service_1.default.login(email);
             if (!userData) {
                 return next(ApiError_1.default.badRequest(`Login error`));
             }

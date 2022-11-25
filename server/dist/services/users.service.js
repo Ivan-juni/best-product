@@ -12,6 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const comment_model_1 = __importDefault(require("../db/models/comment/comment.model"));
+const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
 const user_model_1 = __importDefault(require("../db/models/user/user.model"));
 class UserService {
     static getUsers(searchCriteria) {
@@ -60,6 +62,40 @@ class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return user_model_1.default.query().patchAndFetchById(id, changingValues);
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static getComments(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const comments = yield comment_model_1.default.query()
+                    .select('comments.id', 'comments.productId', 'products.name as productName', 'comments.text', 'comments.createdAt', 'comments.updatedAt')
+                    .where({ userId })
+                    .leftJoin('products', function () {
+                    this.on('products.id', '=', 'comments.productId');
+                });
+                return comments;
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static getFavorites(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const favorites = yield favorite_model_1.default.query()
+                    .select('favorites.id', 'products.*', 'favorites.createdAt', 'favorites.updatedAt')
+                    .where({ userId })
+                    .leftJoin('products', function () {
+                    this.on('products.id', '=', 'favorites.productId');
+                });
+                return favorites;
             }
             catch (error) {
                 console.log('Error: ', error);

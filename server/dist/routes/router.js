@@ -9,7 +9,7 @@ const products_router_1 = __importDefault(require("./products.router"));
 const users_router_1 = __importDefault(require("./users.router"));
 const router = express_1.default.Router();
 router.use('/auth', auth_router_1.default);
-router.use('/goods', products_router_1.default);
+router.use('/products', products_router_1.default);
 router.use('/users', users_router_1.default);
 exports.default = router;
 //# sourceMappingURL=router.js.map

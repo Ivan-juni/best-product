@@ -51,7 +51,7 @@ class AuthService {
             }
         });
     }
-    static login(email, password) {
+    static login(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield user_model_1.default.query().findOne({ email });

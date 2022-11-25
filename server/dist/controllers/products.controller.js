@@ -24,6 +24,201 @@ class ProductsController {
             return res.json(products);
         });
     }
+    static getStatistics(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const quantity = +req.query.quantity || 5;
+            const products = yield products_service_1.default.getStatistics(quantity);
+            if (!products) {
+                return next(ApiError_1.default.badRequest(`Fetching products error`));
+            }
+            return res.json(products);
+        });
+    }
+    static getCharacteristics(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            const characteristics = yield products_service_1.default.getCharacteristics(+productId);
+            if (!characteristics) {
+                return next(ApiError_1.default.badRequest(`Fetching characteristics error`));
+            }
+            return res.json(characteristics);
+        });
+    }
+    static addToFavorite(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const favorites = yield products_service_1.default.addToFavorite(+id, +productId);
+            if (!favorites) {
+                return next(ApiError_1.default.badRequest(`Adding to favorites error`));
+            }
+            return res.json(favorites);
+        });
+    }
+    static deleteFromFavorite(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const result = yield products_service_1.default.deleteFromFavorite(+id, +productId);
+            if (!result) {
+                return next(ApiError_1.default.badRequest(`Adding to favorites error`));
+            }
+            if (typeof result == 'number') {
+                return res.json({
+                    message: `Successfully deleted ${result} queries`,
+                });
+            }
+            else {
+                return res.json(result);
+            }
+        });
+    }
+    static addComment(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            const { productId } = req.query;
+            const commentText = req.body.text;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            if (!commentText) {
+                return next(ApiError_1.default.internal('Please, type the cooment text'));
+            }
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const comment = yield products_service_1.default.addComment(+id, +productId, commentText);
+            if (!comment) {
+                return next(ApiError_1.default.badRequest(`Adding comment error`));
+            }
+            return res.json(comment);
+        });
+    }
+    static deleteComment(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            const { commentId } = req.query;
+            if (!commentId) {
+                return next(ApiError_1.default.internal('Type comment id'));
+            }
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const result = yield products_service_1.default.deleteComment(+id, +commentId);
+            if (!result) {
+                return next(ApiError_1.default.badRequest(`Deletion comment error`));
+            }
+            if (typeof result == 'number') {
+                return res.json({ message: `Successfully deleted ${result} comments` });
+            }
+            else {
+                return res.json(result);
+            }
+        });
+    }
+    static getProductComments(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            const page = +req.query.page || 0;
+            const limit = +req.query.page || 5;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type the product id'));
+            }
+            const comments = yield products_service_1.default.getProductComments(+productId, page, limit);
+            if (!comments) {
+                return next(ApiError_1.default.badRequest(`Fetching comments error`));
+            }
+            return res.json(comments);
+        });
+    }
+    static deleteProducts(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query; // 3
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            const result = yield products_service_1.default.deleteProduct(+productId);
+            if (!result) {
+                return next(ApiError_1.default.badRequest(`Deletion products error`));
+            }
+            if (typeof result == 'number') {
+                return res.json({ message: `Successfully deleted ${result} comments` });
+            }
+            else {
+                return res.json(result);
+            }
+        });
+    }
+    static addProduct(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const productInfo = req.body;
+            let microphone = null;
+            let batteryLiveTime = null;
+            let image = req.file.filename;
+            if (!productInfo.name) {
+                return next(ApiError_1.default.internal('Please, add name'));
+            }
+            if (!image) {
+                return next(ApiError_1.default.internal('Please, add image'));
+            }
+            else {
+                image = `http://localhost:${process.env.PORT}/static/products/${image}`;
+                productInfo.image = image;
+            }
+            if (!productInfo.price) {
+                return next(ApiError_1.default.internal('Please, add price'));
+            }
+            if (!productInfo.categoryId) {
+                return next(ApiError_1.default.internal('Please, add category id'));
+            }
+            if (!productInfo.purpose) {
+                return next(ApiError_1.default.internal('Please, add purpose'));
+            }
+            if (!productInfo.description) {
+                return next(ApiError_1.default.internal('Please, add description'));
+            }
+            if (productInfo.batteryLiveTime) {
+                batteryLiveTime = Number(productInfo.batteryLiveTime);
+            }
+            if (productInfo.microphone) {
+                if (productInfo.microphone === 'true') {
+                    microphone = true;
+                }
+                else {
+                    microphone = false;
+                }
+            }
+            const product = yield products_service_1.default.addProduct({
+                price: +productInfo.price,
+                categoryId: +productInfo.categoryId,
+                name: productInfo.name,
+                image: productInfo.image,
+                purpose: productInfo.purpose,
+                description: productInfo.description,
+                design: productInfo.design,
+                connectionType: productInfo.connectionType,
+                microphone: microphone,
+                batteryLiveTime: batteryLiveTime,
+                display: productInfo.display,
+            });
+            if (!product) {
+                return next(ApiError_1.default.badRequest(`Adding product error`));
+            }
+            return res.json(product);
+        });
+    }
 }
 exports.default = ProductsController;
 //# sourceMappingURL=products.controller.js.map

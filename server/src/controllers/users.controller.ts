@@ -101,6 +101,46 @@ class UsersController {
       return res.status(500).json({ message: 'Error: ', error })
     }
   }
+
+  static async getMyComments(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void | Response<any, Record<string, any>>> {
+    const { id } = req.user
+
+    if (!id) {
+      return next(ApiError.unAuthorizedError())
+    }
+
+    const comments = await userService.getComments(+id)
+
+    if (!comments) {
+      return next(ApiError.badRequest(`Fetching comments error`))
+    }
+
+    return res.json(comments)
+  }
+
+  static async getMyFavorites(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void | Response<any, Record<string, any>>> {
+    const { id } = req.user
+
+    if (!id) {
+      return next(ApiError.unAuthorizedError())
+    }
+
+    const favorites = await userService.getFavorites(+id)
+
+    if (!favorites) {
+      return next(ApiError.badRequest(`Fetching favorites error`))
+    }
+
+    return res.json(favorites)
+  }
 }
 
 export default UsersController

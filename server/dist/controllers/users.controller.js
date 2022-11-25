@@ -86,6 +86,32 @@ class UsersController {
             }
         });
     }
+    static getMyComments(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const comments = yield users_service_1.default.getComments(+id);
+            if (!comments) {
+                return next(ApiError_1.default.badRequest(`Fetching comments error`));
+            }
+            return res.json(comments);
+        });
+    }
+    static getMyFavorites(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const favorites = yield users_service_1.default.getFavorites(+id);
+            if (!favorites) {
+                return next(ApiError_1.default.badRequest(`Fetching favorites error`));
+            }
+            return res.json(favorites);
+        });
+    }
 }
 exports.default = UsersController;
 //# sourceMappingURL=users.controller.js.map

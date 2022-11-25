@@ -1,3 +1,5 @@
+import Comment from '../db/models/comment/comment.model'
+import Favorite from '../db/models/favorite/favorite.model'
 import User from '../db/models/user/user.model'
 import { IUsersQuery } from '../types/users.type'
 
@@ -55,6 +57,50 @@ class UserService {
   ): Promise<User | null> {
     try {
       return User.query().patchAndFetchById(id, changingValues)
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async getComments(userId: number): Promise<Comment[] | null> {
+    try {
+      const comments = await Comment.query()
+        .select(
+          'comments.id',
+          'comments.productId',
+          'products.name as productName',
+          'comments.text',
+          'comments.createdAt',
+          'comments.updatedAt'
+        )
+        .where({ userId })
+        .leftJoin('products', function () {
+          this.on('products.id', '=', 'comments.productId')
+        })
+
+      return comments
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async getFavorites(userId: number): Promise<Favorite[] | null> {
+    try {
+      const favorites = await Favorite.query()
+        .select(
+          'favorites.id',
+          'products.*',
+          'favorites.createdAt',
+          'favorites.updatedAt'
+        )
+        .where({ userId })
+        .leftJoin('products', function () {
+          this.on('products.id', '=', 'favorites.productId')
+        })
+
+      return favorites
     } catch (error) {
       console.log('Error: ', error)
       return null

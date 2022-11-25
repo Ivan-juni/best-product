@@ -51,10 +51,7 @@ class AuthService {
     }
   }
 
-  static async login(
-    email: string,
-    password: string
-  ): Promise<{
+  static async login(email: string): Promise<{
     user: UserDto
     accessToken: string
     refreshToken: string

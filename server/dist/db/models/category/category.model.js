@@ -23,8 +23,8 @@ class Category extends objection_1.Model {
             required: ['parent', 'name'],
             properties: {
                 id: { type: 'integer' },
-                parent: { type: 'integer', maxLength: 5 },
-                name: { type: 'integer', maxLength: 20 },
+                parent: { type: 'integer' },
+                name: { type: 'integer' },
                 createdAt: { type: 'string' },
                 updatedAt: { type: 'string' },
             },

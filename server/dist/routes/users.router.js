@@ -24,6 +24,12 @@ const upload = (0, multer_1.default)({ storage });
 // @route put /api/users/changePassword
 // @des Change user role
 router.put('/editProfile', auth_middleware_1.default, upload.single('image'), users_controller_1.default.editProfile);
+// @route get /api/users/comments
+// @des Get user's comments
+router.get('/comments', auth_middleware_1.default, users_controller_1.default.getMyComments);
+// @route get /api/users/favorites
+// @des Get user's favorites
+router.get('/favorites', auth_middleware_1.default, users_controller_1.default.getMyFavorites);
 // ! Admin panel
 // @route get /api/users || /api/users?id=
 // @des Get users

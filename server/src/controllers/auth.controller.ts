@@ -61,10 +61,17 @@ class AuthController {
     }
 
     // храним refreshToken в куках
-    res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
-    })
+    if (req.body.remember) {
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expires after 30 days
+        httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
+      })
+    } else {
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 3 * 60 * 1000, // Cookie expires after 3 mins
+        httpOnly: true,
+      })
+    }
 
     return res.json(userData)
   }
@@ -90,7 +97,7 @@ class AuthController {
       return next(ApiError.badRequest(`Incorrect password`))
     }
 
-    const userData = await userService.login(email, password)
+    const userData = await userService.login(email)
 
     if (!userData) {
       return next(ApiError.badRequest(`Login error`))

@@ -14,8 +14,8 @@ class ProductCharacteristics extends objection_1.Model {
     static get purposeColumn() {
         return 'purpose';
     }
-    static get decriptionColumn() {
-        return 'decription';
+    static get descriptionColumn() {
+        return 'description';
     }
     static get designColumn() {
         return 'design';
@@ -35,11 +35,11 @@ class ProductCharacteristics extends objection_1.Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['purpose', 'decription'],
+            required: ['purpose', 'description'],
             properties: {
                 id: { type: 'integer' },
                 purpose: { type: 'string' },
-                decription: { type: 'string', maxLength: 500 },
+                description: { type: 'string', maxLength: 500 },
                 design: { type: ['string', 'null'] },
                 connectionType: { type: ['string', 'null'] },
                 microphone: { type: ['boolean', 'null'] },

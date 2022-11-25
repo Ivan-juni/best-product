@@ -32,6 +32,14 @@ router.put(
   usersController.editProfile
 )
 
+// @route get /api/users/comments
+// @des Get user's comments
+router.get('/comments', authMiddleware, usersController.getMyComments)
+
+// @route get /api/users/favorites
+// @des Get user's favorites
+router.get('/favorites', authMiddleware, usersController.getMyFavorites)
+
 // ! Admin panel
 // @route get /api/users || /api/users?id=
 // @des Get users

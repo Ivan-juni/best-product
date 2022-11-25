@@ -23,8 +23,8 @@ class Favorite extends objection_1.Model {
             required: ['userId', 'productId'],
             properties: {
                 id: { type: 'integer' },
-                userId: { type: 'integer', maxLength: 5 },
-                productId: { type: 'integer', maxLength: 5 },
+                userId: { type: 'integer' },
+                productId: { type: 'integer' },
                 createdAt: { type: 'string' },
                 updatedAt: { type: 'string' },
             },

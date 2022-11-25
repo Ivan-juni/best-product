@@ -16,7 +16,7 @@ export default class Product extends Model {
   dislikes: number
   views: number
   favoriteStars: number
-  charasteristicsId: number
+  characteristicsId: number
   createdAt: Date
   updatedAt: Date
 
@@ -60,8 +60,8 @@ export default class Product extends Model {
     return 'favoriteStars'
   }
 
-  static get charasteristicsIdColumn(): string {
-    return 'charasteristicsId'
+  static get characteristicsIdColumn(): string {
+    return 'characteristicsId'
   }
 
   static get jsonSchema() {
@@ -73,7 +73,7 @@ export default class Product extends Model {
         'image',
         'categoryId',
         'favoriteStars',
-        'charasteristicsId',
+        'characteristicsId',
       ],
 
       properties: {
@@ -81,12 +81,12 @@ export default class Product extends Model {
         name: { type: 'string', maxLength: 20 },
         price: { type: 'integer' },
         image: { type: 'string' },
-        categoryId: { type: 'integer', maxLength: 5 },
-        likes: { type: 'integer', defalut: 0, min: 0 },
-        dislikes: { type: 'integer', defalut: 0 },
-        views: { type: 'integer', defalut: 0 },
-        favoriteStars: { type: 'integer', defalut: 0 },
-        charasteristicsId: { type: 'integer', maxLength: 5 },
+        categoryId: { type: 'integer' },
+        likes: { type: 'integer', default: 0 },
+        dislikes: { type: 'integer', default: 0 },
+        views: { type: 'integer', default: 0 },
+        favoriteStars: { type: 'integer', default: 0 },
+        characteristicsId: { type: 'integer' },
       },
     }
   }
