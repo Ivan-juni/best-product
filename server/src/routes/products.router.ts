@@ -65,6 +65,15 @@ router.post(
   productController.addProduct
 )
 
+// @route PUT /api/products/
+// @des Update the product
+router.put(
+  '/',
+  checkRole('ADMIN'),
+  upload.single('image'),
+  productController.updateProduct
+)
+
 // @route DELETE /api/products?productId=
 // @des Delete a product
 router.delete('/', checkRole('ADMIN'), productController.deleteProducts)

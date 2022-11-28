@@ -145,7 +145,7 @@ class ProductsController {
     }
     static deleteProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { productId } = req.query; // 3
+            const { productId } = req.query;
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
             }
@@ -154,7 +154,7 @@ class ProductsController {
                 return next(ApiError_1.default.badRequest(`Deletion products error`));
             }
             if (typeof result == 'number') {
-                return res.json({ message: `Successfully deleted ${result} comments` });
+                return res.json({ message: `Successfully deleted ${result} products` });
             }
             else {
                 return res.json(result);
@@ -164,9 +164,16 @@ class ProductsController {
     static addProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const productInfo = req.body;
+            const image = req.file.filename;
             let microphone = null;
-            let batteryLiveTime = null;
-            let image = req.file.filename;
+            if (productInfo.microphone) {
+                if (productInfo.microphone === 'true') {
+                    microphone = true;
+                }
+                else {
+                    microphone = false;
+                }
+            }
             if (!productInfo.name) {
                 return next(ApiError_1.default.internal('Please, add name'));
             }
@@ -174,8 +181,7 @@ class ProductsController {
                 return next(ApiError_1.default.internal('Please, add image'));
             }
             else {
-                image = `http://localhost:${process.env.PORT}/static/products/${image}`;
-                productInfo.image = image;
+                productInfo.image = `http://localhost:${process.env.PORT}/static/products/${image}`;
             }
             if (!productInfo.price) {
                 return next(ApiError_1.default.internal('Please, add price'));
@@ -189,20 +195,9 @@ class ProductsController {
             if (!productInfo.description) {
                 return next(ApiError_1.default.internal('Please, add description'));
             }
-            if (productInfo.batteryLiveTime) {
-                batteryLiveTime = Number(productInfo.batteryLiveTime);
-            }
-            if (productInfo.microphone) {
-                if (productInfo.microphone === 'true') {
-                    microphone = true;
-                }
-                else {
-                    microphone = false;
-                }
-            }
             const product = yield products_service_1.default.addProduct({
-                price: +productInfo.price,
-                categoryId: +productInfo.categoryId,
+                price: +productInfo.price || null,
+                categoryId: +productInfo.categoryId || null,
                 name: productInfo.name,
                 image: productInfo.image,
                 purpose: productInfo.purpose,
@@ -210,13 +205,58 @@ class ProductsController {
                 design: productInfo.design,
                 connectionType: productInfo.connectionType,
                 microphone: microphone,
-                batteryLiveTime: batteryLiveTime,
+                batteryLiveTime: +productInfo.batteryLiveTime || null,
                 display: productInfo.display,
             });
             if (!product) {
                 return next(ApiError_1.default.badRequest(`Adding product error`));
             }
             return res.json(product);
+        });
+    }
+    static updateProduct(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { productId } = req.query;
+                const changingValues = req.body;
+                const image = req.file.filename;
+                let microphone = null;
+                if (!productId) {
+                    return next(ApiError_1.default.badRequest('Please, type the product id'));
+                }
+                if (changingValues.microphone) {
+                    if (changingValues.microphone === 'true') {
+                        changingValues.microphone = true;
+                    }
+                    else {
+                        changingValues.microphone = false;
+                    }
+                }
+                if (image) {
+                    changingValues.image = `http://localhost:${process.env.PORT}/static/products/${image}`;
+                }
+                const product = yield products_service_1.default.updateProduct(+productId, {
+                    price: +changingValues.price || null,
+                    categoryId: +changingValues.categoryId || null,
+                    name: changingValues.name,
+                    image: changingValues.image,
+                    purpose: changingValues.purpose,
+                    description: changingValues.description,
+                    design: changingValues.design,
+                    connectionType: changingValues.connectionType,
+                    microphone: microphone,
+                    batteryLiveTime: +changingValues.batteryLiveTime || null,
+                    display: changingValues.display,
+                });
+                if (!product) {
+                    return next(ApiError_1.default.badRequest(`Updating product error`));
+                }
+                return res.json(product);
+            }
+            catch (error) {
+                console.log(error);
+                return res.json({ Error: error.message });
+            }
         });
     }
 }

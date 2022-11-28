@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 import bcrypt from 'bcrypt'
 import ApiError from '../errors/ApiError'
 import userService from '../services/users.service'
+import commentService from '../services/comments.service'
+import favoritesService from '../services/favorites.service'
+import { changingValuesBody } from '../types/users.type'
 
 class UsersController {
   static async getUsers(
@@ -63,11 +66,7 @@ class UsersController {
       const { id } = req.user
       const photo = req.file.filename
 
-      const changingValues = req.body
-
-      if (changingValues.phone) {
-        changingValues.phone = +changingValues.phone
-      }
+      const changingValues: changingValuesBody = req.body
 
       if (photo !== null && photo !== undefined) {
         changingValues.photo = `http://localhost:${process.env.PORT}/static/users/${photo}`
@@ -87,7 +86,14 @@ class UsersController {
         next(ApiError.unAuthorizedError())
       }
 
-      const user = await userService.editProfile(id, changingValues)
+      const user = await userService.editProfile(id, {
+        photo: changingValues.photo,
+        password: changingValues.password,
+        phone: +changingValues.phone || null,
+        email: changingValues.email,
+        firstName: changingValues.firstName,
+        lastName: changingValues.lastName,
+      })
 
       if (!user) {
         return next(ApiError.badRequest(`Editing profile error`))
@@ -98,7 +104,7 @@ class UsersController {
         .json({ message: 'Profile data changed successfully ' })
     } catch (error) {
       console.log('Error: ', error)
-      return res.status(500).json({ message: 'Error: ', error })
+      return res.status(500).json({ message: `Error: ${error}` })
     }
   }
 
@@ -113,7 +119,7 @@ class UsersController {
       return next(ApiError.unAuthorizedError())
     }
 
-    const comments = await userService.getComments(+id)
+    const comments = await commentService.getComments(+id)
 
     if (!comments) {
       return next(ApiError.badRequest(`Fetching comments error`))
@@ -133,7 +139,7 @@ class UsersController {
       return next(ApiError.unAuthorizedError())
     }
 
-    const favorites = await userService.getFavorites(+id)
+    const favorites = await favoritesService.getFavorites(+id)
 
     if (!favorites) {
       return next(ApiError.badRequest(`Fetching favorites error`))

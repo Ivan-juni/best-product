@@ -1,7 +1,7 @@
-import Comment from '../db/models/comment/comment.model'
-import Favorite from '../db/models/favorite/favorite.model'
 import User from '../db/models/user/user.model'
-import { IUsersQuery } from '../types/users.type'
+import { changingValues, IUsersQuery } from '../types/users.type'
+import path from 'path'
+import fs from 'fs'
 
 class UserService {
   static async getUsers(
@@ -46,61 +46,43 @@ class UserService {
 
   static async editProfile(
     id: number,
-    changingValues: {
-      email?: string | null
-      firstName?: string | null
-      lastName?: string | null
-      phone?: number | null
-      photo?: string | null
-      password?: string | null
-    }
-  ): Promise<User | null> {
+    changingValues: changingValues
+  ): Promise<User | { message: string } | null> {
     try {
+      const oldUser = await User.query().select().findById(id)
+
+      if (!oldUser) {
+        return { message: "Can't find this user" }
+      }
+      // Remove old photo
+      if (oldUser.photo) {
+        const oldPath = path.join(
+          __dirname,
+          '..',
+          '..',
+          'assets',
+          'users',
+          path.basename(oldUser.photo)
+        )
+
+        if (fs.existsSync(oldPath)) {
+          fs.unlink(oldPath, (err) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+          })
+        }
+      }
+
+      // filtering null values
+      Object.keys(changingValues).forEach((key) => {
+        if (changingValues[key] === null) {
+          delete changingValues[key]
+        }
+      })
+
       return User.query().patchAndFetchById(id, changingValues)
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
-  }
-
-  static async getComments(userId: number): Promise<Comment[] | null> {
-    try {
-      const comments = await Comment.query()
-        .select(
-          'comments.id',
-          'comments.productId',
-          'products.name as productName',
-          'comments.text',
-          'comments.createdAt',
-          'comments.updatedAt'
-        )
-        .where({ userId })
-        .leftJoin('products', function () {
-          this.on('products.id', '=', 'comments.productId')
-        })
-
-      return comments
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
-  }
-
-  static async getFavorites(userId: number): Promise<Favorite[] | null> {
-    try {
-      const favorites = await Favorite.query()
-        .select(
-          'favorites.id',
-          'products.*',
-          'favorites.createdAt',
-          'favorites.updatedAt'
-        )
-        .where({ userId })
-        .leftJoin('products', function () {
-          this.on('products.id', '=', 'favorites.productId')
-        })
-
-      return favorites
     } catch (error) {
       console.log('Error: ', error)
       return null

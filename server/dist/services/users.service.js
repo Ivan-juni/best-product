@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const comment_model_1 = __importDefault(require("../db/models/comment/comment.model"));
 const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
 const user_model_1 = __importDefault(require("../db/models/user/user.model"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 class UserService {
     static getUsers(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -61,6 +63,28 @@ class UserService {
     static editProfile(id, changingValues) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const oldUser = yield user_model_1.default.query().select().findById(id);
+                if (!oldUser) {
+                    return { message: "Can't find this user" };
+                }
+                // Remove old photo
+                if (oldUser.photo) {
+                    const oldPath = path_1.default.join(__dirname, '..', '..', 'assets', 'users', path_1.default.basename(oldUser.photo));
+                    if (fs_1.default.existsSync(oldPath)) {
+                        fs_1.default.unlink(oldPath, (err) => {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                        });
+                    }
+                }
+                // filtering null values
+                Object.keys(changingValues).forEach((key) => {
+                    if (changingValues[key] === null) {
+                        delete changingValues[key];
+                    }
+                });
                 return user_model_1.default.query().patchAndFetchById(id, changingValues);
             }
             catch (error) {

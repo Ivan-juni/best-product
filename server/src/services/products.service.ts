@@ -1,9 +1,9 @@
-import Objection, { raw } from 'objection'
-import Comment from '../db/models/comment/comment.model'
-import Favorite from '../db/models/favorite/favorite.model'
+import Objection from 'objection'
 import ProductCharacteristics from '../db/models/product-characteristics/product-characteristics.model'
 import Product from '../db/models/product/product.model'
-import { IProduct, IProductBody, IProductsQuery } from '../types/products.type'
+import { IProduct, IProductsQuery } from '../types/products.type'
+import path from 'path'
+import fs from 'fs'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery) {
@@ -139,129 +139,6 @@ export default class ProductService {
     }
   }
 
-  static async addToFavorite(userId: number, productId: number) {
-    try {
-      const candidate = await Favorite.query().findOne({ userId, productId })
-
-      if (candidate) {
-        return candidate
-      }
-
-      // add to favorite and increment 'favorites' option in Product model
-      await Product.query()
-        .patch({ favoriteStars: raw('favoriteStars + 1') })
-        .where({ id: productId })
-
-      const userFavorites = await Favorite.query().insertAndFetch({
-        userId,
-        productId,
-      })
-
-      return userFavorites
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
-  }
-
-  static async deleteFromFavorite(userId: number, productId: number) {
-    try {
-      const favorite = await Favorite.query().findOne({ userId, productId })
-
-      if (!favorite) {
-        return { message: "This product isn't on your favorites" }
-      }
-
-      // delete from favorite and decrement 'favorites' option in Product model
-      await Product.query()
-        .patch({ favoriteStars: raw('favoriteStars - 1') })
-        .where({ id: productId })
-
-      const deletedQueries = await Favorite.query()
-        .delete()
-        .where({ userId, productId })
-
-      return deletedQueries
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
-  }
-
-  static async addComment(userId: number, productId: number, text: string) {
-    try {
-      const comment = await Comment.query().insertAndFetch({
-        userId,
-        productId,
-        text,
-      })
-
-      return comment
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
-  }
-
-  static async deleteComment(
-    userId: number,
-    commentId: number
-  ): Promise<
-    | number
-    | {
-        message: string
-      }
-    | null
-  > {
-    try {
-      const comment = await Comment.query().findOne({ id: commentId, userId })
-
-      if (!comment) {
-        return { message: "Can't find this comment" }
-      }
-
-      const deletedComments = await Comment.query()
-        .delete()
-        .where({ id: commentId, userId })
-
-      return deletedComments
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
-  }
-
-  static async getProductComments(
-    productId: number,
-    page = 0,
-    limit = 5
-  ): Promise<Objection.Page<Comment>> {
-    try {
-      const comments = await Comment.query()
-        .select(
-          'comments.id',
-          'comments.userId',
-          'users.email as userEmail',
-          'users.firstName as userFirstName',
-          'users.lastName as userLastName',
-          'users.photo as userPhoto',
-          'comments.text',
-          'comments.createdAt',
-          'comments.updatedAt'
-        )
-        .where({ productId })
-        .leftJoin('users', function () {
-          this.on('users.id', '=', 'comments.userId')
-        })
-        .page(page, limit)
-
-      return comments
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
-  }
-
   static async deleteProduct(
     productId: number
   ): Promise<number | { message: string } | null> {
@@ -301,6 +178,51 @@ export default class ProductService {
         categoryId: +product.categoryId,
         characteristicsId: +characteristics.id,
       })
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async updateProduct(
+    productId: number,
+    changingValues: IProduct
+  ): Promise<Product | { message: string } | null> {
+    try {
+      const oldProduct = await Product.query().select().findById(productId)
+
+      if (!oldProduct) {
+        return { message: "Can't find this product" }
+      }
+      // Remove old photo
+      if (oldProduct.image) {
+        const oldPath = path.join(
+          __dirname,
+          '..',
+          '..',
+          'assets',
+          'products',
+          path.basename(oldProduct.image)
+        )
+
+        if (fs.existsSync(oldPath)) {
+          fs.unlink(oldPath, (err) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+          })
+        }
+      }
+
+      // filtering null values
+      Object.keys(changingValues).forEach((key) => {
+        if (changingValues[key] === null) {
+          delete changingValues[key]
+        }
+      })
+
+      return Product.query().patchAndFetchById(productId, changingValues)
     } catch (error) {
       console.log('Error: ', error)
       return null

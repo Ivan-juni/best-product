@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import ApiError from '../errors/ApiError'
 import productsService from '../services/products.service'
+import commentService from '../services/comments.service'
+import favoritesService from '../services/favorites.service'
 import { IProductBody } from '../types/products.type'
 
 export default class ProductsController {
@@ -66,7 +68,7 @@ export default class ProductsController {
       return next(ApiError.unAuthorizedError())
     }
 
-    const favorites = await productsService.addToFavorite(+id, +productId)
+    const favorites = await favoritesService.addToFavorite(+id, +productId)
 
     if (!favorites) {
       return next(ApiError.badRequest(`Adding to favorites error`))
@@ -91,7 +93,7 @@ export default class ProductsController {
       return next(ApiError.unAuthorizedError())
     }
 
-    const result = await productsService.deleteFromFavorite(+id, +productId)
+    const result = await favoritesService.deleteFromFavorite(+id, +productId)
 
     if (!result) {
       return next(ApiError.badRequest(`Adding to favorites error`))
@@ -127,7 +129,7 @@ export default class ProductsController {
       return next(ApiError.unAuthorizedError())
     }
 
-    const comment = await productsService.addComment(
+    const comment = await commentService.addComment(
       +id,
       +productId,
       commentText
@@ -156,7 +158,7 @@ export default class ProductsController {
       return next(ApiError.unAuthorizedError())
     }
 
-    const result = await productsService.deleteComment(+id, +commentId)
+    const result = await commentService.deleteComment(+id, +commentId)
 
     if (!result) {
       return next(ApiError.badRequest(`Deletion comment error`))
@@ -182,7 +184,7 @@ export default class ProductsController {
       return next(ApiError.internal('Type the product id'))
     }
 
-    const comments = await productsService.getProductComments(
+    const comments = await commentService.getProductComments(
       +productId,
       page,
       limit
@@ -225,9 +227,17 @@ export default class ProductsController {
     next: NextFunction
   ): Promise<void | Response<any, Record<string, any>>> {
     const productInfo: IProductBody = req.body
+    const image = req.file.filename
+
     let microphone: boolean | null = null
-    let batteryLiveTime: number | null = null
-    let image = req.file.filename
+
+    if (productInfo.microphone) {
+      if (productInfo.microphone === 'true') {
+        microphone = true
+      } else {
+        microphone = false
+      }
+    }
 
     if (!productInfo.name) {
       return next(ApiError.internal('Please, add name'))
@@ -235,8 +245,7 @@ export default class ProductsController {
     if (!image) {
       return next(ApiError.internal('Please, add image'))
     } else {
-      image = `http://localhost:${process.env.PORT}/static/products/${image}`
-      productInfo.image = image
+      productInfo.image = `http://localhost:${process.env.PORT}/static/products/${image}`
     }
     if (!productInfo.price) {
       return next(ApiError.internal('Please, add price'))
@@ -251,21 +260,9 @@ export default class ProductsController {
       return next(ApiError.internal('Please, add description'))
     }
 
-    if (productInfo.batteryLiveTime) {
-      batteryLiveTime = Number(productInfo.batteryLiveTime)
-    }
-
-    if (productInfo.microphone) {
-      if (productInfo.microphone === 'true') {
-        microphone = true
-      } else {
-        microphone = false
-      }
-    }
-
     const product = await productsService.addProduct({
-      price: +productInfo.price,
-      categoryId: +productInfo.categoryId,
+      price: +productInfo.price || null,
+      categoryId: +productInfo.categoryId || null,
       name: productInfo.name,
       image: productInfo.image,
       purpose: productInfo.purpose,
@@ -273,7 +270,7 @@ export default class ProductsController {
       design: productInfo.design,
       connectionType: productInfo.connectionType,
       microphone: microphone,
-      batteryLiveTime: batteryLiveTime,
+      batteryLiveTime: +productInfo.batteryLiveTime || null,
       display: productInfo.display,
     })
 
@@ -282,5 +279,59 @@ export default class ProductsController {
     }
 
     return res.json(product)
+  }
+
+  static async updateProduct(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void | Response<any, Record<string, any>>> {
+    try {
+      const { productId } = req.query
+
+      const changingValues: IProductBody = req.body
+      const image = req.file.filename
+
+      let microphone: boolean | null = null
+
+      if (!productId) {
+        return next(ApiError.badRequest('Please, type the product id'))
+      }
+
+      if (changingValues.microphone) {
+        if (changingValues.microphone === 'true') {
+          changingValues.microphone = true
+        } else {
+          changingValues.microphone = false
+        }
+      }
+
+      if (image) {
+        changingValues.image = `http://localhost:${process.env.PORT}/static/products/${image}`
+      }
+
+      const product = await productsService.updateProduct(+productId, {
+        price: +changingValues.price || null,
+        categoryId: +changingValues.categoryId || null,
+        name: changingValues.name,
+        image: changingValues.image,
+        purpose: changingValues.purpose,
+        description: changingValues.description,
+        design: changingValues.design,
+        connectionType: changingValues.connectionType,
+        microphone: microphone,
+        batteryLiveTime: +changingValues.batteryLiveTime || null,
+        display: changingValues.display,
+      })
+
+      if (!product) {
+        return next(ApiError.badRequest(`Updating product error`))
+      }
+
+      return res.json(product)
+    } catch (error) {
+      console.log(error)
+      return res.json({ Error: error.message })
+    }
   }
 }

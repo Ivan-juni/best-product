@@ -17,6 +17,8 @@ const comment_model_1 = __importDefault(require("../db/models/comment/comment.mo
 const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
 const product_characteristics_model_1 = __importDefault(require("../db/models/product-characteristics/product-characteristics.model"));
 const product_model_1 = __importDefault(require("../db/models/product/product.model"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -256,6 +258,39 @@ class ProductService {
                     categoryId: +product.categoryId,
                     characteristicsId: +characteristics.id,
                 });
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static updateProduct(productId, changingValues) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const oldProduct = yield product_model_1.default.query().select().findById(productId);
+                if (!oldProduct) {
+                    return { message: "Can't find this product" };
+                }
+                // Remove old photo
+                if (oldProduct.image) {
+                    const oldPath = path_1.default.join(__dirname, '..', '..', 'assets', 'products', path_1.default.basename(oldProduct.image));
+                    if (fs_1.default.existsSync(oldPath)) {
+                        fs_1.default.unlink(oldPath, (err) => {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                        });
+                    }
+                }
+                // filtering null values
+                Object.keys(changingValues).forEach((key) => {
+                    if (changingValues[key] === null) {
+                        delete changingValues[key];
+                    }
+                });
+                return product_model_1.default.query().patchAndFetchById(productId, changingValues);
             }
             catch (error) {
                 console.log('Error: ', error);

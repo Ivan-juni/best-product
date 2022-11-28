@@ -56,10 +56,8 @@ class UsersController {
             try {
                 const { id } = req.user;
                 const photo = req.file.filename;
+                //!todo add type
                 const changingValues = req.body;
-                if (changingValues.phone) {
-                    changingValues.phone = +changingValues.phone;
-                }
                 if (photo !== null && photo !== undefined) {
                     changingValues.photo = `http://localhost:${process.env.PORT}/static/users/${photo}`;
                 }
@@ -72,7 +70,14 @@ class UsersController {
                 if (!id) {
                     next(ApiError_1.default.unAuthorizedError());
                 }
-                const user = yield users_service_1.default.editProfile(id, changingValues);
+                const user = yield users_service_1.default.editProfile(id, {
+                    photo: changingValues.photo || null,
+                    password: changingValues.password,
+                    phone: +changingValues.phone || null,
+                    email: changingValues.email || null,
+                    firstName: changingValues.firstName || null,
+                    lastName: changingValues.lastName || null,
+                });
                 if (!user) {
                     return next(ApiError_1.default.badRequest(`Editing profile error`));
                 }
@@ -82,7 +87,7 @@ class UsersController {
             }
             catch (error) {
                 console.log('Error: ', error);
-                return res.status(500).json({ message: 'Error: ', error });
+                return res.status(500).json({ message: `Error: ${error}` });
             }
         });
     }

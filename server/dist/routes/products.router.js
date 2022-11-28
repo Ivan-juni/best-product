@@ -49,6 +49,9 @@ router.delete('/comment', auth_middleware_1.default, products_controller_1.defau
 // @route POST /api/products/
 // @des Add a product
 router.post('/', (0, check_role_middleware_1.default)('ADMIN'), upload.single('image'), products_controller_1.default.addProduct);
+// @route PUT /api/products/
+// @des Update the product
+router.put('/', (0, check_role_middleware_1.default)('ADMIN'), upload.single('image'), products_controller_1.default.updateProduct);
 // @route DELETE /api/products?productId=
 // @des Delete a product
 router.delete('/', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.deleteProducts);
