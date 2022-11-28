@@ -14,13 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const products_service_1 = __importDefault(require("../services/products.service"));
-const products_service_temp_1 = __importDefault(require("../services/products.service.temp"));
 const comments_service_1 = __importDefault(require("../services/comments.service"));
 const favorites_service_1 = __importDefault(require("../services/favorites.service"));
+const categories_service_1 = __importDefault(require("../services/categories.service"));
 class ProductsController {
     static getProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const products = yield products_service_temp_1.default.getProducts(req.query);
+            const products = yield products_service_1.default.getProducts(req.query);
             if (!products) {
                 return next(ApiError_1.default.badRequest(`Fetching products error`));
             }
@@ -47,6 +47,7 @@ class ProductsController {
             return res.json(characteristics);
         });
     }
+    // favorites
     static addToFavorite(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;
@@ -88,6 +89,7 @@ class ProductsController {
             }
         });
     }
+    // comments
     static addComment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;
@@ -146,6 +148,7 @@ class ProductsController {
             return res.json(comments);
         });
     }
+    // products admin panel
     static deleteProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { productId } = req.query;
@@ -260,6 +263,62 @@ class ProductsController {
                 console.log(error);
                 return res.json({ Error: error.message });
             }
+        });
+    }
+    // categories
+    static addCategory(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const categoryName = req.body.name;
+            const parent = +req.body.parent || 0;
+            console.log(req.body);
+            if (!categoryName) {
+                return next(ApiError_1.default.internal('Please, type the category name'));
+            }
+            if (!parent) {
+                return next(ApiError_1.default.internal('Please, type the category parent'));
+            }
+            const category = yield categories_service_1.default.addCategory({
+                name: categoryName,
+                parent: +parent,
+            });
+            if (!category) {
+                return next(ApiError_1.default.badRequest(`Adding category error`));
+            }
+            return res.json(category);
+        });
+    }
+    static deleteCategory(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { categoryId } = req.query;
+            if (!categoryId) {
+                return next(ApiError_1.default.internal('Please, type the category id'));
+            }
+            const result = yield categories_service_1.default.deleteCategory(+categoryId);
+            if (!result) {
+                return next(ApiError_1.default.badRequest(`Deletion category error`));
+            }
+            if (typeof result == 'number') {
+                return res.json({ message: `Successfully deleted ${result} categories` });
+            }
+            else {
+                return res.json(result);
+            }
+        });
+    }
+    static getCategories(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const categoryId = +req.query.categoryId || null;
+            const page = +req.query.page || 0;
+            const limit = +req.query.limit || 5;
+            const categories = yield categories_service_1.default.getCategories({
+                categoryId,
+                page,
+                limit,
+            });
+            if (!categories) {
+                return next(ApiError_1.default.badRequest(`Fetching categories error`));
+            }
+            return res.json(categories);
         });
     }
 }

@@ -20,11 +20,11 @@ class Category extends objection_1.Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['lower', 'upper', 'name'],
+            required: ['parent', 'name'],
             properties: {
                 id: { type: 'integer' },
                 parent: { type: 'integer' },
-                name: { type: 'integer' },
+                name: { type: 'string' },
                 createdAt: { type: 'string' },
                 updatedAt: { type: 'string' },
             },

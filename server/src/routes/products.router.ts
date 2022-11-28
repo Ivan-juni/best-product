@@ -35,6 +35,11 @@ router.get('/statistics', checkRole('ADMIN'), productController.getStatistics)
 // @des Get product characteristics
 router.get('/characteristics', productController.getCharacteristics)
 
+// @route GET /api/products/categories?categoryId=
+// @des Get  categories
+router.get('/categories', productController.getCategories)
+
+// * favorites *
 // @route POST /api/products/favorite?id=$productId$
 // @des Add product to user favorites
 router.post('/favorite', authMiddleware, productController.addToFavorite)
@@ -43,6 +48,7 @@ router.post('/favorite', authMiddleware, productController.addToFavorite)
 // @des Remove product from user favorites
 router.delete('/favorite', authMiddleware, productController.deleteFromFavorite)
 
+// * comments *
 // @route GET /api/products/comment?productId=$productId$
 // @des Get product comments
 router.get('/comment', authMiddleware, productController.getProductComments)
@@ -65,6 +71,10 @@ router.post(
   productController.addProduct
 )
 
+// @route POST /api/products/categories?categoryId=
+// @des Add a category
+router.post('/categories', checkRole('ADMIN'), productController.addCategory)
+
 // @route PUT /api/products/
 // @des Update the product
 router.put(
@@ -77,5 +87,13 @@ router.put(
 // @route DELETE /api/products?productId=
 // @des Delete a product
 router.delete('/', checkRole('ADMIN'), productController.deleteProducts)
+
+// @route DELETE /api/products/categories?categoryId=
+// @des Delete a category
+router.delete(
+  '/categories',
+  checkRole('ADMIN'),
+  productController.deleteCategory
+)
 
 export default router

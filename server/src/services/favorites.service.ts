@@ -29,10 +29,10 @@ export default class FavoritesService {
     productId: number
   ): Promise<Favorite | null> {
     try {
-      const candidate = await Favorite.query().findOne({ userId, productId })
+      const favorite = await Favorite.query().findOne({ userId, productId })
 
-      if (candidate) {
-        return candidate
+      if (favorite) {
+        return favorite
       }
 
       // add to favorite and increment 'favorites' option in Product model

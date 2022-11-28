@@ -16,29 +16,66 @@ const product_characteristics_model_1 = __importDefault(require("../db/models/pr
 const product_model_1 = __importDefault(require("../db/models/product/product.model"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+const category_model_1 = __importDefault(require("../db/models/category/category.model"));
+const find_in_range_util_1 = require("../utils/find-in-range.util");
+const get_category_id_util_1 = require("../utils/get-category-id.util");
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
-            const limit = +searchCriteria.limit || 5;
-            const page = +searchCriteria.page || 0;
-            const findInRange = (qb, parametr) => {
-                const parametrArray = searchCriteria[parametr].split('-');
-                if (parametrArray.length > 1 && parametrArray[1]) {
-                    // Ex: if ?parametr=400-1000
-                    qb.andWhere(`products.${parametr}`, '>=', +parametrArray[0]).andWhere(`products.${parametr}`, '<=', +parametrArray[1]);
-                }
-                else if (parametrArray.length == 1 && !parametrArray[1]) {
-                    // Ex: if ?parametr=400
-                    qb.andWhere(`products.${parametr}`, '>=', +parametrArray[0]);
-                }
-            };
             try {
+                // введенная категория и её дочерние
+                let categoryChilds = { categoryIds: '' };
+                // родители введенной категории
+                let categoryParents = [];
+                // пагинация
+                const limit = +searchCriteria.limit || 5;
+                const page = +searchCriteria.page || 0;
+                if (searchCriteria.category) {
+                    // находим id написанной категории
+                    const categoryId = yield (0, get_category_id_util_1.getCategoryId)(searchCriteria.category);
+                    // получаем список категорий родителей
+                    const knex = category_model_1.default.knex();
+                    const parentResult = yield knex.raw(`SELECT t2.id,
+                t2.parent,
+                t2.name
+                from (
+                  select @r as _id,
+                    (select @r := parent from categories where id = _id) AS parent,
+                    @l := @l + 1 AS lvl from (select @r := ${categoryId}, @l := 0) vars, categories c
+                    where @r <> 0) t1
+                    join categories t2
+                    on  t1._id = t2.id
+                    order by t1.lvl desc`);
+                    categoryParents = parentResult[0];
+                    // находим id дочерних категорий
+                    const childResult = yield knex.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
+              SELECT @pv:=(
+                  SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
+                  ) AS lv FROM categories
+                  JOIN
+                  (SELECT @pv:=${categoryId}) tmp
+              ) a
+              WHERE lv IS NOT NULL;`);
+                    categoryChilds = childResult[0][0];
+                    // для корректного поиска также добавляем айди введенной категории
+                    if (categoryChilds.categoryIds === '' ||
+                        categoryChilds.categoryIds == null) {
+                        categoryChilds.categoryIds = `${categoryId}`;
+                    }
+                    else {
+                        categoryChilds.categoryIds.concat(`, ${categoryId}`);
+                    }
+                }
                 const products = yield product_model_1.default.query()
                     .select()
                     .from('products')
-                    .where((qb) => __awaiter(this, void 0, void 0, function* () {
+                    .where((qb) => {
+                    if (searchCriteria.category) {
+                        // получаем товары из данной категории и дочерних
+                        qb.whereIn('categories.id', categoryChilds.categoryIds.split(','));
+                    }
                     if (searchCriteria.id) {
-                        qb.where('products.id', '=', +searchCriteria.id);
+                        qb.andWhere('products.id', '=', +searchCriteria.id);
                     }
                     if (searchCriteria.name) {
                         qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`);
@@ -47,26 +84,34 @@ class ProductService {
                         qb.andWhere('products.purpose', 'like', `%${searchCriteria.purpose}%`);
                     }
                     if (searchCriteria.price) {
-                        findInRange(qb, 'price');
+                        (0, find_in_range_util_1.findInRange)(qb, 'price', searchCriteria);
                     }
                     if (searchCriteria.views) {
-                        findInRange(qb, 'views');
+                        (0, find_in_range_util_1.findInRange)(qb, 'views', searchCriteria);
                     }
                     if (searchCriteria.likes) {
-                        findInRange(qb, 'likes');
+                        (0, find_in_range_util_1.findInRange)(qb, 'likes', searchCriteria);
                     }
                     if (searchCriteria.dislikes) {
-                        findInRange(qb, 'dislikes');
+                        (0, find_in_range_util_1.findInRange)(qb, 'dislikes', searchCriteria);
                     }
                     if (searchCriteria.favoriteStars) {
-                        findInRange(qb, 'favoriteStars');
+                        (0, find_in_range_util_1.findInRange)(qb, 'favoriteStars', searchCriteria);
                     }
-                    // if (searchCriteria.category) {
-                    // }
-                }))
-                    .innerJoin('categories', 'categories.id', 'products.categoryId')
+                })
+                    .innerJoin('categories', 'products.categoryId', 'categories.id')
                     .page(page, limit);
-                return products.results;
+                // записываем в объект результат
+                if (searchCriteria.category) {
+                    return {
+                        products: products.results,
+                        categories: categoryParents,
+                        total: products.total,
+                    };
+                }
+                else {
+                    return Object.assign({}, products);
+                }
             }
             catch (error) {
                 console.log('Error: ', error);

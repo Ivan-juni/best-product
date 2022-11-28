@@ -1,56 +1,32 @@
-import Objection from 'objection'
 import ProductCharacteristics from '../db/models/product-characteristics/product-characteristics.model'
 import Product from '../db/models/product/product.model'
 import { IProduct, IProductsQuery } from '../types/products.type'
 import path from 'path'
 import fs from 'fs'
 import Category from '../db/models/category/category.model'
+import { findInRange } from '../utils/find-in-range.util'
+import { getCategoryId } from '../utils/get-category-id.util'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery) {
-    let categoryChilds: { categoryIds: string } = { categoryIds: '' }
-
-    let categoryParents: Array<{
-      id: number
-      parent: number
-      name: string
-    }> = []
-
-    const limit = +searchCriteria.limit || 5
-    const page = +searchCriteria.page || 0
-
-    const findInRange = (
-      qb: Objection.QueryBuilder<Product, Product[]>,
-      parametr: string
-    ) => {
-      const parametrArray = searchCriteria[parametr].split('-')
-
-      if (parametrArray.length > 1 && parametrArray[1]) {
-        // Ex: if ?parametr=400-1000
-        qb.andWhere(`products.${parametr}`, '>=', +parametrArray[0]).andWhere(
-          `products.${parametr}`,
-          '<=',
-          +parametrArray[1]
-        )
-      } else if (parametrArray.length == 1 && !parametrArray[1]) {
-        // Ex: if ?parametr=400
-        qb.andWhere(`products.${parametr}`, '>=', +parametrArray[0])
-      }
-    }
-
-    const getCategoryId = async (): Promise<number> => {
-      // находим id написанной категории
-      const categoryId = await Category.query()
-        .select('categories.id')
-        .where('categories.name', '=', `${searchCriteria.category}`)
-
-      return categoryId[0].id
-    }
-
     try {
+      // введенная категория и её дочерние
+      let categoryChilds: { categoryIds: string } = { categoryIds: '' }
+
+      // родители введенной категории
+      let categoryParents: Array<{
+        id: number
+        parent: number
+        name: string
+      }> = []
+
+      // пагинация
+      const limit = +searchCriteria.limit || 5
+      const page = +searchCriteria.page || 0
+
       if (searchCriteria.category) {
         // находим id написанной категории
-        const categoryId = await getCategoryId()
+        const categoryId = await getCategoryId(searchCriteria.category)
 
         // получаем список категорий родителей
         const knex = Category.knex()
@@ -118,23 +94,23 @@ export default class ProductService {
           }
 
           if (searchCriteria.price) {
-            findInRange(qb, 'price')
+            findInRange(qb, 'price', searchCriteria)
           }
 
           if (searchCriteria.views) {
-            findInRange(qb, 'views')
+            findInRange(qb, 'views', searchCriteria)
           }
 
           if (searchCriteria.likes) {
-            findInRange(qb, 'likes')
+            findInRange(qb, 'likes', searchCriteria)
           }
 
           if (searchCriteria.dislikes) {
-            findInRange(qb, 'dislikes')
+            findInRange(qb, 'dislikes', searchCriteria)
           }
 
           if (searchCriteria.favoriteStars) {
-            findInRange(qb, 'favoriteStars')
+            findInRange(qb, 'favoriteStars', searchCriteria)
           }
         })
         .innerJoin('categories', 'products.categoryId', 'categories.id')
