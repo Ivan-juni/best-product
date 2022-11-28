@@ -20,7 +20,7 @@ class Category extends objection_1.Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['parent', 'name'],
+            required: ['lower', 'upper', 'name'],
             properties: {
                 id: { type: 'integer' },
                 parent: { type: 'integer' },

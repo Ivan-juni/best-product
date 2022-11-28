@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const users_service_1 = __importDefault(require("../services/users.service"));
+const comments_service_1 = __importDefault(require("../services/comments.service"));
+const favorites_service_1 = __importDefault(require("../services/favorites.service"));
 class UsersController {
     static getUsers(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -56,7 +58,6 @@ class UsersController {
             try {
                 const { id } = req.user;
                 const photo = req.file.filename;
-                //!todo add type
                 const changingValues = req.body;
                 if (photo !== null && photo !== undefined) {
                     changingValues.photo = `http://localhost:${process.env.PORT}/static/users/${photo}`;
@@ -71,12 +72,12 @@ class UsersController {
                     next(ApiError_1.default.unAuthorizedError());
                 }
                 const user = yield users_service_1.default.editProfile(id, {
-                    photo: changingValues.photo || null,
+                    photo: changingValues.photo,
                     password: changingValues.password,
                     phone: +changingValues.phone || null,
-                    email: changingValues.email || null,
-                    firstName: changingValues.firstName || null,
-                    lastName: changingValues.lastName || null,
+                    email: changingValues.email,
+                    firstName: changingValues.firstName,
+                    lastName: changingValues.lastName,
                 });
                 if (!user) {
                     return next(ApiError_1.default.badRequest(`Editing profile error`));
@@ -97,7 +98,7 @@ class UsersController {
             if (!id) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
-            const comments = yield users_service_1.default.getComments(+id);
+            const comments = yield comments_service_1.default.getComments(+id);
             if (!comments) {
                 return next(ApiError_1.default.badRequest(`Fetching comments error`));
             }
@@ -110,7 +111,7 @@ class UsersController {
             if (!id) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
-            const favorites = yield users_service_1.default.getFavorites(+id);
+            const favorites = yield favorites_service_1.default.getFavorites(+id);
             if (!favorites) {
                 return next(ApiError_1.default.badRequest(`Fetching favorites error`));
             }

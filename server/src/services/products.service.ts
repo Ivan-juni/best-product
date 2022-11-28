@@ -4,9 +4,18 @@ import Product from '../db/models/product/product.model'
 import { IProduct, IProductsQuery } from '../types/products.type'
 import path from 'path'
 import fs from 'fs'
+import Category from '../db/models/category/category.model'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery) {
+    let categoryChilds: { categoryIds: string } = { categoryIds: '' }
+
+    let categoryParents: Array<{
+      id: number
+      parent: number
+      name: string
+    }> = []
+
     const limit = +searchCriteria.limit || 5
     const page = +searchCriteria.page || 0
 
@@ -29,13 +38,71 @@ export default class ProductService {
       }
     }
 
+    const getCategoryId = async (): Promise<number> => {
+      // находим id написанной категории
+      const categoryId = await Category.query()
+        .select('categories.id')
+        .where('categories.name', '=', `${searchCriteria.category}`)
+
+      return categoryId[0].id
+    }
+
     try {
+      if (searchCriteria.category) {
+        // находим id написанной категории
+        const categoryId = await getCategoryId()
+
+        // получаем список категорий родителей
+        const knex = Category.knex()
+        const parentResult = await knex.raw(`SELECT t2.id,
+                t2.parent,
+                t2.name
+                from (
+                  select @r as _id,
+                    (select @r := parent from categories where id = _id) AS parent,
+                    @l := @l + 1 AS lvl from (select @r := ${categoryId}, @l := 0) vars, categories c
+                    where @r <> 0) t1
+                    join categories t2
+                    on  t1._id = t2.id
+                    order by t1.lvl desc`)
+
+        categoryParents = parentResult[0]
+
+        // находим id дочерних категорий
+        const childResult =
+          await knex.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
+              SELECT @pv:=(
+                  SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
+                  ) AS lv FROM categories
+                  JOIN
+                  (SELECT @pv:=${categoryId}) tmp
+              ) a
+              WHERE lv IS NOT NULL;`)
+
+        categoryChilds = childResult[0][0]
+
+        // для корректного поиска также добавляем айди введенной категории
+        if (
+          categoryChilds.categoryIds === '' ||
+          categoryChilds.categoryIds == null
+        ) {
+          categoryChilds.categoryIds = `${categoryId}`
+        } else {
+          categoryChilds.categoryIds.concat(`, ${categoryId}`)
+        }
+      }
+
       const products = await Product.query()
         .select()
         .from('products')
-        .where(async (qb) => {
+        .where((qb) => {
+          if (searchCriteria.category) {
+            // получаем товары из данной категории и дочерних
+            qb.whereIn('categories.id', categoryChilds.categoryIds.split(','))
+          }
+
           if (searchCriteria.id) {
-            qb.where('products.id', '=', +searchCriteria.id)
+            qb.andWhere('products.id', '=', +searchCriteria.id)
           }
 
           if (searchCriteria.name) {
@@ -69,13 +136,20 @@ export default class ProductService {
           if (searchCriteria.favoriteStars) {
             findInRange(qb, 'favoriteStars')
           }
-          // if (searchCriteria.category) {
-          // }
         })
-        .innerJoin('categories', 'categories.id', 'products.categoryId')
+        .innerJoin('categories', 'products.categoryId', 'categories.id')
         .page(page, limit)
 
-      return products.results
+      // записываем в объект результат
+      if (searchCriteria.category) {
+        return {
+          products: products.results,
+          categories: categoryParents,
+          total: products.total,
+        }
+      } else {
+        return { ...products }
+      }
     } catch (error) {
       console.log('Error: ', error)
       return null

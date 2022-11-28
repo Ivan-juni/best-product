@@ -17,8 +17,8 @@ const product_model_1 = __importDefault(require("../db/models/product/product.mo
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
-            var result = {};
-            var categoryId = [];
+            let categoryChilds = { categoryIds: '' };
+            let categoryParents = [];
             const limit = +searchCriteria.limit || 5;
             const page = +searchCriteria.page || 0;
             const findInRange = (qb, parametr) => {
@@ -32,13 +32,60 @@ class ProductService {
                     qb.andWhere(`products.${parametr}`, '>=', +parametrArray[0]);
                 }
             };
+            const getCategoryId = () => __awaiter(this, void 0, void 0, function* () {
+                // находим id написанной категории
+                const categoryId = yield category_model_1.default.query()
+                    .select('categories.id')
+                    .where('categories.name', '=', `${searchCriteria.category}`);
+                return categoryId[0].id;
+            });
             try {
+                if (searchCriteria.category) {
+                    // находим id написанной категории
+                    const categoryId = yield getCategoryId();
+                    // получаем список категорий родителей
+                    const knex = category_model_1.default.knex();
+                    const parentResult = yield knex.raw(`SELECT t2.id,
+                t2.parent,
+                t2.name
+                from (
+                  select @r as _id,
+                    (select @r := parent from categories where id = _id) AS parent,
+                    @l := @l + 1 AS lvl from (select @r := ${categoryId}, @l := 0) vars, categories c
+                    where @r <> 0) t1
+                    join categories t2
+                    on  t1._id = t2.id
+                    order by t1.lvl desc`);
+                    categoryParents = parentResult[0];
+                    // находим id дочерних категорий
+                    const childResult = yield knex.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
+              SELECT @pv:=(
+                  SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
+                  ) AS lv FROM categories
+                  JOIN
+                  (SELECT @pv:=${categoryId}) tmp
+              ) a
+              WHERE lv IS NOT NULL;`);
+                    categoryChilds = childResult[0][0];
+                    // для корректного поиска также добавляем айди введенной категории
+                    if (categoryChilds.categoryIds === '' ||
+                        categoryChilds.categoryIds == null) {
+                        categoryChilds.categoryIds = `${categoryId}`;
+                    }
+                    else {
+                        categoryChilds.categoryIds.concat(`, ${categoryId}`);
+                    }
+                }
                 const products = yield product_model_1.default.query()
                     .select()
                     .from('products')
-                    .where((qb) => __awaiter(this, void 0, void 0, function* () {
+                    .where((qb) => {
+                    if (searchCriteria.category) {
+                        // получаем товары из данной категории и дочерних
+                        qb.whereIn('categories.id', categoryChilds.categoryIds.split(','));
+                    }
                     if (searchCriteria.id) {
-                        qb.where('products.id', '=', +searchCriteria.id);
+                        qb.andWhere('products.id', '=', +searchCriteria.id);
                     }
                     if (searchCriteria.name) {
                         qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`);
@@ -61,58 +108,20 @@ class ProductService {
                     if (searchCriteria.favoriteStars) {
                         findInRange(qb, 'favoriteStars');
                     }
-                    if (searchCriteria.category) {
-                        // находим id написанной категории
-                        categoryId = yield category_model_1.default.query()
-                            .select('categories.id')
-                            .where('categories.name', '=', `${searchCriteria.category}`);
-                        // находим id дочерних категорий
-                        const knex = category_model_1.default.knex();
-                        const result = yield knex.raw(`SELECT * FROM (
-              SELECT @pv:=(
-                  SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
-                  ) AS lv FROM categories
-                  JOIN
-                  (SELECT @pv:=${categoryId[0].id}) tmp
-              ) a
-              WHERE lv IS NOT NULL;`);
-                        const childs = result[0];
-                        console.log(childs.length);
-                        // получаем товары из данной категории и дочерних
-                        if (childs.length !== 0) {
-                            childs.forEach((obj) => {
-                                obj.lv.split(',').forEach((id) => {
-                                    qb.andWhere('categories.id', '=', +id);
-                                });
-                            });
-                        }
-                        else {
-                            qb.andWhere('categories.name', '=', `${searchCriteria.category}`);
-                        }
-                    }
-                }))
+                })
                     .innerJoin('categories', 'products.categoryId', 'categories.id')
                     .page(page, limit);
-                // записываем в объект результата
-                result = Object.assign({}, products.results);
-                if (searchCriteria.category) {
-                    // получаем список категорий родителей
-                    const knex = category_model_1.default.knex();
-                    const categories = yield knex.raw(`SELECT t2.id,
-                t2.parent,
-                t2.name
-                from (
-                  select @r as _id,
-                    (select @r := parent from categories where id = _id) AS parent,
-                    @l := @l + 1 AS lvl from (select @r := ${categoryId[0].id}, @l := 0) vars, categories c
-                    where @r <> 0) t1
-                    join categories t2
-                    on  t1._id = t2.id
-                    order by t1.lvl desc`);
-                    // записываем в объект результат
-                    result = { products: products.results, categoryChain: categories[0] };
+                // записываем в объект результат
+                if (categoryParents) {
+                    return {
+                        products: products.results,
+                        categories: categoryParents,
+                        total: products.total,
+                    };
                 }
-                return result;
+                else {
+                    return Object.assign({}, products);
+                }
             }
             catch (error) {
                 console.log('Error: ', error);

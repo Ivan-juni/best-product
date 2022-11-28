@@ -14,10 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const products_service_1 = __importDefault(require("../services/products.service"));
+const products_service_temp_1 = __importDefault(require("../services/products.service.temp"));
+const comments_service_1 = __importDefault(require("../services/comments.service"));
+const favorites_service_1 = __importDefault(require("../services/favorites.service"));
 class ProductsController {
     static getProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const products = yield products_service_1.default.getProducts(req.query);
+            const products = yield products_service_temp_1.default.getProducts(req.query);
             if (!products) {
                 return next(ApiError_1.default.badRequest(`Fetching products error`));
             }
@@ -54,7 +57,7 @@ class ProductsController {
             if (!id) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
-            const favorites = yield products_service_1.default.addToFavorite(+id, +productId);
+            const favorites = yield favorites_service_1.default.addToFavorite(+id, +productId);
             if (!favorites) {
                 return next(ApiError_1.default.badRequest(`Adding to favorites error`));
             }
@@ -71,7 +74,7 @@ class ProductsController {
             if (!id) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
-            const result = yield products_service_1.default.deleteFromFavorite(+id, +productId);
+            const result = yield favorites_service_1.default.deleteFromFavorite(+id, +productId);
             if (!result) {
                 return next(ApiError_1.default.badRequest(`Adding to favorites error`));
             }
@@ -99,7 +102,7 @@ class ProductsController {
             if (!id) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
-            const comment = yield products_service_1.default.addComment(+id, +productId, commentText);
+            const comment = yield comments_service_1.default.addComment(+id, +productId, commentText);
             if (!comment) {
                 return next(ApiError_1.default.badRequest(`Adding comment error`));
             }
@@ -116,7 +119,7 @@ class ProductsController {
             if (!id) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
-            const result = yield products_service_1.default.deleteComment(+id, +commentId);
+            const result = yield comments_service_1.default.deleteComment(+id, +commentId);
             if (!result) {
                 return next(ApiError_1.default.badRequest(`Deletion comment error`));
             }
@@ -136,7 +139,7 @@ class ProductsController {
             if (!productId) {
                 return next(ApiError_1.default.internal('Type the product id'));
             }
-            const comments = yield products_service_1.default.getProductComments(+productId, page, limit);
+            const comments = yield comments_service_1.default.getProductComments(+productId, page, limit);
             if (!comments) {
                 return next(ApiError_1.default.badRequest(`Fetching comments error`));
             }

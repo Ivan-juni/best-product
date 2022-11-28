@@ -6,8 +6,8 @@ export default class Category extends Model {
   }
 
   id: number
-  parent: string
-  name: number
+  parent: number
+  name: string
   createdAt: Date
   updatedAt: Date
 
@@ -30,7 +30,7 @@ export default class Category extends Model {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['parent', 'name'],
+      required: ['lower', 'upper', 'name'],
 
       properties: {
         id: { type: 'integer' },
