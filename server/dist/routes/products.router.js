@@ -20,7 +20,7 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const upload = (0, multer_1.default)({ storage });
-// @route POST /api/products/ || /api/products?id= || /api/products?category= || /api/products?price=800-1000 etc.
+// @route POST /api/products/ || /api/products?id= || /api/products?category= || /api/products?price=800-1000 etc. || /api/products?orderByPrice=high/low || /api/products?orderByFavoriteStars=high/low
 // @des Get products
 router.get('/', products_controller_1.default.getProducts);
 // @route GET /api/products/statistics?quantity=5

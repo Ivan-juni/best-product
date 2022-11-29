@@ -11,6 +11,7 @@ import Category from '../db/models/category/category.model'
 import { findInRange } from '../utils/find-in-range.util'
 import { getCategoryId } from '../utils/get-category-id.util'
 import { removePhoto } from '../utils/remove-photo.util'
+import { sort } from '../utils/sort-by.util'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery): resultType {
@@ -73,6 +74,10 @@ export default class ProductService {
         }
       }
 
+      // параметры для сортировки
+      const sortParams = sort(searchCriteria, ['price', 'favoriteStars'])
+
+      // запрос в базу
       const products = await Product.query()
         .select()
         .from('products')
@@ -119,6 +124,7 @@ export default class ProductService {
           }
         })
         .innerJoin('categories', 'products.categoryId', 'categories.id')
+        .orderBy(sortParams.column, sortParams.order)
         .page(page, limit)
 
       // записываем в объект результат

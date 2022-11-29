@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-// @route POST /api/products/ || /api/products?id= || /api/products?category= || /api/products?price=800-1000 etc.
+// @route POST /api/products/ || /api/products?id= || /api/products?category= || /api/products?price=800-1000 etc. || /api/products?orderByPrice=high/low || /api/products?orderByFavoriteStars=high/low
 // @des Get products
 router.get('/', productController.getProducts)
 

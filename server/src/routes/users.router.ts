@@ -4,8 +4,6 @@ import authMiddleware from '../middlewares/auth.middleware'
 import checkRole from '../middlewares/check-role.middleware'
 import multer from 'multer'
 import path from 'path'
-import commentsController from '../controllers/comments.controller'
-import favoritesController from '../controllers/favorites.controller'
 
 const router = Router()
 

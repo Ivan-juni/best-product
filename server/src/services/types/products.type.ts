@@ -11,6 +11,8 @@ export interface IProductsQuery {
   likes?: string
   dislikes?: string
   favoriteStars?: string
+  sortByPrice?: 'low' | 'high'
+  sortByFavoriteStars?: 'low' | 'high'
   page?: string
   limit?: string
 }

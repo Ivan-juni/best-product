@@ -18,6 +18,7 @@ const category_model_1 = __importDefault(require("../db/models/category/category
 const find_in_range_util_1 = require("../utils/find-in-range.util");
 const get_category_id_util_1 = require("../utils/get-category-id.util");
 const remove_photo_util_1 = require("../utils/remove-photo.util");
+const sort_by_util_1 = require("../utils/sort-by.util");
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -65,6 +66,9 @@ class ProductService {
                         categoryChilds.categoryIds.concat(`, ${categoryId}`);
                     }
                 }
+                // параметры для сортировки
+                const sortParams = (0, sort_by_util_1.sort)(searchCriteria, ['price', 'favoriteStars']);
+                // запрос в базу
                 const products = yield product_model_1.default.query()
                     .select()
                     .from('products')
@@ -99,6 +103,7 @@ class ProductService {
                     }
                 })
                     .innerJoin('categories', 'products.categoryId', 'categories.id')
+                    .orderBy(sortParams.column, sortParams.order)
                     .page(page, limit);
                 // записываем в объект результат
                 if (searchCriteria.category) {
