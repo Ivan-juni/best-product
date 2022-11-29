@@ -2,16 +2,16 @@ import { Request, Response, NextFunction } from 'express'
 import bcrypt from 'bcrypt'
 import ApiError from '../errors/ApiError'
 import userService from '../services/users.service'
-import commentService from '../services/comments.service'
-import favoritesService from '../services/favorites.service'
-import { changingValuesBody } from '../types/users.type'
+import { changingValuesBody } from '../services/types/users.type'
+import { ReturnType } from './types/return.type'
+import User from '../db/models/user/user.model'
 
 class UsersController {
   static async getUsers(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<User | User[]> {
     const users = await userService.getUsers(req.query)
 
     if (!users) {
@@ -25,25 +25,29 @@ class UsersController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<{ message: string }> {
     const { id } = req.query
     if (!id) {
       next(ApiError.badRequest("User id hasn't typed"))
     }
-    const users = await userService.deleteUser(+id)
+    const result = await userService.deleteUser(+id)
 
-    if (!users) {
+    if (!result) {
       return next(ApiError.badRequest(`Deletion users error`))
     }
 
-    return res.json(users)
+    if (typeof result == 'number') {
+      return res.json({ message: `Successfully deleted ${result} users` })
+    } else {
+      return res.json(result)
+    }
   }
 
   static async changeRole(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<User> {
     const { id, role } = req.query
     if (!id) {
       next(ApiError.badRequest("User id hasn't typed"))
@@ -61,7 +65,7 @@ class UsersController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<{ message: string }> {
     try {
       const { id } = req.user
       const photo = req.file.filename
@@ -106,46 +110,6 @@ class UsersController {
       console.log('Error: ', error)
       return res.status(500).json({ message: `Error: ${error}` })
     }
-  }
-
-  static async getMyComments(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { id } = req.user
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
-    const comments = await commentService.getComments(+id)
-
-    if (!comments) {
-      return next(ApiError.badRequest(`Fetching comments error`))
-    }
-
-    return res.json(comments)
-  }
-
-  static async getMyFavorites(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { id } = req.user
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
-    const favorites = await favoritesService.getFavorites(+id)
-
-    if (!favorites) {
-      return next(ApiError.badRequest(`Fetching favorites error`))
-    }
-
-    return res.json(favorites)
   }
 }
 

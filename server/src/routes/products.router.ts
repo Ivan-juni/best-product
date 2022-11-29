@@ -2,7 +2,6 @@ import express, { Request } from 'express'
 import multer from 'multer'
 import path from 'path'
 import productController from '../controllers/products.controller'
-import authMiddleware from '../middlewares/auth.middleware'
 import checkRole from '../middlewares/check-role.middleware'
 
 const router = express.Router()
@@ -35,32 +34,6 @@ router.get('/statistics', checkRole('ADMIN'), productController.getStatistics)
 // @des Get product characteristics
 router.get('/characteristics', productController.getCharacteristics)
 
-// @route GET /api/products/categories?categoryId=
-// @des Get  categories
-router.get('/categories', productController.getCategories)
-
-// * favorites *
-// @route POST /api/products/favorite?id=$productId$
-// @des Add product to user favorites
-router.post('/favorite', authMiddleware, productController.addToFavorite)
-
-// @route DELETE /api/products/favorite?id=$productId$
-// @des Remove product from user favorites
-router.delete('/favorite', authMiddleware, productController.deleteFromFavorite)
-
-// * comments *
-// @route GET /api/products/comment?productId=$productId$
-// @des Get product comments
-router.get('/comment', authMiddleware, productController.getProductComments)
-
-// @route POST /api/products/comment?commentId=$commentId$
-// @des Add comment to product
-router.post('/comment', authMiddleware, productController.addComment)
-
-// @route DELETE /api/products/comment?commentId=$commentId$
-// @des Delete comment
-router.delete('/comment', authMiddleware, productController.deleteComment)
-
 // ! Admin panel
 // @route POST /api/products/
 // @des Add a product
@@ -70,10 +43,6 @@ router.post(
   upload.single('image'),
   productController.addProduct
 )
-
-// @route POST /api/products/categories?categoryId=
-// @des Add a category
-router.post('/categories', checkRole('ADMIN'), productController.addCategory)
 
 // @route PUT /api/products/
 // @des Update the product
@@ -87,13 +56,5 @@ router.put(
 // @route DELETE /api/products?productId=
 // @des Delete a product
 router.delete('/', checkRole('ADMIN'), productController.deleteProducts)
-
-// @route DELETE /api/products/categories?categoryId=
-// @des Delete a category
-router.delete(
-  '/categories',
-  checkRole('ADMIN'),
-  productController.deleteCategory
-)
 
 export default router

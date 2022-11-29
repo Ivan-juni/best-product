@@ -1,6 +1,7 @@
 import { raw } from 'objection'
 import Favorite from '../db/models/favorite/favorite.model'
 import Product from '../db/models/product/product.model'
+import { DeleteType } from './types/products.type'
 
 export default class FavoritesService {
   static async getFavorites(userId: number): Promise<Favorite[] | null> {
@@ -55,7 +56,7 @@ export default class FavoritesService {
   static async deleteFromFavorite(
     userId: number,
     productId: number
-  ): Promise<number | { message: string } | null> {
+  ): DeleteType {
     try {
       const favorite = await Favorite.query().findOne({ userId, productId })
 

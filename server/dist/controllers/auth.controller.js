@@ -47,6 +47,7 @@ const registrationSchema = yup.object({
         .string()
         .min(4, 'Password should be longer than 3 symbols')
         .max(30, 'Password should be shorter than 30 symbols')
+        .matches(/^[A-Za-z]+$/, 'Only English letters')
         .required(),
     firstName: yup
         .string()

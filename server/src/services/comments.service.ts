@@ -1,5 +1,6 @@
 import Objection from 'objection'
 import Comment from '../db/models/comment/comment.model'
+import { DeleteType } from './types/products.type'
 
 export default class CommentService {
   static async getComments(userId: number): Promise<Comment[] | null> {
@@ -46,20 +47,23 @@ export default class CommentService {
 
   static async deleteComment(
     userId: number,
-    commentId: number
-  ): Promise<number | { message: string } | null> {
+    commentId: number,
+    role: string
+  ): DeleteType {
     try {
-      const comment = await Comment.query().findOne({ id: commentId, userId })
-
-      if (!comment) {
-        return { message: "Can't find this comment" }
+      if (role === 'ADMIN') {
+        const comment = await Comment.query().findOne({ id: commentId })
+        if (!comment) {
+          return { message: "Can't find or delete this comment" }
+        }
+        return Comment.query().delete().where({ id: commentId })
+      } else if (role === 'USER') {
+        const comment = await Comment.query().findOne({ id: commentId, userId })
+        if (!comment) {
+          return { message: "Can't find or delete this comment" }
+        }
+        return Comment.query().delete().where({ id: commentId, userId })
       }
-
-      const deletedComments = await Comment.query()
-        .delete()
-        .where({ id: commentId, userId })
-
-      return deletedComments
     } catch (error) {
       console.log('Error: ', error)
       return null

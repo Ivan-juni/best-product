@@ -1,17 +1,20 @@
 import { Request, Response, NextFunction } from 'express'
 import ApiError from '../errors/ApiError'
 import productsService from '../services/products.service'
-import commentService from '../services/comments.service'
-import favoritesService from '../services/favorites.service'
-import categoriesService from '../services/categories.service'
-import { IProductBody } from '../types/products.type'
+import {
+  IProductBody,
+  resultType,
+  StatisticsType,
+} from '../services/types/products.type'
+import { ReturnType } from './types/return.type'
+import Product from '../db/models/product/product.model'
 
 export default class ProductsController {
   static async getProducts(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<resultType> {
     const products = await productsService.getProducts(req.query)
 
     if (!products) {
@@ -25,7 +28,7 @@ export default class ProductsController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<StatisticsType> {
     const quantity = +req.query.quantity || 5
 
     const products = await productsService.getStatistics(quantity)
@@ -41,7 +44,7 @@ export default class ProductsController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<Product[]> {
     const { productId } = req.query
 
     const characteristics = await productsService.getCharacteristics(+productId)
@@ -53,162 +56,13 @@ export default class ProductsController {
     return res.json(characteristics)
   }
 
-  // favorites
-
-  static async addToFavorite(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { id } = req.user
-    const { productId } = req.query
-
-    if (!productId) {
-      return next(ApiError.internal('Type product id'))
-    }
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
-    const favorites = await favoritesService.addToFavorite(+id, +productId)
-
-    if (!favorites) {
-      return next(ApiError.badRequest(`Adding to favorites error`))
-    }
-
-    return res.json(favorites)
-  }
-
-  static async deleteFromFavorite(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { id } = req.user
-    const { productId } = req.query
-
-    if (!productId) {
-      return next(ApiError.internal('Type product id'))
-    }
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
-    const result = await favoritesService.deleteFromFavorite(+id, +productId)
-
-    if (!result) {
-      return next(ApiError.badRequest(`Adding to favorites error`))
-    }
-
-    if (typeof result == 'number') {
-      return res.json({
-        message: `Successfully deleted ${result} queries`,
-      })
-    } else {
-      return res.json(result)
-    }
-  }
-
-  // comments
-
-  static async addComment(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { id } = req.user
-    const { productId } = req.query
-    const commentText: string = req.body.text
-
-    if (!productId) {
-      return next(ApiError.internal('Type product id'))
-    }
-
-    if (!commentText) {
-      return next(ApiError.internal('Please, type the cooment text'))
-    }
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
-    const comment = await commentService.addComment(
-      +id,
-      +productId,
-      commentText
-    )
-
-    if (!comment) {
-      return next(ApiError.badRequest(`Adding comment error`))
-    }
-
-    return res.json(comment)
-  }
-
-  static async deleteComment(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { id } = req.user
-    const { commentId } = req.query
-
-    if (!commentId) {
-      return next(ApiError.internal('Type comment id'))
-    }
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
-    const result = await commentService.deleteComment(+id, +commentId)
-
-    if (!result) {
-      return next(ApiError.badRequest(`Deletion comment error`))
-    }
-
-    if (typeof result == 'number') {
-      return res.json({ message: `Successfully deleted ${result} comments` })
-    } else {
-      return res.json(result)
-    }
-  }
-
-  static async getProductComments(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { productId } = req.query
-    const page = +req.query.page || 0
-    const limit = +req.query.page || 5
-
-    if (!productId) {
-      return next(ApiError.internal('Type the product id'))
-    }
-
-    const comments = await commentService.getProductComments(
-      +productId,
-      page,
-      limit
-    )
-
-    if (!comments) {
-      return next(ApiError.badRequest(`Fetching comments error`))
-    }
-
-    return res.json(comments)
-  }
-
   // products admin panel
 
   static async deleteProducts(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<{ message: string }> {
     const { productId } = req.query
 
     if (!productId) {
@@ -232,7 +86,7 @@ export default class ProductsController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<Product> {
     const productInfo: IProductBody = req.body
     const image = req.file.filename
 
@@ -292,7 +146,7 @@ export default class ProductsController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<Product | { message: string }> {
     try {
       const { productId } = req.query
 
@@ -307,9 +161,9 @@ export default class ProductsController {
 
       if (changingValues.microphone) {
         if (changingValues.microphone === 'true') {
-          changingValues.microphone = true
+          microphone = true
         } else {
-          changingValues.microphone = false
+          microphone = false
         }
       }
 
@@ -340,81 +194,5 @@ export default class ProductsController {
       console.log(error)
       return res.json({ Error: error.message })
     }
-  }
-
-  // categories
-
-  static async addCategory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const categoryName: string = req.body.name
-    const parent: number = +req.body.parent || 0
-
-    if (!categoryName) {
-      return next(ApiError.internal('Please, type the category name'))
-    }
-
-    if (!parent) {
-      return next(ApiError.internal('Please, type the category parent'))
-    }
-
-    const category = await categoriesService.addCategory({
-      name: categoryName,
-      parent: +parent,
-    })
-
-    if (!category) {
-      return next(ApiError.badRequest(`Adding category error`))
-    }
-
-    return res.json(category)
-  }
-
-  static async deleteCategory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const { categoryId } = req.query
-
-    if (!categoryId) {
-      return next(ApiError.internal('Please, type the category id'))
-    }
-
-    const result = await categoriesService.deleteCategory(+categoryId)
-
-    if (!result) {
-      return next(ApiError.badRequest(`Deletion category error`))
-    }
-
-    if (typeof result == 'number') {
-      return res.json({ message: `Successfully deleted ${result} categories` })
-    } else {
-      return res.json(result)
-    }
-  }
-
-  static async getCategories(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
-    const categoryId = +req.query.categoryId || null
-    const page = +req.query.page || 0
-    const limit = +req.query.limit || 5
-
-    const categories = await categoriesService.getCategories({
-      categoryId,
-      page,
-      limit,
-    })
-
-    if (!categories) {
-      return next(ApiError.badRequest(`Fetching categories error`))
-    }
-
-    return res.json(categories)
   }
 }

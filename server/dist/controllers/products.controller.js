@@ -14,9 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const products_service_1 = __importDefault(require("../services/products.service"));
-const comments_service_1 = __importDefault(require("../services/comments.service"));
-const favorites_service_1 = __importDefault(require("../services/favorites.service"));
-const categories_service_1 = __importDefault(require("../services/categories.service"));
 class ProductsController {
     static getProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -45,107 +42,6 @@ class ProductsController {
                 return next(ApiError_1.default.badRequest(`Fetching characteristics error`));
             }
             return res.json(characteristics);
-        });
-    }
-    // favorites
-    static addToFavorite(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.user;
-            const { productId } = req.query;
-            if (!productId) {
-                return next(ApiError_1.default.internal('Type product id'));
-            }
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
-            const favorites = yield favorites_service_1.default.addToFavorite(+id, +productId);
-            if (!favorites) {
-                return next(ApiError_1.default.badRequest(`Adding to favorites error`));
-            }
-            return res.json(favorites);
-        });
-    }
-    static deleteFromFavorite(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.user;
-            const { productId } = req.query;
-            if (!productId) {
-                return next(ApiError_1.default.internal('Type product id'));
-            }
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
-            const result = yield favorites_service_1.default.deleteFromFavorite(+id, +productId);
-            if (!result) {
-                return next(ApiError_1.default.badRequest(`Adding to favorites error`));
-            }
-            if (typeof result == 'number') {
-                return res.json({
-                    message: `Successfully deleted ${result} queries`,
-                });
-            }
-            else {
-                return res.json(result);
-            }
-        });
-    }
-    // comments
-    static addComment(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.user;
-            const { productId } = req.query;
-            const commentText = req.body.text;
-            if (!productId) {
-                return next(ApiError_1.default.internal('Type product id'));
-            }
-            if (!commentText) {
-                return next(ApiError_1.default.internal('Please, type the cooment text'));
-            }
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
-            const comment = yield comments_service_1.default.addComment(+id, +productId, commentText);
-            if (!comment) {
-                return next(ApiError_1.default.badRequest(`Adding comment error`));
-            }
-            return res.json(comment);
-        });
-    }
-    static deleteComment(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.user;
-            const { commentId } = req.query;
-            if (!commentId) {
-                return next(ApiError_1.default.internal('Type comment id'));
-            }
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
-            const result = yield comments_service_1.default.deleteComment(+id, +commentId);
-            if (!result) {
-                return next(ApiError_1.default.badRequest(`Deletion comment error`));
-            }
-            if (typeof result == 'number') {
-                return res.json({ message: `Successfully deleted ${result} comments` });
-            }
-            else {
-                return res.json(result);
-            }
-        });
-    }
-    static getProductComments(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { productId } = req.query;
-            const page = +req.query.page || 0;
-            const limit = +req.query.page || 5;
-            if (!productId) {
-                return next(ApiError_1.default.internal('Type the product id'));
-            }
-            const comments = yield comments_service_1.default.getProductComments(+productId, page, limit);
-            if (!comments) {
-                return next(ApiError_1.default.badRequest(`Fetching comments error`));
-            }
-            return res.json(comments);
         });
     }
     // products admin panel
@@ -232,10 +128,10 @@ class ProductsController {
                 }
                 if (changingValues.microphone) {
                     if (changingValues.microphone === 'true') {
-                        changingValues.microphone = true;
+                        microphone = true;
                     }
                     else {
-                        changingValues.microphone = false;
+                        microphone = false;
                     }
                 }
                 if (image) {
@@ -263,62 +159,6 @@ class ProductsController {
                 console.log(error);
                 return res.json({ Error: error.message });
             }
-        });
-    }
-    // categories
-    static addCategory(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const categoryName = req.body.name;
-            const parent = +req.body.parent || 0;
-            console.log(req.body);
-            if (!categoryName) {
-                return next(ApiError_1.default.internal('Please, type the category name'));
-            }
-            if (!parent) {
-                return next(ApiError_1.default.internal('Please, type the category parent'));
-            }
-            const category = yield categories_service_1.default.addCategory({
-                name: categoryName,
-                parent: +parent,
-            });
-            if (!category) {
-                return next(ApiError_1.default.badRequest(`Adding category error`));
-            }
-            return res.json(category);
-        });
-    }
-    static deleteCategory(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { categoryId } = req.query;
-            if (!categoryId) {
-                return next(ApiError_1.default.internal('Please, type the category id'));
-            }
-            const result = yield categories_service_1.default.deleteCategory(+categoryId);
-            if (!result) {
-                return next(ApiError_1.default.badRequest(`Deletion category error`));
-            }
-            if (typeof result == 'number') {
-                return res.json({ message: `Successfully deleted ${result} categories` });
-            }
-            else {
-                return res.json(result);
-            }
-        });
-    }
-    static getCategories(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const categoryId = +req.query.categoryId || null;
-            const page = +req.query.page || 0;
-            const limit = +req.query.limit || 5;
-            const categories = yield categories_service_1.default.getCategories({
-                categoryId,
-                page,
-                limit,
-            });
-            if (!categories) {
-                return next(ApiError_1.default.badRequest(`Fetching categories error`));
-            }
-            return res.json(categories);
         });
     }
 }

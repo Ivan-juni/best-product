@@ -1,4 +1,5 @@
 import Category from '../db/models/category/category.model'
+import { DeleteType } from './types/products.type'
 
 export default class CategoriesService {
   static async getCategories(searchCriteria: {
@@ -52,9 +53,7 @@ export default class CategoriesService {
     }
   }
 
-  static async deleteCategory(
-    categoryId: number
-  ): Promise<number | { message: string } | null> {
+  static async deleteCategory(categoryId: number): DeleteType {
     try {
       const category = await Category.query().findById(categoryId)
 

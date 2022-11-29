@@ -1,14 +1,19 @@
 import ProductCharacteristics from '../db/models/product-characteristics/product-characteristics.model'
 import Product from '../db/models/product/product.model'
-import { IProduct, IProductsQuery } from '../types/products.type'
-import path from 'path'
-import fs from 'fs'
+import {
+  DeleteType,
+  IProduct,
+  IProductsQuery,
+  resultType,
+  StatisticsType,
+} from './types/products.type'
 import Category from '../db/models/category/category.model'
 import { findInRange } from '../utils/find-in-range.util'
 import { getCategoryId } from '../utils/get-category-id.util'
+import { removePhoto } from '../utils/remove-photo.util'
 
 export default class ProductService {
-  static async getProducts(searchCriteria: IProductsQuery) {
+  static async getProducts(searchCriteria: IProductsQuery): resultType {
     try {
       // введенная категория и её дочерние
       let categoryChilds: { categoryIds: string } = { categoryIds: '' }
@@ -132,7 +137,7 @@ export default class ProductService {
     }
   }
 
-  static async getStatistics(quantity = 5) {
+  static async getStatistics(quantity = 5): StatisticsType {
     // 5 most viewed/liked/disliked/added to favorites
     try {
       const views = await Product.query()
@@ -167,7 +172,9 @@ export default class ProductService {
     }
   }
 
-  static async getCharacteristics(productId: number) {
+  static async getCharacteristics(
+    productId: number
+  ): Promise<Product[] | null> {
     try {
       const characteristics = await Product.query()
         .select(
@@ -189,15 +196,16 @@ export default class ProductService {
     }
   }
 
-  static async deleteProduct(
-    productId: number
-  ): Promise<number | { message: string } | null> {
+  static async deleteProduct(productId: number): DeleteType {
     try {
       const product = await Product.query().findById(productId)
 
       if (!product) {
         return { message: "Can't find this products" }
       }
+
+      // Remove product image from server folder
+      removePhoto(product.image, 'products')
 
       const deletedProducts = await Product.query().deleteById(productId)
       await ProductCharacteristics.query().deleteById(product.characteristicsId)
@@ -209,7 +217,7 @@ export default class ProductService {
     }
   }
 
-  static async addProduct(product: IProduct) {
+  static async addProduct(product: IProduct): Promise<Product | null> {
     try {
       const characteristics = await ProductCharacteristics.query().insert({
         purpose: product.purpose,
@@ -230,6 +238,7 @@ export default class ProductService {
       })
     } catch (error) {
       console.log('Error: ', error)
+      removePhoto(product.image, 'products')
       return null
     }
   }
@@ -244,26 +253,9 @@ export default class ProductService {
       if (!oldProduct) {
         return { message: "Can't find this product" }
       }
-      // Remove old photo
-      if (oldProduct.image) {
-        const oldPath = path.join(
-          __dirname,
-          '..',
-          '..',
-          'assets',
-          'products',
-          path.basename(oldProduct.image)
-        )
 
-        if (fs.existsSync(oldPath)) {
-          fs.unlink(oldPath, (err) => {
-            if (err) {
-              console.error(err)
-              return
-            }
-          })
-        }
-      }
+      // Remove old image
+      removePhoto(oldProduct.image, 'products')
 
       // filtering null values
       Object.keys(changingValues).forEach((key) => {

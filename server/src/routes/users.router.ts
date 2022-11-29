@@ -4,6 +4,8 @@ import authMiddleware from '../middlewares/auth.middleware'
 import checkRole from '../middlewares/check-role.middleware'
 import multer from 'multer'
 import path from 'path'
+import commentsController from '../controllers/comments.controller'
+import favoritesController from '../controllers/favorites.controller'
 
 const router = Router()
 
@@ -31,14 +33,6 @@ router.put(
   upload.single('image'),
   usersController.editProfile
 )
-
-// @route get /api/users/comments
-// @des Get user's comments
-router.get('/comments', authMiddleware, usersController.getMyComments)
-
-// @route get /api/users/favorites
-// @des Get user's favorites
-router.get('/favorites', authMiddleware, usersController.getMyFavorites)
 
 // ! Admin panel
 // @route get /api/users || /api/users?id=

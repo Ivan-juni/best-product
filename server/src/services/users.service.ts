@@ -1,7 +1,7 @@
 import User from '../db/models/user/user.model'
-import { changingValues, IUsersQuery } from '../types/users.type'
-import path from 'path'
-import fs from 'fs'
+import { changingValues, IUsersQuery } from './types/users.type'
+import { removePhoto } from '../utils/remove-photo.util'
+import { DeleteType } from './types/products.type'
 
 class UserService {
   static async getUsers(
@@ -27,8 +27,17 @@ class UserService {
     }
   }
 
-  static async deleteUser(id: number): Promise<number | null> {
+  static async deleteUser(id: number): DeleteType {
     try {
+      const user = await User.query().findById(id)
+
+      if (!user) {
+        return { message: "Can't find this user" }
+      }
+
+      // Remove photo
+      removePhoto(user.photo, 'users')
+
       return User.query().deleteById(id)
     } catch (error) {
       return null
@@ -54,26 +63,9 @@ class UserService {
       if (!oldUser) {
         return { message: "Can't find this user" }
       }
-      // Remove old photo
-      if (oldUser.photo) {
-        const oldPath = path.join(
-          __dirname,
-          '..',
-          '..',
-          'assets',
-          'users',
-          path.basename(oldUser.photo)
-        )
 
-        if (fs.existsSync(oldPath)) {
-          fs.unlink(oldPath, (err) => {
-            if (err) {
-              console.error(err)
-              return
-            }
-          })
-        }
-      }
+      // Remove old photo
+      removePhoto(oldUser.photo, 'users')
 
       // filtering null values
       Object.keys(changingValues).forEach((key) => {
@@ -85,6 +77,9 @@ class UserService {
       return User.query().patchAndFetchById(id, changingValues)
     } catch (error) {
       console.log('Error: ', error)
+      if (changingValues.photo) {
+        removePhoto(changingValues.photo, 'users')
+      }
       return null
     }
   }

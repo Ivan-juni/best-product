@@ -2,7 +2,7 @@ import User from '../db/models/user/user.model'
 import tokenService from './token.service'
 import UserDto from '../dtos/user-dto'
 import bcrypt from 'bcrypt'
-import { IRegistrationQuery } from '../types/auth.type'
+import { IRegistrationQuery } from './types/auth.type'
 
 class AuthService {
   static async registration({

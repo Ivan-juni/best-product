@@ -1,3 +1,6 @@
+import Objection from 'objection'
+import Product from '../../db/models/product/product.model'
+
 export interface IProductsQuery {
   id?: string
   name?: string
@@ -39,3 +42,26 @@ export interface IProduct {
   batteryLiveTime: number | null
   display: string | null
 }
+
+export type resultType = Promise<
+  | {
+      products: Product[]
+      categories: {
+        id: number
+        parent: number
+        name: string
+      }[]
+      total: number
+    }
+  | Objection.Page<Product>
+  | null
+>
+
+export type StatisticsType = Promise<{
+  topViews: Product[]
+  topLikes: Product[]
+  topDislikes: Product[]
+  topFavoriteStars: Product[]
+} | null>
+
+export type DeleteType = Promise<number | { message: string } | null>

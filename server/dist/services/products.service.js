@@ -14,11 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const product_characteristics_model_1 = __importDefault(require("../db/models/product-characteristics/product-characteristics.model"));
 const product_model_1 = __importDefault(require("../db/models/product/product.model"));
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
 const category_model_1 = __importDefault(require("../db/models/category/category.model"));
 const find_in_range_util_1 = require("../utils/find-in-range.util");
 const get_category_id_util_1 = require("../utils/get-category-id.util");
+const remove_photo_util_1 = require("../utils/remove-photo.util");
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -174,6 +173,8 @@ class ProductService {
                 if (!product) {
                     return { message: "Can't find this products" };
                 }
+                // Remove product image from server folder
+                (0, remove_photo_util_1.removePhoto)(product.image, 'products');
                 const deletedProducts = yield product_model_1.default.query().deleteById(productId);
                 yield product_characteristics_model_1.default.query().deleteById(product.characteristicsId);
                 return deletedProducts;
@@ -206,6 +207,7 @@ class ProductService {
             }
             catch (error) {
                 console.log('Error: ', error);
+                (0, remove_photo_util_1.removePhoto)(product.image, 'products');
                 return null;
             }
         });
@@ -217,18 +219,8 @@ class ProductService {
                 if (!oldProduct) {
                     return { message: "Can't find this product" };
                 }
-                // Remove old photo
-                if (oldProduct.image) {
-                    const oldPath = path_1.default.join(__dirname, '..', '..', 'assets', 'products', path_1.default.basename(oldProduct.image));
-                    if (fs_1.default.existsSync(oldPath)) {
-                        fs_1.default.unlink(oldPath, (err) => {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-                        });
-                    }
-                }
+                // Remove old image
+                (0, remove_photo_util_1.removePhoto)(oldProduct.image, 'products');
                 // filtering null values
                 Object.keys(changingValues).forEach((key) => {
                     if (changingValues[key] === null) {

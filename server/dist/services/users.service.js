@@ -13,8 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_model_1 = __importDefault(require("../db/models/user/user.model"));
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
+const remove_photo_util_1 = require("../utils/remove-photo.util");
 class UserService {
     static getUsers(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,6 +39,12 @@ class UserService {
     static deleteUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const user = yield user_model_1.default.query().findById(id);
+                if (!user) {
+                    return { message: "Can't find this user" };
+                }
+                // Remove photo
+                (0, remove_photo_util_1.removePhoto)(user.photo, 'users');
                 return user_model_1.default.query().deleteById(id);
             }
             catch (error) {
@@ -66,17 +71,7 @@ class UserService {
                     return { message: "Can't find this user" };
                 }
                 // Remove old photo
-                if (oldUser.photo) {
-                    const oldPath = path_1.default.join(__dirname, '..', '..', 'assets', 'users', path_1.default.basename(oldUser.photo));
-                    if (fs_1.default.existsSync(oldPath)) {
-                        fs_1.default.unlink(oldPath, (err) => {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-                        });
-                    }
-                }
+                (0, remove_photo_util_1.removePhoto)(oldUser.photo, 'users');
                 // filtering null values
                 Object.keys(changingValues).forEach((key) => {
                     if (changingValues[key] === null) {
@@ -87,6 +82,9 @@ class UserService {
             }
             catch (error) {
                 console.log('Error: ', error);
+                if (changingValues.photo) {
+                    (0, remove_photo_util_1.removePhoto)(changingValues.photo, 'users');
+                }
                 return null;
             }
         });

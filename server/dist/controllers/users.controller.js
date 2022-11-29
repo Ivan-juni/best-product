@@ -15,8 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const users_service_1 = __importDefault(require("../services/users.service"));
-const comments_service_1 = __importDefault(require("../services/comments.service"));
-const favorites_service_1 = __importDefault(require("../services/favorites.service"));
 class UsersController {
     static getUsers(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,11 +31,16 @@ class UsersController {
             if (!id) {
                 next(ApiError_1.default.badRequest("User id hasn't typed"));
             }
-            const users = yield users_service_1.default.deleteUser(+id);
-            if (!users) {
+            const result = yield users_service_1.default.deleteUser(+id);
+            if (!result) {
                 return next(ApiError_1.default.badRequest(`Deletion users error`));
             }
-            return res.json(users);
+            if (typeof result == 'number') {
+                return res.json({ message: `Successfully deleted ${result} users` });
+            }
+            else {
+                return res.json(result);
+            }
         });
     }
     static changeRole(req, res, next) {
@@ -90,32 +93,6 @@ class UsersController {
                 console.log('Error: ', error);
                 return res.status(500).json({ message: `Error: ${error}` });
             }
-        });
-    }
-    static getMyComments(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.user;
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
-            const comments = yield comments_service_1.default.getComments(+id);
-            if (!comments) {
-                return next(ApiError_1.default.badRequest(`Fetching comments error`));
-            }
-            return res.json(comments);
-        });
-    }
-    static getMyFavorites(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.user;
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
-            const favorites = yield favorites_service_1.default.getFavorites(+id);
-            if (!favorites) {
-                return next(ApiError_1.default.badRequest(`Fetching favorites error`));
-            }
-            return res.json(favorites);
         });
     }
 }

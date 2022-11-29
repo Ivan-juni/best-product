@@ -4,6 +4,7 @@ import ApiError from '../errors/ApiError'
 import bcrypt from 'bcrypt'
 import User from '../db/models/user/user.model'
 import userService from '../services/auth.service'
+import { ReturnType } from './types/return.type'
 
 const registrationSchema = yup.object({
   email: yup.string().email().required(),
@@ -12,6 +13,7 @@ const registrationSchema = yup.object({
     .string()
     .min(4, 'Password should be longer than 3 symbols')
     .max(30, 'Password should be shorter than 30 symbols')
+    .matches(/^[A-Za-z]+$/, 'Only English letters')
     .required(),
   firstName: yup
     .string()
@@ -34,7 +36,7 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<typeof userData> {
     try {
       await registrationSchema.validate(req.body)
     } catch (err) {
@@ -80,7 +82,7 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<typeof userData> {
     const { email, password }: IUser = req.body
 
     const user = await User.query().findOne({ email })
@@ -115,7 +117,7 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<{ message: string }> {
     // достаем из кукис refreshToken
     const { refreshToken }: { refreshToken: string } = req.cookies
     const token = await userService.logout(refreshToken)
@@ -137,7 +139,7 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void | Response<any, Record<string, any>>> {
+  ): ReturnType<typeof userData> {
     // достаем из кукис refreshToken
     const { refreshToken }: { refreshToken: string } = req.cookies
 

@@ -47,17 +47,23 @@ class CommentService {
             }
         });
     }
-    static deleteComment(userId, commentId) {
+    static deleteComment(userId, commentId, role) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const comment = yield comment_model_1.default.query().findOne({ id: commentId, userId });
-                if (!comment) {
-                    return { message: "Can't find this comment" };
+                if (role === 'ADMIN') {
+                    const comment = yield comment_model_1.default.query().findOne({ id: commentId });
+                    if (!comment) {
+                        return { message: "Can't find or delete this comment" };
+                    }
+                    return comment_model_1.default.query().delete().where({ id: commentId });
                 }
-                const deletedComments = yield comment_model_1.default.query()
-                    .delete()
-                    .where({ id: commentId, userId });
-                return deletedComments;
+                else if (role === 'USER') {
+                    const comment = yield comment_model_1.default.query().findOne({ id: commentId, userId });
+                    if (!comment) {
+                        return { message: "Can't find or delete this comment" };
+                    }
+                    return comment_model_1.default.query().delete().where({ id: commentId, userId });
+                }
             }
             catch (error) {
                 console.log('Error: ', error);
