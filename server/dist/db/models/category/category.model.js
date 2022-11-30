@@ -17,6 +17,13 @@ class Category extends objection_1.Model {
     static get nameColumn() {
         return 'name';
     }
+    static get modifiers() {
+        return {
+            selectNameIdParent(builder) {
+                builder.select('id', 'name', 'parent');
+            },
+        };
+    }
     static get jsonSchema() {
         return {
             type: 'object',

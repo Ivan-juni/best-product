@@ -5,6 +5,26 @@ import { ReturnType } from './types/return.type'
 import Favorite from '../db/models/favorite/favorite.model'
 
 export default class FavoritesController {
+  static async getUserFavorites(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): ReturnType<Favorite[]> {
+    const { id } = req.user
+
+    if (!id) {
+      return next(ApiError.unAuthorizedError())
+    }
+
+    const favorites = await favoritesService.getFavorites(+id, req.query)
+
+    if (!favorites) {
+      return next(ApiError.badRequest(`Fetching favorites error`))
+    }
+
+    return res.json(favorites)
+  }
+
   static async addToFavorite(
     req: Request,
     res: Response,
@@ -59,25 +79,5 @@ export default class FavoritesController {
     } else {
       return res.json(result)
     }
-  }
-
-  static async getUserFavorites(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<Favorite[]> {
-    const { id } = req.user
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
-    const favorites = await favoritesService.getFavorites(+id)
-
-    if (!favorites) {
-      return next(ApiError.badRequest(`Fetching favorites error`))
-    }
-
-    return res.json(favorites)
   }
 }

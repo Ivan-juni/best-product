@@ -4,7 +4,7 @@ import favoritesController from '../controllers/favorites.controller'
 
 const router = Router()
 
-// @route get /api/users/favorites
+// @route get /api/users/favorites?id= ?price= ?orderByPrice=
 // @des Get user's favorites
 router.get('/', authMiddleware, favoritesController.getUserFavorites)
 

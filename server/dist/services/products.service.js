@@ -19,6 +19,7 @@ const find_in_range_util_1 = require("../utils/find-in-range.util");
 const get_category_id_util_1 = require("../utils/get-category-id.util");
 const remove_photo_util_1 = require("../utils/remove-photo.util");
 const sort_by_util_1 = require("../utils/sort-by.util");
+const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -70,7 +71,7 @@ class ProductService {
                 const sortParams = (0, sort_by_util_1.sort)(searchCriteria, ['price', 'favoriteStars']);
                 // запрос в базу
                 const products = yield product_model_1.default.query()
-                    .select()
+                    .select('id', 'name', 'price', 'image', 'likes', 'dislikes', 'views', 'favoriteStars', 'createdAt', 'updatedAt')
                     .from('products')
                     .where((qb) => {
                     if (searchCriteria.category) {
@@ -102,7 +103,7 @@ class ProductService {
                         (0, find_in_range_util_1.findInRange)(qb, 'favoriteStars', searchCriteria);
                     }
                 })
-                    .innerJoin('categories', 'products.categoryId', 'categories.id')
+                    .withGraphFetched('[category(selectNameIdParent), characteristics]')
                     .orderBy(sortParams.column, sortParams.order)
                     .page(page, limit);
                 // записываем в объект результат
@@ -114,7 +115,7 @@ class ProductService {
                     };
                 }
                 else {
-                    return Object.assign({}, products);
+                    return products;
                 }
             }
             catch (error) {
@@ -182,6 +183,7 @@ class ProductService {
                 (0, remove_photo_util_1.removePhoto)(product.image, 'products');
                 const deletedProducts = yield product_model_1.default.query().deleteById(productId);
                 yield product_characteristics_model_1.default.query().deleteById(product.characteristicsId);
+                yield favorite_model_1.default.query().delete().where({ productId });
                 return deletedProducts;
             }
             catch (error) {

@@ -15,6 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const favorites_service_1 = __importDefault(require("../services/favorites.service"));
 class FavoritesController {
+    static getUserFavorites(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const favorites = yield favorites_service_1.default.getFavorites(+id, req.query);
+            if (!favorites) {
+                return next(ApiError_1.default.badRequest(`Fetching favorites error`));
+            }
+            return res.json(favorites);
+        });
+    }
     static addToFavorite(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;
@@ -54,19 +67,6 @@ class FavoritesController {
             else {
                 return res.json(result);
             }
-        });
-    }
-    static getUserFavorites(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.user;
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
-            const favorites = yield favorites_service_1.default.getFavorites(+id);
-            if (!favorites) {
-                return next(ApiError_1.default.badRequest(`Fetching favorites error`));
-            }
-            return res.json(favorites);
         });
     }
 }

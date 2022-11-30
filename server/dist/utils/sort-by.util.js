@@ -13,7 +13,6 @@ const sort = (searchCriteria, params // price, favoriteStars
         // сортировка
         // first letter to upper case
         const formatedParam = `orderBy${param.charAt(0).toLocaleUpperCase() + param.slice(1)}`;
-        console.log(formatedParam);
         if (searchCriteria[formatedParam]) {
             sortParams.column = param;
             // по возрастанию
@@ -26,7 +25,6 @@ const sort = (searchCriteria, params // price, favoriteStars
             }
         }
     });
-    console.log('sort params:', sortParams);
     return sortParams;
 };
 exports.sort = sort;

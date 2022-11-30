@@ -71,7 +71,7 @@ class Product extends objection_1.Model {
 }
 exports.default = Product;
 Product.relationMappings = {
-    categories: {
+    category: {
         relation: objection_1.Model.HasOneRelation,
         modelClass: category_model_1.default,
         join: {

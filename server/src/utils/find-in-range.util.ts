@@ -1,8 +1,11 @@
 import Objection from 'objection'
 import Product from '../db/models/product/product.model'
+import Favorite from '../db/models/favorite/favorite.model'
 
 export const findInRange = (
-  qb: Objection.QueryBuilder<Product, Product[]>,
+  qb:
+    | Objection.QueryBuilder<Product, Product[]>
+    | Objection.QueryBuilder<Favorite, Favorite[]>,
   parametr: string,
   searchCriteria
 ) => {

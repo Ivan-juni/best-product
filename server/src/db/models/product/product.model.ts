@@ -92,7 +92,7 @@ export default class Product extends Model {
   }
 
   static relationMappings: RelationMappings | RelationMappingsThunk = {
-    categories: {
+    category: {
       relation: Model.HasOneRelation,
       modelClass: Category,
       join: {

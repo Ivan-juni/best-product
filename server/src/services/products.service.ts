@@ -12,6 +12,7 @@ import { findInRange } from '../utils/find-in-range.util'
 import { getCategoryId } from '../utils/get-category-id.util'
 import { removePhoto } from '../utils/remove-photo.util'
 import { sort } from '../utils/sort-by.util'
+import Favorite from '../db/models/favorite/favorite.model'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery): resultType {
@@ -79,7 +80,18 @@ export default class ProductService {
 
       // запрос в базу
       const products = await Product.query()
-        .select()
+        .select(
+          'id',
+          'name',
+          'price',
+          'image',
+          'likes',
+          'dislikes',
+          'views',
+          'favoriteStars',
+          'createdAt',
+          'updatedAt'
+        )
         .from('products')
         .where((qb) => {
           if (searchCriteria.category) {
@@ -123,7 +135,7 @@ export default class ProductService {
             findInRange(qb, 'favoriteStars', searchCriteria)
           }
         })
-        .innerJoin('categories', 'products.categoryId', 'categories.id')
+        .withGraphFetched('[category(selectNameIdParent), characteristics]')
         .orderBy(sortParams.column, sortParams.order)
         .page(page, limit)
 
@@ -135,7 +147,7 @@ export default class ProductService {
           total: products.total,
         }
       } else {
-        return { ...products }
+        return products
       }
     } catch (error) {
       console.log('Error: ', error)
@@ -215,6 +227,7 @@ export default class ProductService {
 
       const deletedProducts = await Product.query().deleteById(productId)
       await ProductCharacteristics.query().deleteById(product.characteristicsId)
+      await Favorite.query().delete().where({ productId })
 
       return deletedProducts
     } catch (error) {
