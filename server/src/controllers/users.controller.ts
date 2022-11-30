@@ -68,7 +68,7 @@ class UsersController {
   ): ReturnType<{ message: string }> {
     try {
       const { id } = req.user
-      const photo = req.file.filename
+      const photo = req.file !== undefined ? req.file.filename : null
 
       const changingValues: changingValuesBody = req.body
 

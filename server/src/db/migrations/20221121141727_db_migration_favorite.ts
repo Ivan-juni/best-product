@@ -24,11 +24,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema
-    .dropTableIfExists('favorites')
-    .dropTableIfExists('comments')
-    .dropTableIfExists('products')
-    .dropTableIfExists('product_characteristics')
-    .dropTableIfExists('categories')
-    .dropTableIfExists('users')
+  return knex.schema.dropTableIfExists('favorites')
 }

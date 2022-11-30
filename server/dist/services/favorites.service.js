@@ -27,15 +27,7 @@ class FavoritesService {
                 // параметры для сортировки
                 const sortParams = (0, sort_by_util_1.sort)(searchCriteria, ['price', 'favoriteStars']);
                 const favorites = yield favorite_model_1.default.query()
-                    .select('favorites.id as favoritesId', 'products.*', 
-                // 'product_characteristics.purpose',
-                // 'product_characteristics.description',
-                // 'product_characteristics.design',
-                // 'product_characteristics.connectionType',
-                // 'product_characteristics.microphone',
-                // 'product_characteristics.batteryLiveTime',
-                // 'product_characteristics.display',
-                'favorites.createdAt as timeAdded')
+                    .select('favorites.id as favoritesId', 'products.*', 'favorites.createdAt as timeAdded')
                     .where((qb) => {
                     qb.where({ userId });
                     if (searchCriteria.id) {

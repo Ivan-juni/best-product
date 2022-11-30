@@ -2,6 +2,8 @@ import User from '../db/models/user/user.model'
 import { changingValues, IUsersQuery } from './types/users.type'
 import { removePhoto } from '../utils/remove-photo.util'
 import { DeleteType } from './types/products.type'
+import Comment from '../db/models/comment/comment.model'
+import Favorite from '../db/models/favorite/favorite.model'
 
 class UserService {
   static async getUsers(
@@ -37,6 +39,9 @@ class UserService {
 
       // Remove photo
       removePhoto(user.photo, 'users')
+
+      await Comment.query().delete().where({ userId: id })
+      await Favorite.query().delete().where({ userId: id })
 
       return User.query().deleteById(id)
     } catch (error) {

@@ -15,9 +15,9 @@ router.get('/user', auth_middleware_1.default, comments_controller_1.default.get
 router.get('/:productId', comments_controller_1.default.getProductComments);
 // @route POST /api/comments/:productId
 // @des Add comment to product
-router.post('/', auth_middleware_1.default, comments_controller_1.default.addComment);
+router.post('/:productId', auth_middleware_1.default, comments_controller_1.default.addComment);
 // @route DELETE /api/comments/:commentId
 // @des Delete comment
-router.delete('/', auth_middleware_1.default, comments_controller_1.default.deleteComment);
+router.delete('/:commentId', auth_middleware_1.default, comments_controller_1.default.deleteComment);
 exports.default = router;
 //# sourceMappingURL=comments.router.js.map

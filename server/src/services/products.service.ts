@@ -13,6 +13,7 @@ import { getCategoryId } from '../utils/get-category-id.util'
 import { removePhoto } from '../utils/remove-photo.util'
 import { sort } from '../utils/sort-by.util'
 import Favorite from '../db/models/favorite/favorite.model'
+import ProductHistory from '../db/models/product-history/product-history.model'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery): resultType {
@@ -184,6 +185,27 @@ export default class ProductService {
         topDislikes: dislikes,
         topFavoriteStars: favoriteStars,
       }
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async getPriceDynamics(productId: number): Promise<ProductHistory[]> {
+    try {
+      const priceDynamics = await ProductHistory.query()
+        .select(
+          'price',
+          'name',
+          'action',
+          'revision',
+          'datetime',
+          'id as productId'
+        )
+        .where({ id: productId })
+        .orderBy('revision', 'asc')
+
+      return priceDynamics
     } catch (error) {
       console.log('Error: ', error)
       return null

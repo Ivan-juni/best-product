@@ -20,6 +20,7 @@ const get_category_id_util_1 = require("../utils/get-category-id.util");
 const remove_photo_util_1 = require("../utils/remove-photo.util");
 const sort_by_util_1 = require("../utils/sort-by.util");
 const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
+const product_history_model_1 = __importDefault(require("../db/models/product-history/product-history.model"));
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -150,6 +151,21 @@ class ProductService {
                     topDislikes: dislikes,
                     topFavoriteStars: favoriteStars,
                 };
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static getPriceDynamics(productId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const priceDynamics = yield product_history_model_1.default.query()
+                    .select('price', 'name', 'action', 'revision', 'datetime', 'id as productId')
+                    .where({ id: productId })
+                    .orderBy('revision', 'asc');
+                return priceDynamics;
             }
             catch (error) {
                 console.log('Error: ', error);

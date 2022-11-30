@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.down = exports.up = void 0;
 function up(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        return knex.schema.createTableIfNotExists('products', (table) => {
+        const result = knex.schema.createTableIfNotExists('products', (table) => {
             table.increments();
             table.string('name', 20).notNullable();
             table.integer('price').notNullable();
@@ -35,6 +35,7 @@ function up(knex) {
                 .inTable('product_characteristics');
             table.timestamps(true, true, true);
         });
+        return result;
     });
 }
 exports.up = up;

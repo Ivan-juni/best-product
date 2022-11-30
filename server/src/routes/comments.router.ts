@@ -14,10 +14,10 @@ router.get('/:productId', commentsController.getProductComments)
 
 // @route POST /api/comments/:productId
 // @des Add comment to product
-router.post('/', authMiddleware, commentsController.addComment)
+router.post('/:productId', authMiddleware, commentsController.addComment)
 
 // @route DELETE /api/comments/:commentId
 // @des Delete comment
-router.delete('/', authMiddleware, commentsController.deleteComment)
+router.delete('/:commentId', authMiddleware, commentsController.deleteComment)
 
 export default router

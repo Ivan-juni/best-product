@@ -26,6 +26,9 @@ router.get('/', products_controller_1.default.getProducts);
 // @route GET /api/products/statistics?quantity=5
 // @des Get products
 router.get('/statistics', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.getStatistics);
+// @route GET /api/products/statistics/price-dynamics
+// @des Get products
+router.get('/statistics/price-dynamics', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.getPriceDynamics);
 // @route GET /api/products/characteristics?productId=5
 // @des Get product characteristics
 router.get('/characteristics', products_controller_1.default.getCharacteristics);

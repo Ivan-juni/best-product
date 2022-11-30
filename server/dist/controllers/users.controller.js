@@ -60,7 +60,7 @@ class UsersController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.user;
-                const photo = req.file.filename;
+                const photo = req.file !== undefined ? req.file.filename : null;
                 const changingValues = req.body;
                 if (photo !== null && photo !== undefined) {
                     changingValues.photo = `http://localhost:${process.env.PORT}/static/users/${photo}`;

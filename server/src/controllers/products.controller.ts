@@ -8,6 +8,7 @@ import {
 } from '../services/types/products.type'
 import { ReturnType } from './types/return.type'
 import Product from '../db/models/product/product.model'
+import ProductHistory from '../db/models/product-history/product-history.model'
 
 export default class ProductsController {
   static async getProducts(
@@ -38,6 +39,26 @@ export default class ProductsController {
     }
 
     return res.json(products)
+  }
+
+  static async getPriceDynamics(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): ReturnType<ProductHistory[]> {
+    const { productId } = req.query
+
+    if (!productId || isNaN(+productId)) {
+      return next(ApiError.badRequest(`Please, type the product id`))
+    }
+
+    const priceDynamics = await productsService.getPriceDynamics(+productId)
+
+    if (!priceDynamics) {
+      return next(ApiError.badRequest(`Fetching price dynamics error`))
+    }
+
+    return res.json(priceDynamics)
   }
 
   static async getCharacteristics(
@@ -88,7 +109,7 @@ export default class ProductsController {
     next: NextFunction
   ): ReturnType<Product> {
     const productInfo: IProductBody = req.body
-    const image = req.file.filename
+    const image = req.file !== undefined ? req.file.filename : null
 
     let microphone: boolean | null = null
 
@@ -103,7 +124,7 @@ export default class ProductsController {
     if (!productInfo.name) {
       return next(ApiError.internal('Please, add name'))
     }
-    if (!image) {
+    if (!image || image == undefined) {
       return next(ApiError.internal('Please, add image'))
     } else {
       productInfo.image = `http://localhost:${process.env.PORT}/static/products/${image}`
@@ -151,7 +172,8 @@ export default class ProductsController {
       const { productId } = req.query
 
       const changingValues: IProductBody = req.body
-      const image = req.file.filename
+
+      const image = req.file !== undefined ? req.file.filename : null
 
       let microphone: boolean | null = null
 

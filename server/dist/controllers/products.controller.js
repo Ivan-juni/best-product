@@ -34,6 +34,19 @@ class ProductsController {
             return res.json(products);
         });
     }
+    static getPriceDynamics(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            if (!productId || isNaN(+productId)) {
+                return next(ApiError_1.default.badRequest(`Please, type the product id`));
+            }
+            const priceDynamics = yield products_service_1.default.getPriceDynamics(+productId);
+            if (!priceDynamics) {
+                return next(ApiError_1.default.badRequest(`Fetching price dynamics error`));
+            }
+            return res.json(priceDynamics);
+        });
+    }
     static getCharacteristics(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { productId } = req.query;
@@ -66,7 +79,7 @@ class ProductsController {
     static addProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const productInfo = req.body;
-            const image = req.file.filename;
+            const image = req.file !== undefined ? req.file.filename : null;
             let microphone = null;
             if (productInfo.microphone) {
                 if (productInfo.microphone === 'true') {
@@ -79,7 +92,7 @@ class ProductsController {
             if (!productInfo.name) {
                 return next(ApiError_1.default.internal('Please, add name'));
             }
-            if (!image) {
+            if (!image || image == undefined) {
                 return next(ApiError_1.default.internal('Please, add image'));
             }
             else {
@@ -121,7 +134,7 @@ class ProductsController {
             try {
                 const { productId } = req.query;
                 const changingValues = req.body;
-                const image = req.file.filename;
+                const image = req.file !== undefined ? req.file.filename : null;
                 let microphone = null;
                 if (!productId) {
                     return next(ApiError_1.default.badRequest('Please, type the product id'));

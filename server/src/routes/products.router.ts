@@ -30,6 +30,14 @@ router.get('/', productController.getProducts)
 // @des Get products
 router.get('/statistics', checkRole('ADMIN'), productController.getStatistics)
 
+// @route GET /api/products/statistics/price-dynamics
+// @des Get products
+router.get(
+  '/statistics/price-dynamics',
+  checkRole('ADMIN'),
+  productController.getPriceDynamics
+)
+
 // @route GET /api/products/characteristics?productId=5
 // @des Get product characteristics
 router.get('/characteristics', productController.getCharacteristics)
