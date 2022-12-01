@@ -1,7 +1,7 @@
 import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTableIfNotExists('products', (table) => {
+  const result = knex.schema.createTableIfNotExists('products', (table) => {
     table.increments()
 
     table.string('name', 20).notNullable()
@@ -13,11 +13,10 @@ export async function up(knex: Knex): Promise<void> {
       .unsigned()
       .references('id')
       .inTable('categories')
-    table.integer('likes').defaultTo(0)
-    table.integer('dislikes').defaultTo(0)
-    table.integer('views').defaultTo(0)
-    table.integer('favoriteStars').defaultTo(0)
-    table.string('description', 500).notNullable()
+    table.integer('likes').defaultTo(0).unsigned()
+    table.integer('dislikes').defaultTo(0).unsigned()
+    table.integer('views').defaultTo(0).unsigned()
+    table.integer('favoriteStars').defaultTo(0).unsigned()
     table
       .integer('characteristicsId', 5)
       .notNullable()
@@ -25,8 +24,10 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('product_characteristics')
 
-    table.timestamps(true, true)
+    table.timestamps(true, true, true)
   })
+
+  return result
 }
 
 export async function down(knex: Knex): Promise<void> {

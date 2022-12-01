@@ -1,4 +1,4 @@
-import { Model } from 'objection'
+import { AnyQueryBuilder, Model, Modifiers } from 'objection'
 
 export default class Category extends Model {
   static get tableName() {
@@ -6,8 +6,8 @@ export default class Category extends Model {
   }
 
   id: number
-  parent: string
-  name: number
+  parent: number
+  name: string
   createdAt: Date
   updatedAt: Date
 
@@ -27,6 +27,14 @@ export default class Category extends Model {
     return 'name'
   }
 
+  static get modifiers(): Modifiers<AnyQueryBuilder> {
+    return {
+      selectNameIdParent(builder) {
+        builder.select('id', 'name', 'parent')
+      },
+    }
+  }
+
   static get jsonSchema() {
     return {
       type: 'object',
@@ -34,8 +42,8 @@ export default class Category extends Model {
 
       properties: {
         id: { type: 'integer' },
-        parent: { type: 'integer', maxLength: 5 },
-        name: { type: 'integer', maxLength: 20 },
+        parent: { type: 'integer' },
+        name: { type: 'string' },
         createdAt: { type: 'string' },
         updatedAt: { type: 'string' },
       },

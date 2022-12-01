@@ -1,6 +1,7 @@
 import { Model, RelationMappings, RelationMappingsThunk } from 'objection'
 import Comment from '../comment/comment.model'
 import Favorite from '../favorite/favorite.model'
+import Token from '../token/token.model'
 
 export default class User extends Model {
   static get tableName() {
@@ -9,11 +10,12 @@ export default class User extends Model {
 
   id: number
   email: string
-  phone: number
+  phone: number | null
   password: string
   firstName: string
   lastName: string
   role: string
+  photo: string | null
   createdAt: Date
   updatedAt: Date
 
@@ -49,6 +51,10 @@ export default class User extends Model {
     return 'role'
   }
 
+  static get photoColumn(): string {
+    return 'photo'
+  }
+
   fullName(): string {
     return this.firstName + ' ' + this.lastName
   }
@@ -66,6 +72,7 @@ export default class User extends Model {
         firstName: { type: 'string', minLength: 1, maxLength: 255 },
         lastName: { type: 'string', minLength: 1, maxLength: 255 },
         role: { type: 'string', default: 'USER', minLength: 4, maxLength: 5 },
+        photo: { type: ['string', 'null'], default: null, maxLength: 255 },
         createdAt: { type: 'string' },
         updatedAt: { type: 'string' },
       },
@@ -96,6 +103,15 @@ export default class User extends Model {
           to: 'comments.productId',
         },
         to: 'products.id',
+      },
+    },
+
+    tokens: {
+      relation: Model.HasOneRelation,
+      modelClass: Token,
+      join: {
+        from: 'users.id',
+        to: 'tokens.userId',
       },
     },
   }

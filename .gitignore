@@ -5,3 +5,7 @@
 # env
 /client/.env
 /server/.env
+/server/src/db/.env
+/server/dist/db/.env
+
+sql queries.rtf

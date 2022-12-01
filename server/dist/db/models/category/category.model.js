@@ -17,14 +17,21 @@ class Category extends objection_1.Model {
     static get nameColumn() {
         return 'name';
     }
+    static get modifiers() {
+        return {
+            selectNameIdParent(builder) {
+                builder.select('id', 'name', 'parent');
+            },
+        };
+    }
     static get jsonSchema() {
         return {
             type: 'object',
             required: ['parent', 'name'],
             properties: {
                 id: { type: 'integer' },
-                parent: { type: 'integer', maxLength: 5 },
-                name: { type: 'integer', maxLength: 20 },
+                parent: { type: 'integer' },
+                name: { type: 'string' },
                 createdAt: { type: 'string' },
                 updatedAt: { type: 'string' },
             },

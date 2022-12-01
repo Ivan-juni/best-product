@@ -40,11 +40,8 @@ class Product extends objection_1.Model {
     static get favoriteStarsColumn() {
         return 'favoriteStars';
     }
-    static get decriptionColumn() {
-        return 'decription';
-    }
-    static get charasteristicsIdColumn() {
-        return 'charasteristicsId';
+    static get characteristicsIdColumn() {
+        return 'characteristicsId';
     }
     static get jsonSchema() {
         return {
@@ -55,28 +52,26 @@ class Product extends objection_1.Model {
                 'image',
                 'categoryId',
                 'favoriteStars',
-                'decription',
-                'charasteristicsId',
+                'characteristicsId',
             ],
             properties: {
                 id: { type: 'integer' },
                 name: { type: 'string', maxLength: 20 },
                 price: { type: 'integer' },
                 image: { type: 'string' },
-                categoryId: { type: 'integer', maxLength: 5 },
-                likes: { type: 'integer', defalut: 0 },
-                dislikes: { type: 'integer', defalut: 0 },
-                views: { type: 'integer', defalut: 0 },
-                favoriteStars: { type: 'integer', defalut: 0 },
-                decription: { type: 'string', maxLength: 500 },
-                charasteristicsId: { type: 'integer', maxLength: 5 },
+                categoryId: { type: 'integer' },
+                likes: { type: 'integer', default: 0 },
+                dislikes: { type: 'integer', default: 0 },
+                views: { type: 'integer', default: 0 },
+                favoriteStars: { type: 'integer', default: 0 },
+                characteristicsId: { type: 'integer' },
             },
         };
     }
 }
 exports.default = Product;
 Product.relationMappings = {
-    categories: {
+    category: {
         relation: objection_1.Model.HasOneRelation,
         modelClass: category_model_1.default,
         join: {

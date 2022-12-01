@@ -28,20 +28,14 @@ function up(knex) {
                 .references('id')
                 .inTable('products')
                 .onDelete('CASCADE');
-            table.timestamps(true, true);
+            table.timestamps(true, true, true);
         });
     });
 }
 exports.up = up;
 function down(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        return knex.schema
-            .dropTableIfExists('favorites')
-            .dropTableIfExists('comments')
-            .dropTableIfExists('products')
-            .dropTableIfExists('product_characteristics')
-            .dropTableIfExists('categories')
-            .dropTableIfExists('users');
+        return knex.schema.dropTableIfExists('favorites');
     });
 }
 exports.down = down;

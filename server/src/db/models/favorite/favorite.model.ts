@@ -6,7 +6,7 @@ export default class Favorite extends Model {
   }
 
   id: number
-  userId: string
+  userId: number
   productId: number
   createdAt: Date
   updatedAt: Date
@@ -34,8 +34,8 @@ export default class Favorite extends Model {
 
       properties: {
         id: { type: 'integer' },
-        userId: { type: 'integer', maxLength: 5 },
-        productId: { type: 'integer', maxLength: 5 },
+        userId: { type: 'integer' },
+        productId: { type: 'integer' },
         createdAt: { type: 'string' },
         updatedAt: { type: 'string' },
       },
