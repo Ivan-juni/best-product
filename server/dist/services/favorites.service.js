@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const objection_1 = require("objection");
 const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
 const product_model_1 = __importDefault(require("../db/models/product/product.model"));
-const find_in_range_util_1 = require("../utils/find-in-range.util");
+const find_products_util_1 = require("../utils/find-products.util");
 const sort_by_util_1 = require("../utils/sort-by.util");
 class FavoritesService {
     static getFavorites(userId, searchCriteria) {
@@ -30,30 +30,8 @@ class FavoritesService {
                     .select('favorites.id as favoritesId', 'products.*', 'favorites.createdAt as timeAdded')
                     .where((qb) => {
                     qb.where({ userId });
-                    if (searchCriteria.id) {
-                        qb.andWhere('products.id', '=', +searchCriteria.id);
-                    }
-                    if (searchCriteria.name) {
-                        qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`);
-                    }
-                    if (searchCriteria.purpose) {
-                        qb.andWhere('products.purpose', 'like', `%${searchCriteria.purpose}%`);
-                    }
-                    if (searchCriteria.price) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'price', searchCriteria);
-                    }
-                    if (searchCriteria.views) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'views', searchCriteria);
-                    }
-                    if (searchCriteria.likes) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'likes', searchCriteria);
-                    }
-                    if (searchCriteria.dislikes) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'dislikes', searchCriteria);
-                    }
-                    if (searchCriteria.favoriteStars) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'favoriteStars', searchCriteria);
-                    }
+                    // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+                    (0, find_products_util_1.findProducts)(qb, searchCriteria);
                 })
                     .leftJoin('products', function () {
                     this.on('products.id', '=', 'favorites.productId');

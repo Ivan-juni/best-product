@@ -1,13 +1,14 @@
 import Objection from 'objection'
 import Product from '../db/models/product/product.model'
 import Favorite from '../db/models/favorite/favorite.model'
+import { IProductsQuery } from '../services/types/products.type'
 
 export const findInRange = (
   qb:
     | Objection.QueryBuilder<Product, Product[]>
     | Objection.QueryBuilder<Favorite, Favorite[]>,
   parametr: string,
-  searchCriteria
+  searchCriteria: IProductsQuery
 ) => {
   const parametrArray = searchCriteria[parametr].split('-')
 

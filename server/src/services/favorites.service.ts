@@ -2,6 +2,7 @@ import { raw } from 'objection'
 import Favorite from '../db/models/favorite/favorite.model'
 import Product from '../db/models/product/product.model'
 import { findInRange } from '../utils/find-in-range.util'
+import { findProducts } from '../utils/find-products.util'
 import { sort } from '../utils/sort-by.util'
 import { DeleteType, IProductsQuery } from './types/products.type'
 
@@ -24,41 +25,8 @@ export default class FavoritesService {
         .where((qb) => {
           qb.where({ userId })
 
-          if (searchCriteria.id) {
-            qb.andWhere('products.id', '=', +searchCriteria.id)
-          }
-
-          if (searchCriteria.name) {
-            qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`)
-          }
-
-          if (searchCriteria.purpose) {
-            qb.andWhere(
-              'products.purpose',
-              'like',
-              `%${searchCriteria.purpose}%`
-            )
-          }
-
-          if (searchCriteria.price) {
-            findInRange(qb, 'price', searchCriteria)
-          }
-
-          if (searchCriteria.views) {
-            findInRange(qb, 'views', searchCriteria)
-          }
-
-          if (searchCriteria.likes) {
-            findInRange(qb, 'likes', searchCriteria)
-          }
-
-          if (searchCriteria.dislikes) {
-            findInRange(qb, 'dislikes', searchCriteria)
-          }
-
-          if (searchCriteria.favoriteStars) {
-            findInRange(qb, 'favoriteStars', searchCriteria)
-          }
+          // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+          findProducts(qb, searchCriteria)
         })
         .leftJoin('products', function () {
           this.on('products.id', '=', 'favorites.productId')

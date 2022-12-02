@@ -14,6 +14,7 @@ import { removePhoto } from '../utils/remove-photo.util'
 import { sort } from '../utils/sort-by.util'
 import Favorite from '../db/models/favorite/favorite.model'
 import ProductHistory from '../db/models/product-history/product-history.model'
+import { findProducts } from '../utils/find-products.util'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery): resultType {
@@ -82,16 +83,16 @@ export default class ProductService {
       // запрос в базу
       const products = await Product.query()
         .select(
-          'id',
-          'name',
-          'price',
-          'image',
-          'likes',
-          'dislikes',
-          'views',
-          'favoriteStars',
-          'createdAt',
-          'updatedAt'
+          'products.id',
+          'products.name',
+          'products.price',
+          'products.image',
+          'products.likes',
+          'products.dislikes',
+          'products.views',
+          'products.favoriteStars',
+          'products.createdAt',
+          'products.updatedAt'
         )
         .from('products')
         .where((qb) => {
@@ -99,45 +100,16 @@ export default class ProductService {
             // получаем товары из данной категории и дочерних
             qb.whereIn('categories.id', categoryChilds.categoryIds.split(','))
           }
-
-          if (searchCriteria.id) {
-            qb.andWhere('products.id', '=', +searchCriteria.id)
-          }
-
-          if (searchCriteria.name) {
-            qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`)
-          }
-
-          if (searchCriteria.purpose) {
-            qb.andWhere(
-              'products.purpose',
-              'like',
-              `%${searchCriteria.purpose}%`
-            )
-          }
-
-          if (searchCriteria.price) {
-            findInRange(qb, 'price', searchCriteria)
-          }
-
-          if (searchCriteria.views) {
-            findInRange(qb, 'views', searchCriteria)
-          }
-
-          if (searchCriteria.likes) {
-            findInRange(qb, 'likes', searchCriteria)
-          }
-
-          if (searchCriteria.dislikes) {
-            findInRange(qb, 'dislikes', searchCriteria)
-          }
-
-          if (searchCriteria.favoriteStars) {
-            findInRange(qb, 'favoriteStars', searchCriteria)
-          }
+          // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+          findProducts(qb, searchCriteria)
         })
+        .innerJoin(
+          'product_characteristics',
+          'product_characteristics.id',
+          'products.characteristicsId'
+        )
         .withGraphFetched('[category(selectNameIdParent), characteristics]')
-        .orderBy(sortParams.column, sortParams.order)
+        .orderBy(`products.${sortParams.column}`, sortParams.order)
         .page(page, limit)
 
       // записываем в объект результат

@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const product_characteristics_model_1 = __importDefault(require("../db/models/product-characteristics/product-characteristics.model"));
 const product_model_1 = __importDefault(require("../db/models/product/product.model"));
 const category_model_1 = __importDefault(require("../db/models/category/category.model"));
-const find_in_range_util_1 = require("../utils/find-in-range.util");
 const get_category_id_util_1 = require("../utils/get-category-id.util");
 const remove_photo_util_1 = require("../utils/remove-photo.util");
 const sort_by_util_1 = require("../utils/sort-by.util");
 const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
 const product_history_model_1 = __importDefault(require("../db/models/product-history/product-history.model"));
+const find_products_util_1 = require("../utils/find-products.util");
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -72,40 +72,19 @@ class ProductService {
                 const sortParams = (0, sort_by_util_1.sort)(searchCriteria, ['price', 'favoriteStars']);
                 // запрос в базу
                 const products = yield product_model_1.default.query()
-                    .select('id', 'name', 'price', 'image', 'likes', 'dislikes', 'views', 'favoriteStars', 'createdAt', 'updatedAt')
+                    .select('products.id', 'products.name', 'products.price', 'products.image', 'products.likes', 'products.dislikes', 'products.views', 'products.favoriteStars', 'products.createdAt', 'products.updatedAt')
                     .from('products')
                     .where((qb) => {
                     if (searchCriteria.category) {
                         // получаем товары из данной категории и дочерних
                         qb.whereIn('categories.id', categoryChilds.categoryIds.split(','));
                     }
-                    if (searchCriteria.id) {
-                        qb.andWhere('products.id', '=', +searchCriteria.id);
-                    }
-                    if (searchCriteria.name) {
-                        qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`);
-                    }
-                    if (searchCriteria.purpose) {
-                        qb.andWhere('products.purpose', 'like', `%${searchCriteria.purpose}%`);
-                    }
-                    if (searchCriteria.price) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'price', searchCriteria);
-                    }
-                    if (searchCriteria.views) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'views', searchCriteria);
-                    }
-                    if (searchCriteria.likes) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'likes', searchCriteria);
-                    }
-                    if (searchCriteria.dislikes) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'dislikes', searchCriteria);
-                    }
-                    if (searchCriteria.favoriteStars) {
-                        (0, find_in_range_util_1.findInRange)(qb, 'favoriteStars', searchCriteria);
-                    }
+                    // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+                    (0, find_products_util_1.findProducts)(qb, searchCriteria);
                 })
+                    .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
                     .withGraphFetched('[category(selectNameIdParent), characteristics]')
-                    .orderBy(sortParams.column, sortParams.order)
+                    .orderBy(`products.${sortParams.column}`, sortParams.order)
                     .page(page, limit);
                 // записываем в объект результат
                 if (searchCriteria.category) {
