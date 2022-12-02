@@ -1,0 +1,13 @@
+$purple: #766ED3;
+
+
+ .cards {
+    width: 100%;
+    margin-top: 27px;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    column-gap: 56px;
+    row-gap: 64px;
+ }

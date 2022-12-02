@@ -1,0 +1,52 @@
+$purple: #766ED3;
+
+       
+.wrapper__dropdown {
+    .dropdown__title{
+        display: flex;
+        align-items: center;
+        gap: 14px;
+
+        span{
+            font-style: normal;
+            font-weight: 500;
+            font-size: 22px;
+            line-height: 27px;
+            color: #524F5E;
+        }
+    }
+    .dropdown__items {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+        li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            input{
+                height: 27px;
+                width: 27px;
+            }
+           
+            label {
+                font-style: normal;
+                font-weight: 300;
+                font-size: 22px;
+                line-height: 27px;
+
+                color: #524F5E;
+            }
+        }
+    }
+}
+
+.active {
+    .arrow__icon{
+        transition: 0.3s;
+        transform: rotate(180deg);
+    }
+}
+
+
+
