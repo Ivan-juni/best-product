@@ -4,15 +4,27 @@ import { removePhoto } from '../utils/remove-photo.util'
 import { DeleteType } from './types/products.type'
 import Comment from '../db/models/comment/comment.model'
 import Favorite from '../db/models/favorite/favorite.model'
+import Objection from 'objection'
 
 class UserService {
-  static async getUsers(searchCriteria: IUsersQuery): Promise<User | User[] | null> {
+  static async getUsers(
+    searchCriteria: IUsersQuery
+  ): Promise<Objection.Page<User> | null> {
     const limit = +searchCriteria.limit || 5
     const page = +searchCriteria.page || 0
 
     try {
       const users = await User.query()
-        .select()
+        .select(
+          'id',
+          'email',
+          'phone',
+          'firstName',
+          'lastName',
+          'role',
+          'createdAt',
+          'updatedAt'
+        )
         .where((qb) => {
           if (searchCriteria.id) {
             qb.where('users.id', '=', +searchCriteria.id)
@@ -20,7 +32,7 @@ class UserService {
         })
         .page(page, limit)
 
-      return users.results
+      return users
     } catch (error) {
       console.log('Error: ', error)
       return null

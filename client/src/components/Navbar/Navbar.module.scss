@@ -1,0 +1,53 @@
+$fill: #766ED3;
+$path_fill: #fff;
+
+@mixin link-bg($image) {
+    background-image: url('../../assets/icons/#{$image}-icon.svg');
+    background-size: cover;
+    background-repeat: none;
+}
+
+.wrapper{
+    min-width: 84px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding-top: 128px;
+    background-color: #fff;
+
+    .home {
+        @include link-bg("home/home-unactive");
+    }
+
+    .home__active{
+        @include link-bg("home/home-active");
+    }
+
+    .favorites {
+        @include link-bg("favorites/fav-unactive");
+    }
+
+    .favorites__active {
+        @include link-bg("favorites/fav-active");
+    }
+
+    .categories {
+        @include link-bg("categories/categ-unactive");
+    }
+
+    .categories__active {
+        @include link-bg("categories/categ-active");
+    }
+
+    .page {
+        width: 65px;
+        height: 61.84px;
+        
+        &:hover{
+            transition: 0.3s;
+            opacity: 0.8;
+        }
+    }
+}
