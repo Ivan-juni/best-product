@@ -11,6 +11,9 @@ export interface IProductsQuery {
   likes?: string
   dislikes?: string
   favoriteStars?: string
+  connectionType?: string
+  display?: string
+  microphone?: 'true'
   sortByPrice?: 'low' | 'high'
   sortByFavoriteStars?: 'low' | 'high'
   page?: string

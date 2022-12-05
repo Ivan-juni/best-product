@@ -47,15 +47,15 @@ const registrationSchema = yup.object({
         .string()
         .min(4, 'Password should be longer than 3 symbols')
         .max(30, 'Password should be shorter than 30 symbols')
-        .matches(/^[A-Za-z]+$/, 'Only English letters')
+        .matches(/^[a-zA-Z0-9-]+$/, 'Only English letters and numbers')
         .required(),
     firstName: yup
         .string()
-        .max(255, 'Firstname should be shorter than 3 symbols')
+        .max(255, 'Firstname should be shorter than 255 symbols')
         .required(),
     lastName: yup
         .string()
-        .max(255, 'Lastname should be shorter than 3 symbols')
+        .max(255, 'Lastname should be shorter than 255 symbols')
         .required(),
     role: yup.string().nullable().default('USER').min(4).max(5),
     photo: yup.string().nullable().default(null),
@@ -84,7 +84,7 @@ class AuthController {
                 return next(ApiError_1.default.badRequest(`Registration error`));
             }
             // храним refreshToken в куках
-            if (req.body.remember) {
+            if (req.body.remember && req.body.remember !== undefined) {
                 res.cookie('refreshToken', userData.refreshToken, {
                     maxAge: 30 * 24 * 60 * 60 * 1000,
                     httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера

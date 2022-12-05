@@ -65,8 +65,7 @@ class UsersController {
                 if (photo !== null && photo !== undefined) {
                     changingValues.photo = `http://localhost:${process.env.PORT}/static/users/${photo}`;
                 }
-                if (changingValues.password !== null &&
-                    changingValues.password !== undefined) {
+                if (changingValues.password !== null && changingValues.password !== undefined) {
                     // хэшируем пароль
                     const hashPassword = yield bcrypt_1.default.hash(changingValues.password, 3);
                     changingValues.password = hashPassword;
@@ -85,9 +84,7 @@ class UsersController {
                 if (!user) {
                     return next(ApiError_1.default.badRequest(`Editing profile error`));
                 }
-                return res
-                    .status(200)
-                    .json({ message: 'Profile data changed successfully ' });
+                return res.status(200).json({ message: 'Profile data changed successfully ' });
             }
             catch (error) {
                 console.log('Error: ', error);

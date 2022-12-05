@@ -23,14 +23,14 @@ class UserService {
             const page = +searchCriteria.page || 0;
             try {
                 const users = yield user_model_1.default.query()
-                    .select()
+                    .select('id', 'email', 'phone', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
                     .where((qb) => {
                     if (searchCriteria.id) {
                         qb.where('users.id', '=', +searchCriteria.id);
                     }
                 })
                     .page(page, limit);
-                return users.results;
+                return users;
             }
             catch (error) {
                 console.log('Error: ', error);

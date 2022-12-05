@@ -9,9 +9,7 @@ import path from 'path'
 
 const app = express()
 
-app.get('/', (req: Request, res: Response) =>
-  res.status(200).json({ message: 'Server is working' })
-)
+app.get('/', (req: Request, res: Response) => res.status(200).json({ message: 'Server is working' }))
 
 const start = async () => {
   try {
@@ -20,6 +18,14 @@ const start = async () => {
     dotenv.config()
 
     const port = process.env.PORT || 8000
+
+    app.use(function (req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*')
+      res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE')
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+      res.header('Access-Control-Allow-Credentials', 'true')
+      next()
+    })
 
     app.use(cors())
     app.use(express.json())

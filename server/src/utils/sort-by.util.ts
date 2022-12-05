@@ -18,9 +18,7 @@ export const sort = (
   params.forEach((param) => {
     // сортировка
     // first letter to upper case
-    const formatedParam = `orderBy${
-      param.charAt(0).toLocaleUpperCase() + param.slice(1)
-    }`
+    const formatedParam = `orderBy${param.charAt(0).toLocaleUpperCase() + param.slice(1)}`
 
     if (searchCriteria[formatedParam]) {
       sortParams.column = param

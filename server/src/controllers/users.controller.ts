@@ -7,11 +7,7 @@ import { ReturnType } from './types/return.type'
 import User from '../db/models/user/user.model'
 
 class UsersController {
-  static async getUsers(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<User | User[]> {
+  static async getUsers(req: Request, res: Response, next: NextFunction): ReturnType<User | User[]> {
     const users = await userService.getUsers(req.query)
 
     if (!users) {
@@ -21,11 +17,7 @@ class UsersController {
     return res.json(users)
   }
 
-  static async deleteUsers(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<{ message: string }> {
+  static async deleteUsers(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { id } = req.query
     if (!id) {
       next(ApiError.badRequest("User id hasn't typed"))
@@ -43,11 +35,7 @@ class UsersController {
     }
   }
 
-  static async changeRole(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<User> {
+  static async changeRole(req: Request, res: Response, next: NextFunction): ReturnType<User> {
     const { id, role } = req.query
     if (!id) {
       next(ApiError.badRequest("User id hasn't typed"))
@@ -61,11 +49,7 @@ class UsersController {
     return res.json(user)
   }
 
-  static async editProfile(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<{ message: string }> {
+  static async editProfile(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     try {
       const { id } = req.user
       const photo = req.file !== undefined ? req.file.filename : null
@@ -76,10 +60,7 @@ class UsersController {
         changingValues.photo = `http://localhost:${process.env.PORT}/static/users/${photo}`
       }
 
-      if (
-        changingValues.password !== null &&
-        changingValues.password !== undefined
-      ) {
+      if (changingValues.password !== null && changingValues.password !== undefined) {
         // хэшируем пароль
         const hashPassword = await bcrypt.hash(changingValues.password, 3)
 
@@ -103,9 +84,7 @@ class UsersController {
         return next(ApiError.badRequest(`Editing profile error`))
       }
 
-      return res
-        .status(200)
-        .json({ message: 'Profile data changed successfully ' })
+      return res.status(200).json({ message: 'Profile data changed successfully ' })
     } catch (error) {
       console.log('Error: ', error)
       return res.status(500).json({ message: `Error: ${error}` })

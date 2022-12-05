@@ -13,15 +13,15 @@ const registrationSchema = yup.object({
     .string()
     .min(4, 'Password should be longer than 3 symbols')
     .max(30, 'Password should be shorter than 30 symbols')
-    .matches(/^[A-Za-z]+$/, 'Only English letters')
+    .matches(/^[a-zA-Z0-9-]+$/, 'Only English letters and numbers')
     .required(),
   firstName: yup
     .string()
-    .max(255, 'Firstname should be shorter than 3 symbols')
+    .max(255, 'Firstname should be shorter than 255 symbols')
     .required(),
   lastName: yup
     .string()
-    .max(255, 'Lastname should be shorter than 3 symbols')
+    .max(255, 'Lastname should be shorter than 255 symbols')
     .required(),
   role: yup.string().nullable().default('USER').min(4).max(5),
   photo: yup.string().nullable().default(null),
@@ -32,11 +32,7 @@ const registrationSchema = yup.object({
 type IUser = yup.InferType<typeof registrationSchema>
 
 class AuthController {
-  static async registration(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<typeof userData> {
+  static async registration(req: Request, res: Response, next: NextFunction): ReturnType<typeof userData> {
     try {
       await registrationSchema.validate(req.body)
     } catch (err) {
@@ -50,9 +46,7 @@ class AuthController {
     const candidate = await User.query().findOne({ email })
 
     if (candidate !== undefined) {
-      return next(
-        ApiError.badRequest(`User with the e-mail ${email} already exists`)
-      )
+      return next(ApiError.badRequest(`User with the e-mail ${email} already exists`))
     }
     //
 
@@ -63,7 +57,7 @@ class AuthController {
     }
 
     // храним refreshToken в куках
-    if (req.body.remember) {
+    if (req.body.remember && req.body.remember !== undefined) {
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expires after 30 days
         httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
@@ -78,19 +72,13 @@ class AuthController {
     return res.json(userData)
   }
 
-  static async login(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<typeof userData> {
+  static async login(req: Request, res: Response, next: NextFunction): ReturnType<typeof userData> {
     const { email, password }: IUser = req.body
 
     const user = await User.query().findOne({ email })
 
     if (user == undefined) {
-      return next(
-        ApiError.badRequest(`User with the e-mail ${email} doesn't exist`)
-      )
+      return next(ApiError.badRequest(`User with the e-mail ${email} doesn't exist`))
     }
 
     // сравниваем введенный пароль с захэшированным в базе данных
@@ -113,11 +101,7 @@ class AuthController {
     return res.json(userData)
   }
 
-  static async logout(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<{ message: string }> {
+  static async logout(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     // достаем из кукис refreshToken
     const { refreshToken }: { refreshToken: string } = req.cookies
     const token = await userService.logout(refreshToken)
@@ -135,11 +119,7 @@ class AuthController {
     }
   }
 
-  static async refresh(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<typeof userData> {
+  static async refresh(req: Request, res: Response, next: NextFunction): ReturnType<typeof userData> {
     // достаем из кукис refreshToken
     const { refreshToken }: { refreshToken: string } = req.cookies
 
