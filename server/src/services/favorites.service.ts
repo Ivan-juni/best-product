@@ -1,7 +1,6 @@
 import { raw } from 'objection'
 import Favorite from '../db/models/favorite/favorite.model'
 import Product from '../db/models/product/product.model'
-import { findInRange } from '../utils/find-in-range.util'
 import { findProducts } from '../utils/find-products.util'
 import { sort } from '../utils/sort-by.util'
 import { DeleteType, IProductsQuery } from './types/products.type'
@@ -17,11 +16,7 @@ export default class FavoritesService {
       const sortParams = sort(searchCriteria, ['price', 'favoriteStars'])
 
       const favorites = await Favorite.query()
-        .select(
-          'favorites.id as favoritesId',
-          'products.*',
-          'favorites.createdAt as timeAdded'
-        )
+        .select('favorites.id as favoritesId', 'products.*', 'favorites.createdAt as timeAdded')
         .where((qb) => {
           qb.where({ userId })
 
@@ -32,11 +27,7 @@ export default class FavoritesService {
           this.on('products.id', '=', 'favorites.productId')
         })
         .leftJoin('product_characteristics', function () {
-          this.on(
-            'product_characteristics.id',
-            '=',
-            'products.characteristicsId'
-          )
+          this.on('product_characteristics.id', '=', 'products.characteristicsId')
         })
         .orderBy(`products.${sortParams.column}`, sortParams.order)
         .page(page, limit)
@@ -48,10 +39,7 @@ export default class FavoritesService {
     }
   }
 
-  static async addToFavorite(
-    userId: number,
-    productId: number
-  ): Promise<Favorite | null> {
+  static async addToFavorite(userId: number, productId: number): Promise<Favorite | null> {
     try {
       const favorite = await Favorite.query().findOne({ userId, productId })
 
@@ -76,10 +64,7 @@ export default class FavoritesService {
     }
   }
 
-  static async deleteFromFavorite(
-    userId: number,
-    productId: number
-  ): DeleteType {
+  static async deleteFromFavorite(userId: number, productId: number): DeleteType {
     try {
       const favorite = await Favorite.query().findOne({ userId, productId })
 
@@ -92,9 +77,7 @@ export default class FavoritesService {
         .patch({ favoriteStars: raw('favoriteStars - 1') })
         .where({ id: productId })
 
-      const deletedQueries = await Favorite.query()
-        .delete()
-        .where({ userId, productId })
+      const deletedQueries = await Favorite.query().delete().where({ userId, productId })
 
       return deletedQueries
     } catch (error) {

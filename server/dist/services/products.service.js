@@ -60,8 +60,7 @@ class ProductService {
               WHERE lv IS NOT NULL;`);
                     categoryChilds = childResult[0][0];
                     // для корректного поиска также добавляем айди введенной категории
-                    if (categoryChilds.categoryIds === '' ||
-                        categoryChilds.categoryIds == null) {
+                    if (categoryChilds.categoryIds === '' || categoryChilds.categoryIds == null) {
                         categoryChilds.categoryIds = `${categoryId}`;
                     }
                     else {
@@ -108,22 +107,10 @@ class ProductService {
         return __awaiter(this, void 0, void 0, function* () {
             // 5 most viewed/liked/disliked/added to favorites
             try {
-                const views = yield product_model_1.default.query()
-                    .select('name', 'views')
-                    .orderBy('views', 'desc')
-                    .limit(quantity);
-                const likes = yield product_model_1.default.query()
-                    .select('name', 'likes')
-                    .orderBy('likes', 'desc')
-                    .limit(quantity);
-                const dislikes = yield product_model_1.default.query()
-                    .select('name', 'dislikes')
-                    .orderBy('dislikes', 'desc')
-                    .limit(quantity);
-                const favoriteStars = yield product_model_1.default.query()
-                    .select('name', 'favoriteStars')
-                    .orderBy('favoriteStars', 'desc')
-                    .limit(quantity);
+                const views = yield product_model_1.default.query().select('name', 'views').orderBy('views', 'desc').limit(quantity);
+                const likes = yield product_model_1.default.query().select('name', 'likes').orderBy('likes', 'desc').limit(quantity);
+                const dislikes = yield product_model_1.default.query().select('name', 'dislikes').orderBy('dislikes', 'desc').limit(quantity);
+                const favoriteStars = yield product_model_1.default.query().select('name', 'favoriteStars').orderBy('favoriteStars', 'desc').limit(quantity);
                 return {
                     topViews: views,
                     topLikes: likes,
@@ -221,14 +208,16 @@ class ProductService {
                 if (!oldProduct) {
                     return { message: "Can't find this product" };
                 }
-                // Remove old image
-                (0, remove_photo_util_1.removePhoto)(oldProduct.image, 'products');
                 // filtering null values
                 Object.keys(changingValues).forEach((key) => {
                     if (changingValues[key] === null) {
                         delete changingValues[key];
                     }
                 });
+                if (changingValues.image) {
+                    // Remove old image
+                    (0, remove_photo_util_1.removePhoto)(oldProduct.image, 'products');
+                }
                 return product_model_1.default.query().patchAndFetchById(productId, changingValues);
             }
             catch (error) {

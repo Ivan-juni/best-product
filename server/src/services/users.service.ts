@@ -6,9 +6,7 @@ import Comment from '../db/models/comment/comment.model'
 import Favorite from '../db/models/favorite/favorite.model'
 
 class UserService {
-  static async getUsers(
-    searchCriteria: IUsersQuery
-  ): Promise<User | User[] | null> {
+  static async getUsers(searchCriteria: IUsersQuery): Promise<User | User[] | null> {
     const limit = +searchCriteria.limit || 5
     const page = +searchCriteria.page || 0
 
@@ -58,10 +56,7 @@ class UserService {
     }
   }
 
-  static async editProfile(
-    id: number,
-    changingValues: changingValues
-  ): Promise<User | { message: string } | null> {
+  static async editProfile(id: number, changingValues: changingValues): Promise<User | { message: string } | null> {
     try {
       const oldUser = await User.query().select().findById(id)
 

@@ -83,9 +83,7 @@ class FavoritesService {
                 yield product_model_1.default.query()
                     .patch({ favoriteStars: (0, objection_1.raw)('favoriteStars - 1') })
                     .where({ id: productId });
-                const deletedQueries = yield favorite_model_1.default.query()
-                    .delete()
-                    .where({ userId, productId });
+                const deletedQueries = yield favorite_model_1.default.query().delete().where({ userId, productId });
                 return deletedQueries;
             }
             catch (error) {

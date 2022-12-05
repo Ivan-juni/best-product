@@ -2,12 +2,41 @@ import Objection from 'objection'
 import Favorite from '../db/models/favorite/favorite.model'
 import Product from '../db/models/product/product.model'
 import { IProductsQuery } from '../services/types/products.type'
-import { findInRange } from './find-in-range.util'
+
+export const searchUtil = (
+  qb: Objection.QueryBuilder<Product, Product[]> | Objection.QueryBuilder<Favorite, Favorite[]>,
+  searchCriteria: IProductsQuery,
+  parametr: string
+) => {
+  const array = searchCriteria[parametr].split(',')
+
+  qb.andWhere(`product_characteristics.${parametr}`, 'like', `%${array[0]}%`)
+
+  for (let index = 1; index < array.length; index++) {
+    const item = array[index]
+
+    qb.orWhere(`product_characteristics.${parametr}`, 'like', `%${item}%`)
+  }
+}
+
+export const findInRange = (
+  qb: Objection.QueryBuilder<Product, Product[]> | Objection.QueryBuilder<Favorite, Favorite[]>,
+  parametr: string,
+  searchCriteria: IProductsQuery
+) => {
+  const parametrArray = searchCriteria[parametr].split('-')
+
+  if (parametrArray.length > 1 && parametrArray[1]) {
+    // Ex: if ?parametr=400-1000
+    qb.andWhere(`products.${parametr}`, '>=', +parametrArray[0]).andWhere(`products.${parametr}`, '<=', +parametrArray[1])
+  } else if (parametrArray.length == 1 && !parametrArray[1]) {
+    // Ex: if ?parametr=400
+    qb.andWhere(`products.${parametr}`, '>=', +parametrArray[0])
+  }
+}
 
 export const findProducts = (
-  qb:
-    | Objection.QueryBuilder<Product, Product[]>
-    | Objection.QueryBuilder<Favorite, Favorite[]>,
+  qb: Objection.QueryBuilder<Product, Product[]> | Objection.QueryBuilder<Favorite, Favorite[]>,
   searchCriteria: IProductsQuery
 ) => {
   if (searchCriteria.id) {
@@ -19,31 +48,15 @@ export const findProducts = (
   }
 
   if (searchCriteria.purpose) {
-    const purposes = searchCriteria.purpose.split(',')
-
-    purposes.forEach((purpose) => {
-      qb.andWhere('product_characteristics.purpose', 'like', `%${purpose}%`)
-    })
+    searchUtil(qb, searchCriteria, 'purpose')
   }
 
   if (searchCriteria.display) {
-    const displays = searchCriteria.display.split(',')
-
-    displays.forEach((display) => {
-      qb.andWhere('product_characteristics.display', 'like', `%${display}%`)
-    })
+    searchUtil(qb, searchCriteria, 'display')
   }
 
   if (searchCriteria.connectionType) {
-    const connectionTypes = searchCriteria.connectionType.split(',')
-
-    connectionTypes.forEach((connectionType) => {
-      qb.andWhere(
-        'product_characteristics.connectionType',
-        'like',
-        `%${connectionType}%`
-      )
-    })
+    searchUtil(qb, searchCriteria, 'connectionType')
   }
 
   if (searchCriteria.microphone && searchCriteria.microphone === 'true') {

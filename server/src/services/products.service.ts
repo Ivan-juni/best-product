@@ -1,14 +1,7 @@
 import ProductCharacteristics from '../db/models/product-characteristics/product-characteristics.model'
 import Product from '../db/models/product/product.model'
-import {
-  DeleteType,
-  IProduct,
-  IProductsQuery,
-  resultType,
-  StatisticsType,
-} from './types/products.type'
+import { DeleteType, IProduct, IProductsQuery, resultType, StatisticsType } from './types/products.type'
 import Category from '../db/models/category/category.model'
-import { findInRange } from '../utils/find-in-range.util'
 import { getCategoryId } from '../utils/get-category-id.util'
 import { removePhoto } from '../utils/remove-photo.util'
 import { sort } from '../utils/sort-by.util'
@@ -54,8 +47,7 @@ export default class ProductService {
         categoryParents = parentResult[0]
 
         // находим id дочерних категорий
-        const childResult =
-          await knex.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
+        const childResult = await knex.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
               SELECT @pv:=(
                   SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
                   ) AS lv FROM categories
@@ -67,10 +59,7 @@ export default class ProductService {
         categoryChilds = childResult[0][0]
 
         // для корректного поиска также добавляем айди введенной категории
-        if (
-          categoryChilds.categoryIds === '' ||
-          categoryChilds.categoryIds == null
-        ) {
+        if (categoryChilds.categoryIds === '' || categoryChilds.categoryIds == null) {
           categoryChilds.categoryIds = `${categoryId}`
         } else {
           categoryChilds.categoryIds.concat(`, ${categoryId}`)
@@ -103,11 +92,7 @@ export default class ProductService {
           // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
           findProducts(qb, searchCriteria)
         })
-        .innerJoin(
-          'product_characteristics',
-          'product_characteristics.id',
-          'products.characteristicsId'
-        )
+        .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
         .withGraphFetched('[category(selectNameIdParent), characteristics]')
         .orderBy(`products.${sortParams.column}`, sortParams.order)
         .page(page, limit)
@@ -131,25 +116,13 @@ export default class ProductService {
   static async getStatistics(quantity = 5): StatisticsType {
     // 5 most viewed/liked/disliked/added to favorites
     try {
-      const views = await Product.query()
-        .select('name', 'views')
-        .orderBy('views', 'desc')
-        .limit(quantity)
+      const views = await Product.query().select('name', 'views').orderBy('views', 'desc').limit(quantity)
 
-      const likes = await Product.query()
-        .select('name', 'likes')
-        .orderBy('likes', 'desc')
-        .limit(quantity)
+      const likes = await Product.query().select('name', 'likes').orderBy('likes', 'desc').limit(quantity)
 
-      const dislikes = await Product.query()
-        .select('name', 'dislikes')
-        .orderBy('dislikes', 'desc')
-        .limit(quantity)
+      const dislikes = await Product.query().select('name', 'dislikes').orderBy('dislikes', 'desc').limit(quantity)
 
-      const favoriteStars = await Product.query()
-        .select('name', 'favoriteStars')
-        .orderBy('favoriteStars', 'desc')
-        .limit(quantity)
+      const favoriteStars = await Product.query().select('name', 'favoriteStars').orderBy('favoriteStars', 'desc').limit(quantity)
 
       return {
         topViews: views,
@@ -166,14 +139,7 @@ export default class ProductService {
   static async getPriceDynamics(productId: number): Promise<ProductHistory[]> {
     try {
       const priceDynamics = await ProductHistory.query()
-        .select(
-          'price',
-          'name',
-          'action',
-          'revision',
-          'datetime',
-          'id as productId'
-        )
+        .select('price', 'name', 'action', 'revision', 'datetime', 'id as productId')
         .where({ id: productId })
         .orderBy('revision', 'asc')
 
@@ -184,22 +150,12 @@ export default class ProductService {
     }
   }
 
-  static async getCharacteristics(
-    productId: number
-  ): Promise<Product[] | null> {
+  static async getCharacteristics(productId: number): Promise<Product[] | null> {
     try {
       const characteristics = await Product.query()
-        .select(
-          'products.id as productId',
-          'products.name as productName',
-          'product_characteristics.*'
-        )
+        .select('products.id as productId', 'products.name as productName', 'product_characteristics.*')
         .where('products.id', '=', productId)
-        .innerJoin(
-          'product_characteristics',
-          'product_characteristics.id',
-          'products.characteristicsId'
-        )
+        .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
 
       return characteristics
     } catch (error) {
@@ -256,10 +212,7 @@ export default class ProductService {
     }
   }
 
-  static async updateProduct(
-    productId: number,
-    changingValues: IProduct
-  ): Promise<Product | { message: string } | null> {
+  static async updateProduct(productId: number, changingValues: IProduct): Promise<Product | { message: string } | null> {
     try {
       const oldProduct = await Product.query().select().findById(productId)
 

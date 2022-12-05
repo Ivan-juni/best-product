@@ -16,9 +16,7 @@ exports.getCategoryId = void 0;
 const category_model_1 = __importDefault(require("../db/models/category/category.model"));
 const getCategoryId = (category) => __awaiter(void 0, void 0, void 0, function* () {
     // находим id написанной категории
-    const categoryId = yield category_model_1.default.query()
-        .select('categories.id')
-        .where('categories.name', '=', `${category}`);
+    const categoryId = yield category_model_1.default.query().select('categories.id').where('categories.name', '=', `${category}`);
     return categoryId[0].id;
 });
 exports.getCategoryId = getCategoryId;
