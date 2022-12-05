@@ -27,7 +27,8 @@ $purple: #766ED3;
 
     .name__section {
         padding: 18px 13px 18px 18px;
-        .text {
+        .link, .text {
+            text-decoration: none;
             font-style: normal;
             font-weight: 500;
             font-size: 30px;

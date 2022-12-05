@@ -150,12 +150,23 @@ $purple: #766ED3;
                         transition: 0.3s;
                         opacity: 0.8;
                     }
+                    
+                    &:disabled {
+                        opacity: 0.6;
+                    }
                 }
             }
 
-            .error{
+            .error {
                 color: $purple;
                 font-size: 14px;
+            }
+
+            .status {
+                margin-top: 20px;
+                color: red;
+                font-size: 18px;
+                text-align: center;
             }
         }
 

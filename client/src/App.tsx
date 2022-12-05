@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './App.scss'
 import AppRouter from './AppRouter'
 import Footer from './components/Footer/Footer'
 import Header from './components/Header/Header'
 import Navbar from './components/Navbar/Navbar'
+import { useAppDispatch } from './hoooks/redux'
+import { checkAuth } from './store/slices/auth/ActionCreators.auth'
 
-function App() {
+const App: React.FC = () => {
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      dispatch(checkAuth())
+    }
+  }, [])
+
   return (
     <div className='wrapper'>
       <header>

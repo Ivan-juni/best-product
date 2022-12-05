@@ -7,9 +7,11 @@ import userAvatar from '../../assets/images/unknown-user.png'
 import Auth from './Auth/Auth'
 import LoginModal from '../Modals/login-modal/LoginModal'
 import RegistrationModal from '../Modals/registration-modal/RegistrationModal'
+import { useAppSelector } from '../../hoooks/redux'
 
 const Header: React.FC = () => {
   const [authOpen, setAuthOpen] = useState(false)
+  const { user, isAuth } = useAppSelector((state) => state.authReducer)
 
   const [loginModalActive, setLoginModalActive] = useState(false)
   const [registrationModalActive, setRegistrationModalActive] = useState(false)
@@ -25,29 +27,16 @@ const Header: React.FC = () => {
         </div>
         <div className={styles.search}>
           <SearchIcon className={styles.search__icon} />
-          <input
-            type='text'
-            className={styles.search__input}
-            placeholder='Search'
-          />
+          <input type='text' className={styles.search__input} placeholder='Search' />
         </div>
         <div className={styles.auth}>
           <img
-            src={userAvatar}
+            src={isAuth ? (user.photo ? user.photo : userAvatar) : userAvatar}
             alt='avatar'
-            className={
-              authOpen
-                ? styles.auth__avatar + ' ' + styles.active
-                : styles.auth__avatar
-            }
+            className={authOpen ? styles.auth__avatar + ' ' + styles.active : styles.auth__avatar}
             onClick={() => setAuthOpen((prev) => !prev)}
           />
-          {authOpen && (
-            <Auth
-              setModalActive={setLoginModalActive}
-              setAuthOpen={setAuthOpen}
-            />
-          )}
+          {authOpen && <Auth setModalActive={setLoginModalActive} setAuthOpen={setAuthOpen} isAuth={isAuth} user={user} />}
         </div>
       </div>
       {loginModalActive && (
@@ -59,10 +48,7 @@ const Header: React.FC = () => {
         />
       )}
       {registrationModalActive && (
-        <RegistrationModal
-          setRegistrationActive={setRegistrationModalActive}
-          registrationActive={registrationModalActive}
-        />
+        <RegistrationModal setRegistrationActive={setRegistrationModalActive} registrationActive={registrationModalActive} />
       )}
     </>
   )

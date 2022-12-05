@@ -82,6 +82,9 @@ $purple: #766ED3;
 
         .auth__avatar{
             transition: 0.3s;
+            max-width: 60px;
+            max-height: 60px;
+            border-radius: 50%;
 
             &:hover {
                 opacity: 0.8;
