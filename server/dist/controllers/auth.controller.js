@@ -84,7 +84,7 @@ class AuthController {
                 return next(ApiError_1.default.badRequest(`Registration error`));
             }
             // храним refreshToken в куках
-            if (req.body.remember) {
+            if (req.body.remember && req.body.remember !== undefined) {
                 res.cookie('refreshToken', userData.refreshToken, {
                     maxAge: 30 * 24 * 60 * 60 * 1000,
                     httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера

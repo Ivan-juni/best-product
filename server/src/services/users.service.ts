@@ -68,10 +68,7 @@ class UserService {
     }
   }
 
-  static async editProfile(
-    id: number,
-    changingValues: changingValues
-  ): Promise<User | { message: string } | null> {
+  static async editProfile(id: number, changingValues: changingValues): Promise<User | { message: string } | null> {
     try {
       const oldUser = await User.query().select().findById(id)
 
