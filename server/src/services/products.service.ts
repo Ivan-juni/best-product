@@ -267,15 +267,17 @@ export default class ProductService {
         return { message: "Can't find this product" }
       }
 
-      // Remove old image
-      removePhoto(oldProduct.image, 'products')
-
       // filtering null values
       Object.keys(changingValues).forEach((key) => {
         if (changingValues[key] === null) {
           delete changingValues[key]
         }
       })
+
+      if (changingValues.image) {
+        // Remove old image
+        removePhoto(oldProduct.image, 'products')
+      }
 
       return Product.query().patchAndFetchById(productId, changingValues)
     } catch (error) {
