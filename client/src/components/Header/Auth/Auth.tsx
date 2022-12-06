@@ -2,21 +2,21 @@ import React from 'react'
 import styles from './Auth.module.scss'
 import { NavLink } from 'react-router-dom'
 import { IUser } from '../../../models/IUser.model'
-import { useAppDispatch } from '../../../hoooks/redux'
+import { useActions, useAppDispatch } from '../../../hoooks/redux'
 import { logout } from '../../../store/slices/auth/ActionCreators.auth'
 
 type PropsType = {
-  setAuthOpen: (value: React.SetStateAction<boolean>) => void
-  setModalActive: (value: React.SetStateAction<boolean>) => void
+  setAuthOpen: React.Dispatch<React.SetStateAction<boolean>>
   isAuth: boolean
   user: IUser
 }
 
-const Auth: React.FC<PropsType> = ({ setAuthOpen, setModalActive, isAuth, user }) => {
+const Auth: React.FC<PropsType> = ({ setAuthOpen, isAuth, user }) => {
   const dispatch = useAppDispatch()
+  const { setLogModalOpen } = useActions()
 
   const loginClick = () => {
-    setModalActive(true)
+    setLogModalOpen(true)
     setAuthOpen(false)
   }
 

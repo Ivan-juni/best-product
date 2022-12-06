@@ -7,6 +7,6 @@ export interface IUser {
   photo: string | null
   // password: string
   role: 'USER' | 'ADMIN'
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }

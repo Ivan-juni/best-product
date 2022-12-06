@@ -73,6 +73,11 @@ $purple: #766ED3;
             .text {
                 display: flex;
                 align-items: center;
+                
+                .arrowDown{
+                    transition: 0.3s;
+                    transform: rotate(180deg);
+                }
             }
         }
     

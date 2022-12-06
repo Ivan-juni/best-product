@@ -9,15 +9,20 @@ import { ReactComponent as DislikeIcon } from '../../../assets/icons/stats/disli
 import { ReactComponent as FavoriteIcon } from '../../../assets/icons/stats/favorite-stats-icon.svg'
 import productImage from '../../../assets/images/JBLT110.png'
 
-const ProductLong: React.FC = () => {
+type PropsType = {
+  isFavorite: boolean
+  setFavorite: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const ProductLong: React.FC<PropsType> = ({ isFavorite, setFavorite }) => {
   return (
     <div className={styles.card__tall}>
       <div className={styles.main}>
-        <div className={styles.favorite__section}>
-          <FavoriteEmptyIcon />
+        <div className={isFavorite ? `${styles.favorite__section} ${styles.filled}` : `${styles.favorite__section} ${styles.empty}`}>
+          {isFavorite ? <FavoriteFilledIcon onClick={() => setFavorite(false)} /> : <FavoriteEmptyIcon onClick={() => setFavorite(true)} />}
         </div>
         <div className={styles.image}>
-          <img src={productImage} alt='product-image' />
+          <img src={productImage} alt='product' />
         </div>
         <div className={styles.info}>
           <h1 className={styles.title}>JBL T110</h1>

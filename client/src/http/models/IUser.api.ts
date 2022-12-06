@@ -6,6 +6,6 @@ export interface IUser {
   lastName: string
   photo: string | null
   role: 'USER' | 'ADMIN'
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }

@@ -29,6 +29,30 @@ $purple: #766ED3;
             background-color: $purple;
             min-height: 50px;
             width: 100%;
+            transition: 0.3s;
+
+            
+        }
+        .filled{
+            svg {
+                &:hover {
+                    path {
+                        stroke:white;
+                        stroke-width: 2px;
+                        fill: $purple;
+                    }
+                }
+            }
+        }
+        .empty {
+            svg {
+                &:hover {
+                    path {
+                        stroke: none;
+                    }
+                    fill: #F8DC25;
+                }
+            }
         }
 
         .image {

@@ -5,6 +5,8 @@ import { checkAuth, login, logout, registration } from './ActionCreators.auth'
 
 interface AuthState {
   user: IUser
+  isLogModalOpen: boolean
+  isRegModalOpen: boolean
   isAuth: boolean
   isLoading: boolean
   error: string
@@ -20,9 +22,11 @@ const initialState: AuthState = {
     photo: null,
     // password: '',
     role: 'USER',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: '',
+    updatedAt: '',
   },
+  isLogModalOpen: false,
+  isRegModalOpen: false,
   isAuth: false,
   isLoading: false,
   error: '',
@@ -54,6 +58,12 @@ export const authSlice = createSlice({
     },
     setUser: (state: AuthState, action: PayloadAction<IUser>) => {
       return (state = { ...state, user: action.payload })
+    },
+    setLogModalOpen: (state: AuthState, action: PayloadAction<boolean>) => {
+      return (state = { ...state, isLogModalOpen: action.payload })
+    },
+    setRegModalOpen: (state: AuthState, action: PayloadAction<boolean>) => {
+      return (state = { ...state, isRegModalOpen: action.payload })
     },
   },
   extraReducers: {

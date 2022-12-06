@@ -2,34 +2,31 @@ import React, { useEffect } from 'react'
 import styles from './LoginModal.module.scss'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-import { useAppDispatch, useAppSelector } from '../../../hoooks/redux'
+import { useActions, useAppDispatch, useAppSelector } from '../../../hoooks/redux'
 import { login } from '../../../store/slices/auth/ActionCreators.auth'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 
-type LoginModalPropsType = {
-  setLoginActive: (value: React.SetStateAction<boolean>) => void
-  setRegistrationActive: (value: React.SetStateAction<boolean>) => void
-  loginActive: boolean
-  registrationActive: boolean
-}
+const LoginModal: React.FC = () => {
+  const { isLogModalOpen } = useAppSelector((state) => state.authReducer)
+  const { setLogModalOpen, setRegModalOpen } = useActions()
 
-const LoginModal: React.FC<LoginModalPropsType> = ({ setLoginActive, setRegistrationActive, loginActive, registrationActive }) => {
   useEffect(() => {
-    if (loginActive) {
+    if (isLogModalOpen) {
       document.body.style.overflow = 'hidden'
     }
     return () => {
       document.body.style.overflow = 'unset'
     }
-  }, [loginActive])
+  }, [isLogModalOpen])
 
   return (
-    <div className={styles.modal} onClick={() => setLoginActive(false)}>
+    <div className={styles.modal} onClick={() => setLogModalOpen(false)}>
       <div className={styles.modal__content} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h1>SIGN IN</h1>
         </div>
         <div className={styles.body}>
-          <LoginForm setLoginModalActive={setLoginActive} setRegistrationModalActive={setRegistrationActive} />
+          <LoginForm setLogModalActive={setLogModalOpen} setRegModalActive={setRegModalOpen} />
         </div>
       </div>
     </div>
@@ -37,13 +34,12 @@ const LoginModal: React.FC<LoginModalPropsType> = ({ setLoginActive, setRegistra
 }
 
 type LoginFormPropsType = {
-  setLoginModalActive: (value: React.SetStateAction<boolean>) => void
-  setRegistrationModalActive: (value: React.SetStateAction<boolean>) => void
+  setLogModalActive: ActionCreatorWithPayload<boolean, 'auth/setLogModalOpen'>
+  setRegModalActive: ActionCreatorWithPayload<boolean, 'auth/setRegModalOpen'>
 }
 
-const LoginForm: React.FC<LoginFormPropsType> = ({ setLoginModalActive, setRegistrationModalActive }) => {
+const LoginForm: React.FC<LoginFormPropsType> = ({ setLogModalActive, setRegModalActive }) => {
   const dispatch = useAppDispatch()
-  const { isLoading, error } = useAppSelector((state) => state.authReducer)
 
   const initialValues = {
     email: '',
@@ -59,20 +55,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ setLoginModalActive, setRegis
   }
 
   const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus }: FormikType) => {
-    dispatch(login(values))
-
-    if (isLoading) {
-      setSubmitting(true)
-    }
-
-    if (error !== '') {
-      setSubmitting(false)
-      setStatus(error)
-    }
-    if (error == '') {
-      setSubmitting(true)
-      setLoginModalActive(false)
-    }
+    dispatch(login({ ...values, setStatus, setSubmitting }))
   }
 
   const validationSchema = Yup.object({
@@ -85,8 +68,8 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ setLoginModalActive, setRegis
   })
 
   const handleCreateClick = () => {
-    setLoginModalActive(false)
-    setRegistrationModalActive(true)
+    setLogModalActive(false)
+    setRegModalActive(true)
   }
 
   return (

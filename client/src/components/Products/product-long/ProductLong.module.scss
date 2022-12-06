@@ -28,6 +28,29 @@ $purple: #766ED3;
             width: 50px;
         }
 
+        .filled {
+            svg {
+                &:hover {
+                    path {
+                        stroke: white;
+                        stroke-width: 2px;
+                        fill: $purple;
+                    }
+                }
+            }
+        }
+
+        .empty {
+            svg {
+                &:hover {
+                    path {
+                        stroke: none;
+                    }
+                    fill: #F8DC25;
+                }
+            }
+        }
+
         .image {
             max-width: 217px;
             max-height: 217px;

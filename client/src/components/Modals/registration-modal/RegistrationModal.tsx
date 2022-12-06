@@ -3,31 +3,27 @@ import styles from './RegistrationModal.module.scss'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { registration } from '../../../store/slices/auth/ActionCreators.auth'
-import { useAppDispatch, useAppSelector } from '../../../hoooks/redux'
+import { useActions, useAppDispatch, useAppSelector } from '../../../hoooks/redux'
 
-type PropsType = {
-  registrationActive: boolean
-  setRegistrationActive: (value: React.SetStateAction<boolean>) => void
-}
+const RegistrationModal: React.FC = () => {
+  const { setRegModalOpen } = useActions()
 
-const RegistrationModal: React.FC<PropsType> = ({ setRegistrationActive }) => {
   return (
-    <div className={styles.modal} onClick={() => setRegistrationActive(false)}>
+    <div className={styles.modal} onClick={() => setRegModalOpen(false)}>
       <div className={styles.modal__content} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h1>SIGN UP</h1>
         </div>
         <div className={styles.body}>
-          <RegistrationForm setModalActive={setRegistrationActive} />
+          <RegistrationForm />
         </div>
       </div>
     </div>
   )
 }
 
-const RegistrationForm: React.FC<{ setModalActive: (value: React.SetStateAction<boolean>) => void }> = ({ setModalActive }) => {
+const RegistrationForm: React.FC = () => {
   const dispatch = useAppDispatch()
-  const { isLoading, error } = useAppSelector((state) => state.authReducer)
 
   const initialValues = {
     email: '',
@@ -45,20 +41,7 @@ const RegistrationForm: React.FC<{ setModalActive: (value: React.SetStateAction<
   }
 
   const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus }: FormikType) => {
-    dispatch(registration(values))
-
-    if (isLoading) {
-      setSubmitting(true)
-    }
-
-    if (error !== '') {
-      setSubmitting(false)
-      setStatus(error)
-    }
-    if (error == '') {
-      setSubmitting(true)
-      setModalActive(false)
-    }
+    dispatch(registration({ ...values, setStatus, setSubmitting }))
   }
 
   const validationSchema = Yup.object({
