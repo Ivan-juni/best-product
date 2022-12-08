@@ -35,9 +35,9 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <>
       <div className={styles.account}>
-        <h1 className={styles.caption}>Account Setting</h1>
+        <h1 className={styles.caption}>Account Settings</h1>
         <div className={styles.section}>
           <div className={styles.photo}>
             {isLoading ? <Preloader /> : <img src={isAuth ? (user.photo ? user.photo : avatar) : avatar} alt='avatar' />}
@@ -57,7 +57,7 @@ const Profile: React.FC = () => {
           <AdminPanel />
         </div>
       )}
-    </div>
+    </>
   )
 }
 

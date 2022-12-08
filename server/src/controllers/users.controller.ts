@@ -23,6 +23,11 @@ class UsersController {
     if (!id) {
       next(ApiError.badRequest("User id hasn't typed"))
     }
+
+    if (+id === req.user.id) {
+      next(ApiError.badRequest("You can't delete yourself"))
+    }
+
     const result = await userService.deleteUser(+id)
 
     if (!result) {
@@ -41,6 +46,11 @@ class UsersController {
     if (!id) {
       next(ApiError.badRequest("User id hasn't typed"))
     }
+
+    if (+id === req.user.id) {
+      next(ApiError.badRequest("You can't change your role"))
+    }
+
     const user = await userService.changeRole(+id, role.toString())
 
     if (!user) {

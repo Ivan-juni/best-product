@@ -1,0 +1,32 @@
+@import "../../../variables.scss";
+
+.wrapper {
+    .items {
+        list-style-type: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .disabled {
+            max-height: 64px;
+
+            svg {
+                opacity: 0.6;
+            }
+        }
+
+        .item {
+            color: $purple;
+            font-weight: 400;
+            font-size: 28px;
+            max-height: 64px;
+
+            svg {
+                &:hover {
+                    transition: 0.3s;
+                    opacity: 0.6;
+                }
+            }
+        }
+    }
+}

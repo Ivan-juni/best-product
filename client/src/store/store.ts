@@ -3,8 +3,8 @@ import authReducer from './slices/auth/Auth.slice'
 import usersReducer from './slices/users/Users.slice'
 
 const rootReducer = combineReducers({
-  authReducer,
   usersReducer,
+  authReducer,
 })
 
 export const setupStore = () => {

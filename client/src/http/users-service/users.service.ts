@@ -1,12 +1,22 @@
 import $api from '../index'
 import { AxiosResponse } from 'axios'
-import { ChangingValues, UsersResponse } from './user.model'
+import { ChangingValues } from './user.model'
 import { IUser } from '../../models/IUser.model'
 import { DeleteResponse } from '../models/DeleteResponse'
+import { ObjectionPage } from '../../models/ObjectionPage.model'
 
 export default class UsersService {
-  static async getUsers(): Promise<AxiosResponse<UsersResponse>> {
-    return $api.get<UsersResponse>('/users')
+  static async getUsers(
+    id: string | null = null,
+    firstName: string | null = null,
+    page: number = 0,
+    limit: number = 3
+  ): Promise<AxiosResponse<ObjectionPage<IUser[]>>> {
+    return $api.get<ObjectionPage<IUser[]>>(
+      `/users?page=${page}&limit=${limit}${
+        id && firstName ? `&id=${id}&firstName=${firstName}` : firstName ? `&firstName=${firstName}` : id ? `&id=${id}` : ''
+      }`
+    )
   }
 
   static async changeRole(id: number, role: 'ADMIN' | 'USER'): Promise<AxiosResponse<IUser>> {

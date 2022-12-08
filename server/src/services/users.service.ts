@@ -13,10 +13,14 @@ class UserService {
 
     try {
       const users = await User.query()
-        .select('id', 'email', 'phone', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
+        .select('id', 'email', 'phone', 'photo', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
         .where((qb) => {
           if (searchCriteria.id) {
             qb.where('users.id', '=', +searchCriteria.id)
+          }
+
+          if (searchCriteria.firstName) {
+            qb.orWhere('users.firstName', 'like', `%${searchCriteria.firstName}%`)
           }
         })
         .page(page, limit)

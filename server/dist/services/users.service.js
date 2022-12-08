@@ -23,10 +23,13 @@ class UserService {
             const page = +searchCriteria.page || 0;
             try {
                 const users = yield user_model_1.default.query()
-                    .select('id', 'email', 'phone', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
+                    .select('id', 'email', 'phone', 'photo', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
                     .where((qb) => {
                     if (searchCriteria.id) {
                         qb.where('users.id', '=', +searchCriteria.id);
+                    }
+                    if (searchCriteria.firstName) {
+                        qb.orWhere('users.firstName', 'like', `%${searchCriteria.firstName}%`);
                     }
                 })
                     .page(page, limit);
@@ -74,8 +77,10 @@ class UserService {
                 if (!oldUser) {
                     throw new Error("Can't find this user");
                 }
-                // Remove old photo
-                (0, remove_photo_util_1.removePhoto)(oldUser.photo, 'users');
+                if (changingValues.photo) {
+                    // Remove old photo
+                    (0, remove_photo_util_1.removePhoto)(oldUser.photo, 'users');
+                }
                 // filtering null values
                 Object.keys(changingValues).forEach((key) => {
                     if (changingValues[key] === null) {
@@ -86,9 +91,9 @@ class UserService {
             }
             catch (error) {
                 console.log('Error: ', error);
-                // if (changingValues.photo) {
-                //   removePhoto(changingValues.photo, 'users')
-                // }
+                if (changingValues.photo) {
+                    (0, remove_photo_util_1.removePhoto)(changingValues.photo, 'users');
+                }
                 return null;
             }
         });

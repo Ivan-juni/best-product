@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import { useAppDispatch } from '../../../hoooks/redux'
 import { IUser } from '../../../models/IUser.model'
 import { editProfile } from '../../../store/slices/users/ActionCreators.users'
+import { FormikType } from '../../../models/Formik.model'
 
 type PropsType = {
   user: IUser
@@ -29,11 +30,6 @@ const ProfileForm: React.FC<PropsType> = ({ user }) => {
     phone: string | null
     password: string | null
     confirmNewPassword: string | null
-  }
-
-  type FormikType = {
-    setSubmitting: (isSubmitting: boolean) => void
-    setStatus: (arg0: string) => void
   }
 
   const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus }: FormikType) => {
@@ -98,7 +94,7 @@ const ProfileForm: React.FC<PropsType> = ({ user }) => {
   })
 
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+    <Formik enableReinitialize initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
       {(formik) => {
         return (
           <Form>

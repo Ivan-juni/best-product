@@ -31,6 +31,9 @@ class UsersController {
             if (!id) {
                 next(ApiError_1.default.badRequest("User id hasn't typed"));
             }
+            if (+id === req.user.id) {
+                next(ApiError_1.default.badRequest("You can't delete yourself"));
+            }
             const result = yield users_service_1.default.deleteUser(+id);
             if (!result) {
                 return next(ApiError_1.default.badRequest(`Deletion users error`));
@@ -48,6 +51,9 @@ class UsersController {
             const { id, role } = req.query;
             if (!id) {
                 next(ApiError_1.default.badRequest("User id hasn't typed"));
+            }
+            if (+id === req.user.id) {
+                next(ApiError_1.default.badRequest("You can't change your role"));
             }
             const user = yield users_service_1.default.changeRole(+id, role.toString());
             if (!user) {
