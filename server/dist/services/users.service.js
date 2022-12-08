@@ -72,7 +72,7 @@ class UserService {
             try {
                 const oldUser = yield user_model_1.default.query().select().findById(id);
                 if (!oldUser) {
-                    return { message: "Can't find this user" };
+                    throw new Error("Can't find this user");
                 }
                 // Remove old photo
                 (0, remove_photo_util_1.removePhoto)(oldUser.photo, 'users');
@@ -86,9 +86,9 @@ class UserService {
             }
             catch (error) {
                 console.log('Error: ', error);
-                if (changingValues.photo) {
-                    (0, remove_photo_util_1.removePhoto)(changingValues.photo, 'users');
-                }
+                // if (changingValues.photo) {
+                //   removePhoto(changingValues.photo, 'users')
+                // }
                 return null;
             }
         });

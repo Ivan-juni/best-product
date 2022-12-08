@@ -3,7 +3,7 @@ import styles from './RegistrationModal.module.scss'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { registration } from '../../../store/slices/auth/ActionCreators.auth'
-import { useActions, useAppDispatch, useAppSelector } from '../../../hoooks/redux'
+import { useActions, useAppDispatch } from '../../../hoooks/redux'
 
 const RegistrationModal: React.FC = () => {
   const { setRegModalOpen } = useActions()
@@ -59,7 +59,9 @@ const RegistrationForm: React.FC = () => {
       .min(3, 'Lastname should be longer than 2 symbols')
       .max(255, 'Lastname should be shorter than 255 symbols')
       .required('Required field'),
-    confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password')], 'Passwords must match')
+      .required(),
   })
 
   return (

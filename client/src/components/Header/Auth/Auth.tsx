@@ -30,7 +30,7 @@ const Auth: React.FC<PropsType> = ({ setAuthOpen, isAuth, user }) => {
       {isAuth ? (
         <>
           <div className={styles.name__section}>
-            <NavLink className={styles.link} to='/profile'>
+            <NavLink className={styles.link} to='/profile' onClick={() => setAuthOpen(false)}>
               <span className={styles.text}>{user.firstName + ' ' + user.lastName}</span>
             </NavLink>
           </div>

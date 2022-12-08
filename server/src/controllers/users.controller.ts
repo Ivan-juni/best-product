@@ -5,9 +5,10 @@ import userService from '../services/users.service'
 import { changingValuesBody } from '../services/types/users.type'
 import { ReturnType } from './types/return.type'
 import User from '../db/models/user/user.model'
+import Objection from 'objection'
 
 class UsersController {
-  static async getUsers(req: Request, res: Response, next: NextFunction): ReturnType<User | User[]> {
+  static async getUsers(req: Request, res: Response, next: NextFunction): ReturnType<Objection.Page<User> | null> {
     const users = await userService.getUsers(req.query)
 
     if (!users) {
@@ -49,7 +50,7 @@ class UsersController {
     return res.json(user)
   }
 
-  static async editProfile(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
+  static async editProfile(req: Request, res: Response, next: NextFunction): ReturnType<User> {
     try {
       const { id } = req.user
       const photo = req.file !== undefined ? req.file.filename : null
@@ -68,7 +69,7 @@ class UsersController {
       }
 
       if (!id) {
-        next(ApiError.unAuthorizedError())
+        return next(ApiError.unAuthorizedError())
       }
 
       const user = await userService.editProfile(id, {
@@ -84,10 +85,10 @@ class UsersController {
         return next(ApiError.badRequest(`Editing profile error`))
       }
 
-      return res.status(200).json({ message: 'Profile data changed successfully ' })
+      return res.status(200).json(user)
     } catch (error) {
       console.log('Error: ', error)
-      return res.status(500).json({ message: `Error: ${error}` })
+      return next(ApiError.badRequest(`${error}`))
     }
   }
 }

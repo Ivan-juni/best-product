@@ -71,7 +71,7 @@ class UsersController {
                     changingValues.password = hashPassword;
                 }
                 if (!id) {
-                    next(ApiError_1.default.unAuthorizedError());
+                    return next(ApiError_1.default.unAuthorizedError());
                 }
                 const user = yield users_service_1.default.editProfile(id, {
                     photo: changingValues.photo,
@@ -84,11 +84,11 @@ class UsersController {
                 if (!user) {
                     return next(ApiError_1.default.badRequest(`Editing profile error`));
                 }
-                return res.status(200).json({ message: 'Profile data changed successfully ' });
+                return res.status(200).json(user);
             }
             catch (error) {
                 console.log('Error: ', error);
-                return res.status(500).json({ message: `Error: ${error}` });
+                return next(ApiError_1.default.badRequest(`${error}`));
             }
         });
     }

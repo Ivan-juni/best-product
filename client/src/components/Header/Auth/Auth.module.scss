@@ -37,6 +37,15 @@ $purple: #766ED3;
         
             color: #524F5E;
         }
+
+        .link {
+            .text {
+                &:hover{
+                    transition: 0.3s;
+                    color: $purple;
+                }
+            }
+        }
     }
 
     .link__section{
