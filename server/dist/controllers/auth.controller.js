@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const yup = __importStar(require("yup"));
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const user_model_1 = __importDefault(require("../db/models/user/user.model"));
+const user_model_1 = __importDefault(require("../db/models/user.model"));
 const auth_service_1 = __importDefault(require("../services/auth.service"));
 const registrationSchema = yup.object({
     email: yup.string().email().required(),

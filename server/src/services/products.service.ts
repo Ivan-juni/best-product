@@ -1,13 +1,15 @@
-import ProductCharacteristics from '../db/models/product-characteristics/product-characteristics.model'
-import Product from '../db/models/product/product.model'
+import ProductCharacteristics from '../db/models/product-characteristics.model'
+import Product from '../db/models/product.model'
 import { DeleteType, IProduct, IProductsQuery, resultType, StatisticsType } from './types/products.type'
-import Category from '../db/models/category/category.model'
+import Category from '../db/models/category.model'
 import { getCategoryId } from '../utils/get-category-id.util'
 import { removePhoto } from '../utils/remove-photo.util'
 import { sort } from '../utils/sort-by.util'
-import Favorite from '../db/models/favorite/favorite.model'
-import ProductHistory from '../db/models/product-history/product-history.model'
+import Favorite from '../db/models/favorite.model'
+import ProductHistory from '../db/models/product-history.model'
 import { findProducts } from '../utils/find-products.util'
+import { replaceSpaces } from '../utils/replace-spaces.util'
+import Image from '../db/models/image.module'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery): resultType {
@@ -93,7 +95,7 @@ export default class ProductService {
           findProducts(qb, searchCriteria)
         })
         .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
-        .withGraphFetched('[category(selectNameIdParent), characteristics]')
+        .withGraphFetched('[category(selectNameIdParent), characteristics, images(selectIdAndSrc)]')
         .orderBy(`products.${sortParams.column}`, sortParams.order)
         .page(page, limit)
 
@@ -169,17 +171,61 @@ export default class ProductService {
       const product = await Product.query().findById(productId)
 
       if (!product) {
-        return { message: "Can't find this products" }
+        return { message: "Can't find this product" }
       }
 
-      // Remove product image from server folder
-      removePhoto(product.image, 'products')
+      // Remove product folder with images from server
+      removePhoto('', `products/${replaceSpaces(product.name)}`)
 
       const deletedProducts = await Product.query().deleteById(productId)
       await ProductCharacteristics.query().deleteById(product.characteristicsId)
       await Favorite.query().delete().where({ productId })
 
       return deletedProducts
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async deleteImage(productId: number, imageId: number): DeleteType {
+    try {
+      const product = await Product.query().findById(productId)
+
+      if (!product) {
+        return { message: "Can't find this product" }
+      }
+
+      const image = await Image.query().findById(imageId)
+
+      if (!image) {
+        return { message: "Can't find this image" }
+      }
+
+      // Remove product image from server folder
+      removePhoto(image.src, `products/${replaceSpaces(product.name)}`)
+
+      const deletedImages = await Image.query().deleteById(imageId)
+
+      return deletedImages
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async addImage(productId: number, fileName: string): Promise<Image | null> {
+    try {
+      const product = await Product.query().findById(productId)
+
+      const image = `http://localhost:${process.env.PORT}/static/products/${replaceSpaces(product.name)}/${fileName}`
+
+      const insertedImage = await Image.query().insert({
+        productId,
+        src: image,
+      })
+
+      return insertedImage
     } catch (error) {
       console.log('Error: ', error)
       return null
@@ -207,17 +253,17 @@ export default class ProductService {
       })
     } catch (error) {
       console.log('Error: ', error)
-      removePhoto(product.image, 'products')
+      removePhoto(product.image, `products/${replaceSpaces(product.name)}`)
       return null
     }
   }
 
-  static async updateProduct(productId: number, changingValues: IProduct): Promise<Product | { message: string } | null> {
+  static async updateProduct(productId: number, changingValues: IProduct): Promise<Product | null> {
     try {
       const oldProduct = await Product.query().select().findById(productId)
 
       if (!oldProduct) {
-        return { message: "Can't find this product" }
+        throw new Error("Can't find this product")
       }
 
       // filtering null values
@@ -229,7 +275,7 @@ export default class ProductService {
 
       if (changingValues.image) {
         // Remove old image
-        removePhoto(oldProduct.image, 'products')
+        removePhoto(oldProduct.image, `products/${replaceSpaces(oldProduct.name)}`)
       }
 
       return Product.query().patchAndFetchById(productId, changingValues)

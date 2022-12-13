@@ -1,0 +1,102 @@
+@import "../../../variables.scss";
+
+.wrapper {
+    max-width: 1247px;
+    width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 495px;
+    margin-top: 50px;
+    border-radius: 10px;
+    padding: 19px 31px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .slider {
+        max-width: 531px;
+    }
+
+    .info{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .up {
+            .stats {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 31px;
+    
+                .item{
+                    width: 150px;
+                    height: 43px;
+                    display: flex;
+                    align-items: center;
+                    gap: 13px;
+
+                    span {
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 24px;
+                        line-height: 29px;
+                        color: #000000;
+                    }
+                }
+            }
+            .text {
+                .title {
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 32px;
+                    line-height: 39px;
+                    color: #171313;
+                    margin-bottom: 38px;
+                }
+                .additional {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 13px;
+                    p {
+                        font-style: normal;
+                        font-weight: 300;
+                        font-size: 20px;
+                        line-height: 24px;
+                        color: #171313;
+
+                        span {
+                            font-weight: 500;
+                            line-height: 25px;
+                        }
+                    }
+                }
+            }
+        }
+        .down {
+            padding-bottom: 27px;
+            .price{
+                display: flex;
+                align-items: center;
+                gap: 30px;
+
+                span {
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 40px;
+                    line-height: 48px;
+                    color: #000000;              
+                    transform: matrix(1, 0, 0, 1, 0, 0);
+                }
+
+                svg {
+                    height: 52px;
+                    width: 52px;
+                }
+            }
+        }
+
+    }
+}

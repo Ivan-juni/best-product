@@ -1,5 +1,5 @@
 import Objection from 'objection'
-import Product from '../../db/models/product/product.model'
+import Product from '../../db/models/product.model'
 
 export interface IProductsQuery {
   id?: string

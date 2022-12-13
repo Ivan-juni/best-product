@@ -1,6 +1,6 @@
 import { raw } from 'objection'
-import Favorite from '../db/models/favorite/favorite.model'
-import Product from '../db/models/product/product.model'
+import Favorite from '../db/models/favorite.model'
+import Product from '../db/models/product.model'
 import { findProducts } from '../utils/find-products.util'
 import { sort } from '../utils/sort-by.util'
 import { DeleteType, IProductsQuery } from './types/products.type'

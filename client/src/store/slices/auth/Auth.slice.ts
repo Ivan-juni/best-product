@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IUser } from '../../../models/IUser.model'
 import { checkAuth, login, logout, registration } from './ActionCreators.auth'
 
-interface AuthState {
+export interface AuthState {
   user: IUser
   isLogModalOpen: boolean
   isRegModalOpen: boolean

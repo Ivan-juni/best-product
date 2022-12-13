@@ -1,19 +1,12 @@
 import Objection from 'objection'
-import Comment from '../db/models/comment/comment.model'
+import Comment from '../db/models/comment.model'
 import { DeleteType } from './types/products.type'
 
 export default class CommentService {
   static async getComments(userId: number): Promise<Comment[] | null> {
     try {
       const comments = await Comment.query()
-        .select(
-          'comments.id',
-          'comments.productId',
-          'products.name as productName',
-          'comments.text',
-          'comments.createdAt',
-          'comments.updatedAt'
-        )
+        .select('comments.id', 'comments.productId', 'products.name as productName', 'comments.text', 'comments.createdAt', 'comments.updatedAt')
         .where({ userId })
         .leftJoin('products', function () {
           this.on('products.id', '=', 'comments.productId')
@@ -26,11 +19,7 @@ export default class CommentService {
     }
   }
 
-  static async addComment(
-    userId: number,
-    productId: number,
-    text: string
-  ): Promise<Comment | null> {
+  static async addComment(userId: number, productId: number, text: string): Promise<Comment | null> {
     try {
       const comment = await Comment.query().insertAndFetch({
         userId,
@@ -45,11 +34,7 @@ export default class CommentService {
     }
   }
 
-  static async deleteComment(
-    userId: number,
-    commentId: number,
-    role: string
-  ): DeleteType {
+  static async deleteComment(userId: number, commentId: number, role: string): DeleteType {
     try {
       if (role === 'ADMIN') {
         const comment = await Comment.query().findOne({ id: commentId })
@@ -70,11 +55,7 @@ export default class CommentService {
     }
   }
 
-  static async getProductComments(
-    productId: number,
-    page = 0,
-    limit = 5
-  ): Promise<Objection.Page<Comment> | null> {
+  static async getProductComments(productId: number, page = 0, limit = 5): Promise<Objection.Page<Comment> | null> {
     try {
       const comments = await Comment.query()
         .select(

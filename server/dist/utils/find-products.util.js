@@ -27,7 +27,7 @@ const findProducts = (qb, searchCriteria) => {
         qb.andWhere('products.id', '=', +searchCriteria.id);
     }
     if (searchCriteria.name) {
-        qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`);
+        qb.orWhere('products.name', 'like', `%${searchCriteria.name}%`);
     }
     if (searchCriteria.purpose) {
         (0, exports.searchUtil)(qb, searchCriteria, 'purpose');

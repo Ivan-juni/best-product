@@ -1,9 +1,9 @@
-import User from '../db/models/user/user.model'
+import User from '../db/models/user.model'
 import { changingValues, IUsersQuery } from './types/users.type'
 import { removePhoto } from '../utils/remove-photo.util'
 import { DeleteType } from './types/products.type'
-import Comment from '../db/models/comment/comment.model'
-import Favorite from '../db/models/favorite/favorite.model'
+import Comment from '../db/models/comment.model'
+import Favorite from '../db/models/favorite.model'
 import Objection from 'objection'
 
 class UserService {

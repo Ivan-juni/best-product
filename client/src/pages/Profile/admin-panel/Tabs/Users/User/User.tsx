@@ -2,15 +2,27 @@ import React from 'react'
 import styles from './User.module.scss'
 import userAvatar from '../../../../../../assets/images/unknown-user.png'
 import { IUser } from '../../../../../../models/IUser.model'
-import { useAppSelector } from '../../../../../../hoooks/redux'
+import { useAppDispatch, useAppSelector } from '../../../../../../hoooks/redux'
 import { ReactComponent as DeleteUserIcon } from '../../../../../../assets/icons/other/delete-icon.svg'
+import { changeRole, deleteUser } from '../../../../../../store/slices/users/ActionCreators.users'
 
 type PropsType = {
   user: IUser
 }
 
 const User: React.FC<PropsType> = ({ user }) => {
+  const dispatch = useAppDispatch()
   const yourId = useAppSelector((state) => state.authReducer.user.id)
+
+  const deleteClickHandler = () => {
+    dispatch(deleteUser({ id: user.id }))
+  }
+
+  const changeRoleHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === 'ADMIN' || e.target.value === 'USER') {
+      dispatch(changeRole({ id: user.id, role: e.target.value }))
+    }
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -19,13 +31,13 @@ const User: React.FC<PropsType> = ({ user }) => {
         <div className={styles.menu}>
           <ul>
             <li>
-              <select name='role' id='role' defaultValue={user.role} disabled={user.id === yourId}>
+              <select name='role' id='role' defaultValue={user.role} disabled={user.id === yourId} onChange={changeRoleHandler}>
                 <option value='USER'>USER</option>
                 <option value='ADMIN'>ADMIN</option>
               </select>
             </li>
             <li>
-              <button className={styles.deleteButton} disabled={user.id === yourId || user.role === 'ADMIN'}>
+              <button className={styles.deleteButton} disabled={user.id === yourId || user.role === 'ADMIN'} onClick={deleteClickHandler}>
                 <DeleteUserIcon />
               </button>
             </li>
@@ -44,7 +56,7 @@ const User: React.FC<PropsType> = ({ user }) => {
         <ul className={styles.email}>
           <li>
             <span>Email: </span>
-            <span>{user.email}</span>
+            <span id={styles.email__span}>{user.email}</span>
           </li>
           <li>
             <span>

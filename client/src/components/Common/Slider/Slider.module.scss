@@ -1,0 +1,72 @@
+@import "../../../variables.scss";
+
+$transition: all 0.3s linear;
+
+.wrapper {
+    width: 531px;
+    height: 455px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    // gap: 40px;
+
+    .main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        max-width: 310px;
+        overflow: hidden;
+
+        .main__image{
+            max-width: 310px;
+            object-fit: contain;
+        }
+
+        article {
+            // position: absolute;
+            // top: 0;
+            // left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: $transition;
+
+        }
+
+        .activeSlide {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .lastSlide {
+            transform: translateX(-100%);
+        }
+        .nextSlide {
+            transform: translateX(100%);
+        }
+    }
+
+    .slider {
+        height: 100px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .left__button, .right__button {
+            width: 64px;
+            height: 64px;
+            background: transparent;
+            border: none;
+        }
+    }
+
+    .second__slider{
+        max-height: 98px;
+    }
+    .next, .prev {
+        min-width: 64px;
+        min-height: 64px;
+    }
+}
+

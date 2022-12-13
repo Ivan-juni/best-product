@@ -12,15 +12,14 @@ export default class UsersService {
     page: number = 0,
     limit: number = 3
   ): Promise<AxiosResponse<ObjectionPage<IUser[]>>> {
-    return $api.get<ObjectionPage<IUser[]>>(
-      `/users?page=${page}&limit=${limit}${
-        id && firstName ? `&id=${id}&firstName=${firstName}` : firstName ? `&firstName=${firstName}` : id ? `&id=${id}` : ''
-      }`
-    )
-  }
-
-  static async changeRole(id: number, role: 'ADMIN' | 'USER'): Promise<AxiosResponse<IUser>> {
-    return $api.put<IUser>(`/users/changeRole?id=${id}&role=${role}`)
+    return $api.get<ObjectionPage<IUser[]>>('/users', {
+      params: {
+        id,
+        firstName,
+        page,
+        limit,
+      },
+    })
   }
 
   static async editProfile(changingValues: ChangingValues): Promise<AxiosResponse<IUser & { password: string }>> {
@@ -36,6 +35,10 @@ export default class UsersService {
         headers: { 'Content-type': 'multipart/form-data' },
       })
     }
+  }
+
+  static async changeRole(id: number, role: 'ADMIN' | 'USER'): Promise<AxiosResponse<IUser>> {
+    return $api.put<IUser>(`/users/changeRole?id=${id}&role=${role}`)
   }
 
   static async deleteUser(id: number): Promise<AxiosResponse<DeleteResponse>> {

@@ -61,7 +61,7 @@
     .info{
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
 
         .name{
             display: flex;
@@ -74,6 +74,9 @@
                 &:last-child {
                     flex-direction: row;
                 }
+               #email__span {
+                    word-wrap: break-word;
+               }
             }
         }
         

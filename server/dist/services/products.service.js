@@ -12,15 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const product_characteristics_model_1 = __importDefault(require("../db/models/product-characteristics/product-characteristics.model"));
-const product_model_1 = __importDefault(require("../db/models/product/product.model"));
-const category_model_1 = __importDefault(require("../db/models/category/category.model"));
+const product_characteristics_model_1 = __importDefault(require("../db/models/product-characteristics.model"));
+const product_model_1 = __importDefault(require("../db/models/product.model"));
+const category_model_1 = __importDefault(require("../db/models/category.model"));
 const get_category_id_util_1 = require("../utils/get-category-id.util");
 const remove_photo_util_1 = require("../utils/remove-photo.util");
 const sort_by_util_1 = require("../utils/sort-by.util");
-const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
-const product_history_model_1 = __importDefault(require("../db/models/product-history/product-history.model"));
+const favorite_model_1 = __importDefault(require("../db/models/favorite.model"));
+const product_history_model_1 = __importDefault(require("../db/models/product-history.model"));
 const find_products_util_1 = require("../utils/find-products.util");
+const replace_spaces_util_1 = require("../utils/replace-spaces.util");
+const image_module_1 = __importDefault(require("../db/models/image.module"));
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -82,7 +84,7 @@ class ProductService {
                     (0, find_products_util_1.findProducts)(qb, searchCriteria);
                 })
                     .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
-                    .withGraphFetched('[category(selectNameIdParent), characteristics]')
+                    .withGraphFetched('[category(selectNameIdParent), characteristics, images(selectIdAndSrc)]')
                     .orderBy(`products.${sortParams.column}`, sortParams.order)
                     .page(page, limit);
                 // записываем в объект результат
@@ -159,14 +161,53 @@ class ProductService {
             try {
                 const product = yield product_model_1.default.query().findById(productId);
                 if (!product) {
-                    return { message: "Can't find this products" };
+                    return { message: "Can't find this product" };
                 }
-                // Remove product image from server folder
-                (0, remove_photo_util_1.removePhoto)(product.image, 'products');
+                // Remove product folder with images from server
+                (0, remove_photo_util_1.removePhoto)('', `products/${(0, replace_spaces_util_1.replaceSpaces)(product.name)}`);
                 const deletedProducts = yield product_model_1.default.query().deleteById(productId);
                 yield product_characteristics_model_1.default.query().deleteById(product.characteristicsId);
                 yield favorite_model_1.default.query().delete().where({ productId });
                 return deletedProducts;
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static deleteImage(productId, imageId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const product = yield product_model_1.default.query().findById(productId);
+                if (!product) {
+                    return { message: "Can't find this product" };
+                }
+                const image = yield image_module_1.default.query().findById(imageId);
+                if (!image) {
+                    return { message: "Can't find this image" };
+                }
+                // Remove product image from server folder
+                (0, remove_photo_util_1.removePhoto)(image.src, `products/${(0, replace_spaces_util_1.replaceSpaces)(product.name)}`);
+                const deletedImages = yield image_module_1.default.query().deleteById(imageId);
+                return deletedImages;
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static addImage(productId, fileName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const product = yield product_model_1.default.query().findById(productId);
+                const image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(product.name)}/${fileName}`;
+                const insertedImage = yield image_module_1.default.query().insert({
+                    productId,
+                    src: image,
+                });
+                return insertedImage;
             }
             catch (error) {
                 console.log('Error: ', error);
@@ -196,7 +237,7 @@ class ProductService {
             }
             catch (error) {
                 console.log('Error: ', error);
-                (0, remove_photo_util_1.removePhoto)(product.image, 'products');
+                (0, remove_photo_util_1.removePhoto)(product.image, `products/${(0, replace_spaces_util_1.replaceSpaces)(product.name)}`);
                 return null;
             }
         });
@@ -206,7 +247,7 @@ class ProductService {
             try {
                 const oldProduct = yield product_model_1.default.query().select().findById(productId);
                 if (!oldProduct) {
-                    return { message: "Can't find this product" };
+                    throw new Error("Can't find this product");
                 }
                 // filtering null values
                 Object.keys(changingValues).forEach((key) => {
@@ -216,7 +257,7 @@ class ProductService {
                 });
                 if (changingValues.image) {
                     // Remove old image
-                    (0, remove_photo_util_1.removePhoto)(oldProduct.image, 'products');
+                    (0, remove_photo_util_1.removePhoto)(oldProduct.image, `products/${(0, replace_spaces_util_1.replaceSpaces)(oldProduct.name)}`);
                 }
                 return product_model_1.default.query().patchAndFetchById(productId, changingValues);
             }

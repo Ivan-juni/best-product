@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IUser } from '../../../models/IUser.model'
 import { ObjectionPage } from '../../../models/ObjectionPage.model'
-import { editProfile, fetchUsers } from './ActionCreators.users'
+import { changeRole, deleteUser, editProfile, fetchUsers } from './ActionCreators.users'
 
-interface UsersState {
+export interface UsersState {
   users: IUser[]
   total: number
+  page: number
   isLoading: boolean
   error: string
 }
@@ -13,6 +14,7 @@ interface UsersState {
 const initialState: UsersState = {
   users: [],
   total: 0,
+  page: 0,
   isLoading: false,
   error: '',
 }
@@ -40,16 +42,28 @@ export const usersSlice = createSlice({
     setUsers: (state: UsersState, action: PayloadAction<ObjectionPage<IUser[]>>) => {
       return (state = { ...state, users: action.payload.results, total: action.payload.total })
     },
+    deleteUser: (state: UsersState, action: PayloadAction<number>) => {
+      return (state = { ...state, users: state.users.filter((user) => user.id !== action.payload) })
+    },
+    setUsersPage: (state: UsersState, action: PayloadAction<number>) => {
+      return (state = { ...state, page: action.payload })
+    },
   },
   extraReducers: {
     [fetchUsers.fulfilled.type]: fulfilledReducer,
     [editProfile.fulfilled.type]: fulfilledReducer,
+    [deleteUser.fulfilled.type]: fulfilledReducer,
+    [changeRole.fulfilled.type]: fulfilledReducer,
 
     [fetchUsers.pending.type]: pendingReducer,
     [editProfile.pending.type]: pendingReducer,
+    [deleteUser.pending.type]: pendingReducer,
+    [changeRole.pending.type]: pendingReducer,
 
     [fetchUsers.rejected.type]: rejectionReducer,
     [editProfile.rejected.type]: rejectionReducer,
+    [deleteUser.rejected.type]: rejectionReducer,
+    [changeRole.rejected.type]: rejectionReducer,
   },
 })
 

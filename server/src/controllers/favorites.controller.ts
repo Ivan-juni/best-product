@@ -2,14 +2,10 @@ import { Request, Response, NextFunction } from 'express'
 import ApiError from '../errors/ApiError'
 import favoritesService from '../services/favorites.service'
 import { ReturnType } from './types/return.type'
-import Favorite from '../db/models/favorite/favorite.model'
+import Favorite from '../db/models/favorite.model'
 
 export default class FavoritesController {
-  static async getUserFavorites(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<Favorite[]> {
+  static async getUserFavorites(req: Request, res: Response, next: NextFunction): ReturnType<Favorite[]> {
     const { id } = req.user
 
     if (!id) {
@@ -25,11 +21,7 @@ export default class FavoritesController {
     return res.json(favorites)
   }
 
-  static async addToFavorite(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<Favorite> {
+  static async addToFavorite(req: Request, res: Response, next: NextFunction): ReturnType<Favorite> {
     const { id } = req.user
     const { productId } = req.query
 
@@ -50,11 +42,7 @@ export default class FavoritesController {
     return res.json(favorites)
   }
 
-  static async deleteFromFavorite(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<{ message: string }> {
+  static async deleteFromFavorite(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { id } = req.user
     const { productId } = req.query
 

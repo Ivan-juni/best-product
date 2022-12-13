@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const user_model_1 = __importDefault(require("../db/models/user/user.model"));
+const user_model_1 = __importDefault(require("../db/models/user.model"));
 const token_service_1 = __importDefault(require("./token.service"));
 const user_dto_1 = __importDefault(require("../dtos/user-dto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 class AuthService {
-    static registration({ email, password, firstName, lastName, createdAt, updatedAt, phone, photo, }) {
+    static registration({ email, password, firstName, lastName, createdAt, updatedAt, phone, photo }) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // хэшируем пароль

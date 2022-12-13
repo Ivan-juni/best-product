@@ -1,8 +1,8 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Preloader from '../../../../../components/Common/Preloader/Preloader'
-import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
+import { useActions, useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
 import { fetchUsers } from '../../../../../store/slices/users/ActionCreators.users'
 import User from './User/User'
 import styles from './UsersTab.module.scss'
@@ -12,13 +12,15 @@ import Paginator from '../../../../../components/Common/Paginator/Paginator'
 
 const UsersTab: React.FC = () => {
   const dispatch = useAppDispatch()
-  const { isLoading, total, users } = useAppSelector((state) => state.usersReducer)
+  const { isLoading, total, page, users } = useAppSelector((state) => state.usersReducer)
 
   // pagination
-  const [page, setPage] = useState(0)
+  const { setUsersPage } = useActions()
 
   useEffect(() => {
-    dispatch(fetchUsers({ id: null, firstName: null, page, limit: 3 }))
+    const limit = 3
+
+    dispatch(fetchUsers({ id: null, firstName: null, page, limit }))
   }, [page])
 
   const initialValues: InitialValuesType = {
@@ -40,7 +42,7 @@ const UsersTab: React.FC = () => {
         return value === '' ? null : value
       }),
     id: Yup.string()
-      .min(1, 'Firstname should be at least 1 symbol')
+      .min(1, 'ID should be at least 1 symbol')
       .nullable(true)
       .transform((_, value: string) => {
         return value === '' ? null : value
@@ -87,9 +89,14 @@ const UsersTab: React.FC = () => {
       </Formik>
       <div className={isLoading ? styles.loading : styles.users}>
         {isLoading ? <Preloader /> : users.map((user: IUser) => <User key={user.id} user={user} />)}
+        {users.length === 0 && !isLoading && (
+          <div className={styles.noUsers}>
+            <h1>No users...</h1>
+          </div>
+        )}
       </div>
       <div className={styles.pagination}>
-        <Paginator total={total} page={page} setPage={setPage} />
+        <Paginator total={total} page={page} setPage={setUsersPage} limit={3} />
       </div>
     </div>
   )

@@ -1,12 +1,8 @@
-import Category from '../db/models/category/category.model'
+import Category from '../db/models/category.model'
 import { DeleteType } from './types/products.type'
 
 export default class CategoriesService {
-  static async getCategories(searchCriteria: {
-    categoryId?: number | null
-    page?: number
-    limit?: number
-  }) {
+  static async getCategories(searchCriteria: { categoryId?: number | null; page?: number; limit?: number }) {
     try {
       const limit = +searchCriteria.limit || 5
       const page = +searchCriteria.page || 0
@@ -28,10 +24,7 @@ export default class CategoriesService {
     }
   }
 
-  static async addCategory(categoryValues: {
-    name: string
-    parent: number
-  }): Promise<Category | null> {
+  static async addCategory(categoryValues: { name: string; parent: number }): Promise<Category | null> {
     try {
       const productCategory = await Category.query().findOne({
         name: categoryValues.name,

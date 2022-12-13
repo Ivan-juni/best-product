@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import * as yup from 'yup'
 import ApiError from '../errors/ApiError'
 import bcrypt from 'bcrypt'
-import User from '../db/models/user/user.model'
+import User from '../db/models/user.model'
 import userService from '../services/auth.service'
 import { ReturnType } from './types/return.type'
 

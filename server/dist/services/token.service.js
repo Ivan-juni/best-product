@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const token_model_1 = __importDefault(require("../db/models/token/token.model"));
+const token_model_1 = __importDefault(require("../db/models/token.model"));
 class TokenService {
     static generateTokens(payload) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -87,9 +87,7 @@ class TokenService {
     static removeToken(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const tokenData = yield token_model_1.default.query()
-                    .delete()
-                    .where('refreshToken', refreshToken);
+                const tokenData = yield token_model_1.default.query().delete().where('refreshToken', refreshToken);
                 return tokenData;
             }
             catch (error) {

@@ -4,7 +4,7 @@ import ApiError from '../errors/ApiError'
 import userService from '../services/users.service'
 import { changingValuesBody } from '../services/types/users.type'
 import { ReturnType } from './types/return.type'
-import User from '../db/models/user/user.model'
+import User from '../db/models/user.model'
 import Objection from 'objection'
 
 class UsersController {

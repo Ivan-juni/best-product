@@ -45,13 +45,18 @@
         flex-wrap: wrap;
         margin-bottom: 50px;
     }
-    .loading {
+    .loading, .noUsers {
         height: 280px;
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
         align-items: center;
         margin-bottom: 50px;
+    }
+
+    .noUsers{
+        width: 100%;
+        margin-bottom: 0px;
     }
 
     .find{

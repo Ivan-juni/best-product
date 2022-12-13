@@ -10,6 +10,7 @@ $purple: #766ED3;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 5;
 
     .modal__content {
         min-width: 577px;

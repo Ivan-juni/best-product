@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const objection_1 = require("objection");
-const favorite_model_1 = __importDefault(require("../db/models/favorite/favorite.model"));
-const product_model_1 = __importDefault(require("../db/models/product/product.model"));
+const favorite_model_1 = __importDefault(require("../db/models/favorite.model"));
+const product_model_1 = __importDefault(require("../db/models/product.model"));
 const find_products_util_1 = require("../utils/find-products.util");
 const sort_by_util_1 = require("../utils/sort-by.util");
 class FavoritesService {

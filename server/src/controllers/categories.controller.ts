@@ -3,14 +3,10 @@ import ApiError from '../errors/ApiError'
 import categoriesService from '../services/categories.service'
 import { ReturnType } from './types/return.type'
 import Objection from 'objection'
-import Category from '../db/models/category/category.model'
+import Category from '../db/models/category.model'
 
 export default class CategoriesController {
-  static async getCategories(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<Objection.Page<Category>> {
+  static async getCategories(req: Request, res: Response, next: NextFunction): ReturnType<Objection.Page<Category>> {
     const categoryId = +req.params || null
     const page = +req.query.page || 0
     const limit = +req.query.limit || 5
@@ -28,11 +24,7 @@ export default class CategoriesController {
     return res.json(categories)
   }
 
-  static async addCategory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<Category> {
+  static async addCategory(req: Request, res: Response, next: NextFunction): ReturnType<Category> {
     const categoryName: string = req.body.name
     const parent: number = +req.body.parent || 0
 
@@ -56,11 +48,7 @@ export default class CategoriesController {
     return res.json(category)
   }
 
-  static async deleteCategory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): ReturnType<{ message: string }> {
+  static async deleteCategory(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { categoryId } = req.params
 
     if (!categoryId) {
