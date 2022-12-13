@@ -17,7 +17,6 @@ const removePhoto = (imagePath, folder) => {
     // remove product's image or user's photo
     else {
         const dir = path_1.default.join(__dirname, '..', '..', 'assets', `${folder}`, path_1.default.basename(imagePath));
-        console.log(dir);
         if (fs_1.default.existsSync(dir)) {
             fs_1.default.unlink(dir, (err) => {
                 if (err) {

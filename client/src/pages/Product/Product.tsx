@@ -5,6 +5,7 @@ import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
 import { IProduct } from '../../models/IProduct.model'
 import { fetchProducts } from '../../store/slices/product/ActionCreators.product'
 import { useSearchParams } from 'react-router-dom'
+import ProductTabs from './Tabs/ProductTabs'
 
 const Product: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -25,7 +26,12 @@ const Product: React.FC = () => {
     }
   }, [productId])
 
-  return <div className={styles.wrapper}>{filteredProduct.length !== 0 && <Card product={filteredProduct[0]} isEditMode={isEditMode} />}</div>
+  return (
+    <div className={styles.wrapper}>
+      {filteredProduct.length !== 0 && <Card product={filteredProduct[0]} isEditMode={isEditMode} />}
+      <ProductTabs product={filteredProduct[0]} isEditMode={isEditMode} />
+    </div>
+  )
 }
 
 export default Product
