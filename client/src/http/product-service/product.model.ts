@@ -7,7 +7,7 @@ export type ProductResponse = ObjectionPage<IProduct[]> & { categories?: ICatego
 export interface ProductChangingValues {
   name?: string | null
   price?: number | null
-  image?: string | null
+  image?: string | File | null
   categoryId?: number | null
   purpose?: string | null
   description?: string | null

@@ -3,6 +3,7 @@ import { AxiosResponse } from 'axios'
 import { DeleteResponse } from '../models/DeleteResponse'
 import { IProduct, IProductQuery } from '../../models/IProduct.model'
 import { ProductChangingValues, ProductResponse } from './product.model'
+import { IImages } from '../../models/IImages.model'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductResponse>> {
@@ -36,5 +37,18 @@ export default class ProductService {
 
   static async deleteProduct(id: number): Promise<AxiosResponse<DeleteResponse>> {
     return $api.delete<DeleteResponse>(`/products?productId=${id}`)
+  }
+
+  static async addImage(id: number, image: File): Promise<AxiosResponse<IImages>> {
+    const formData = new FormData()
+
+    formData.append('image', image)
+    return $api.post<IImages>(`/products/images?productId=${id}`, formData, {
+      headers: { 'Content-type': 'multipart/form-data' },
+    })
+  }
+
+  static async deleteImage(productId: number, imageId: number): Promise<AxiosResponse<DeleteResponse>> {
+    return $api.delete<DeleteResponse>(`/products/images?productId=${productId}&imageId=${imageId}`)
   }
 }

@@ -1,12 +1,116 @@
+@import "../../variables.scss";
+
 .wrapper {
     max-width: 1247px;
     width: 100%;
     height: 100%;
-    margin: 0 auto;
-    margin-top: 50px;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+    margin: 0 auto;
+    margin-top: 20px;
+
+    .main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .menu {
+            display: flex;
+            justify-content: space-between;
+            height: 50px;
+
+            .left{
+                display: flex;
+                align-items: center;
+                width: 70px;
+                
+
+                svg {
+                    &:hover {
+                        transition: 0.3s all ease;
+                        opacity: 0.6;
+                        transform: translateX(15%);
+                    }
+                }
+            }
+
+            .right {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+
+                .edit {
+                    width: 100%;
+                    border: none;
+                    background: transparent;
+                    width: 32px;
+                    height: 32px;
+                    padding: 0;
+
+                    &:hover,  &:active,  &:focus {
+                        transition: 0.3s;
+                        opacity: 0.6;
+                    }
+
+                    svg {
+                        width: 32px;
+                        height: 32px;
+                    }
+                }
+
+                .submit {
+                    align-self: flex-end;
+                    max-width: 500px;
+                    display: flex;
+                    align-items: center;
+            
+                    .changeInfo,
+                    .cancel {
+                        width: 100%;
+                        height: 50px;
+                        background: $purple;
+                        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+                        border-radius: 7px;
+                        border: none;
+                        padding: 20px;
+            
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+            
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 22px;
+                        line-height: 27px;
+                        color: #fff;
+            
+                        &:disabled {
+                            opacity: 0.6;
+                        }
+            
+                        &:hover {
+                            transition: 0.3s;
+                            opacity: 0.8;
+                        }
+                    }
+            
+                    .changeInfo {
+                        min-width: 200px;
+                        max-width: 230px;
+                    }
+            
+                    .cancel {
+                        background-color: #fa2626be;
+                        width: 150px;
+                        margin-left: 20px;
+                    }
+                }
+            }
+        }
+    }
 }

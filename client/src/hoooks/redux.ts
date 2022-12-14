@@ -10,9 +10,9 @@ export const useAppSelector: TypedUseSelectorHook<RootStateType> = useSelector
 
 // use Actions hook
 const allActions = {
+  ...productAction,
   ...authAction,
   ...usersAction,
-  ...productAction,
 }
 
 export const useActions = () => {

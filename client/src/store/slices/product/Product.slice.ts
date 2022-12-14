@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ProductResponse } from '../../../http/product-service/product.model'
 import { ICategory } from '../../../models/ICategory'
 import { IProduct } from '../../../models/IProduct.model'
-import { deleteProduct, editProduct, fetchProducts } from './ActionCreators.product'
+import { fetchProducts, addImage, deleteImage, deleteProduct, editProduct } from './ActionCreators.product'
 
 export interface ProductState {
   products: IProduct[]
@@ -67,19 +67,36 @@ export const productSlice = createSlice({
     setEditMode: (state: ProductState, action: PayloadAction<boolean>) => {
       return (state = { ...state, isEditMode: action.payload })
     },
+    // deleteImage: (state: ProductState, action: PayloadAction<{ productId: number; imageId: number }>) => {
+    //   return (state = {
+    //     ...state,
+    //     products: state.products.filter((product) => {
+    //       if (product.id === action.payload.productId) {
+    //         product.images.filter((image) => image.id !== action.payload.imageId)
+    //       }
+    //       return product
+    //     }),
+    //   })
+    // },
   },
   extraReducers: {
     [fetchProducts.fulfilled.type]: fulfilledReducer,
     [deleteProduct.fulfilled.type]: fulfilledReducer,
     [editProduct.fulfilled.type]: fulfilledReducer,
+    [addImage.fulfilled.type]: fulfilledReducer,
+    [deleteImage.fulfilled.type]: fulfilledReducer,
 
     [fetchProducts.pending.type]: pendingReducer,
     [deleteProduct.pending.type]: pendingReducer,
     [editProduct.pending.type]: pendingReducer,
+    [addImage.pending.type]: pendingReducer,
+    [deleteImage.pending.type]: pendingReducer,
 
     [fetchProducts.rejected.type]: rejectionReducer,
     [deleteProduct.rejected.type]: rejectionReducer,
     [editProduct.rejected.type]: rejectionReducer,
+    [addImage.rejected.type]: rejectionReducer,
+    [deleteImage.rejected.type]: rejectionReducer,
   },
 })
 

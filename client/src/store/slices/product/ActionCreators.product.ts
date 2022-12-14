@@ -67,3 +67,33 @@ export const deleteProduct = createAsyncThunk<void, { id: number }, { rejectValu
     return thunkApi.rejectWithValue(error.response?.data?.message)
   }
 })
+
+export const addImage = createAsyncThunk<void, { id: number; image: File }, { rejectValue: string }>(
+  'product/images/addImage',
+  async ({ id, image }, thunkApi) => {
+    try {
+      await ProductService.addImage(id, image)
+
+      await thunkApi.dispatch(fetchProducts({ id: `${id}` }))
+    } catch (error: any) {
+      console.log(error.response?.data?.message)
+
+      return thunkApi.rejectWithValue(error.response?.data?.message)
+    }
+  }
+)
+
+export const deleteImage = createAsyncThunk<void, { productId: number; imageId: number }, { rejectValue: string }>(
+  'product/images/deleteImage',
+  async ({ productId, imageId }, thunkApi) => {
+    try {
+      await ProductService.deleteImage(productId, imageId)
+
+      await thunkApi.dispatch(fetchProducts({ id: `${productId}` }))
+    } catch (error: any) {
+      console.log(error.response?.data?.message)
+
+      return thunkApi.rejectWithValue(error.response?.data?.message)
+    }
+  }
+)

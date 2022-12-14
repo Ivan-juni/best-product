@@ -10,3 +10,13 @@ export interface ICharacteristics {
   createdAt?: string
   updatedAt?: string
 }
+
+export interface FormikCharacteristics {
+  purpose: string
+  description: string
+  design: string
+  connectionType: string
+  microphone: string
+  batteryLiveTime: string
+  display: string
+}

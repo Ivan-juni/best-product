@@ -258,7 +258,7 @@ export default class ProductService {
     }
   }
 
-  static async updateProduct(productId: number, changingValues: IProduct): Promise<Product | null> {
+  static async updateProduct(productId: number, changingValues: IProduct): Promise<Product> {
     try {
       const oldProduct = await Product.query().select().findById(productId)
 
@@ -278,7 +278,18 @@ export default class ProductService {
         removePhoto(oldProduct.image, `products/${replaceSpaces(oldProduct.name)}`)
       }
 
-      return Product.query().patchAndFetchById(productId, changingValues)
+      // достаем значения для продукта и для характеристик отдельно
+      const { price, categoryId, name, image, ...characteristics } = changingValues
+      // повторно для продукта, так как что-то из выше перечисленного может быть null
+      const { purpose, description, design, connectionType, microphone, batteryLiveTime, display, ...productValues } = changingValues
+
+      await ProductCharacteristics.query().patchAndFetchById(productId, characteristics)
+
+      const product = await Product.query()
+        .patchAndFetchById(productId, productValues)
+        .withGraphFetched('[category(selectNameIdParent), characteristics, images(selectIdAndSrc)]')
+
+      return product
     } catch (error) {
       console.log('Error: ', error)
       return null
