@@ -17,13 +17,11 @@ const categories_service_1 = __importDefault(require("../services/categories.ser
 class CategoriesController {
     static getCategories(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const categoryId = +req.params || null;
-            const page = +req.query.page || 0;
-            const limit = +req.query.limit || 5;
+            const categoryId = +req.query || null;
+            const categoryName = req.query || null;
             const categories = yield categories_service_1.default.getCategories({
                 categoryId,
-                page,
-                limit,
+                categoryName: categoryName.toString(),
             });
             if (!categories) {
                 return next(ApiError_1.default.badRequest(`Fetching categories error`));
@@ -53,7 +51,7 @@ class CategoriesController {
     }
     static deleteCategory(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { categoryId } = req.params;
+            const { categoryId } = req.query;
             if (!categoryId) {
                 return next(ApiError_1.default.internal('Please, type the category id'));
             }

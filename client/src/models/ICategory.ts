@@ -5,3 +5,7 @@ export interface ICategory {
   createdAt?: string
   updatedAt?: string
 }
+
+export interface ICategoryQuery {
+  id?: number | null
+}

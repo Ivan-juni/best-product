@@ -6,6 +6,8 @@ import Tab from '@mui/material/Tab'
 import Typography from '@mui/material/Typography'
 import UsersTab from './Tabs/Users/UsersTab'
 import ProductsTab from './Tabs/Products/ProductsTab'
+import CategoriesTab from './Tabs/Categories/CategoriesTab'
+import StatsTab from './Tabs/Stats/StatsTab'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -58,6 +60,8 @@ const AdminPanel: React.FC = () => {
         >
           <Tab label='Users' {...a11yProps(0)} />
           <Tab label='Products' {...a11yProps(1)} />
+          <Tab label='Categories' {...a11yProps(2)} />
+          <Tab label='Stats' {...a11yProps(3)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -65,6 +69,12 @@ const AdminPanel: React.FC = () => {
       </TabPanel>
       <TabPanel value={value} index={1}>
         <ProductsTab />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <CategoriesTab />
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        <StatsTab />
       </TabPanel>
     </div>
   )

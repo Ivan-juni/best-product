@@ -2,11 +2,8 @@ import Category from '../db/models/category.model'
 import { DeleteType } from './types/products.type'
 
 export default class CategoriesService {
-  static async getCategories(searchCriteria: { categoryId?: number | null; page?: number; limit?: number }) {
+  static async getCategories(searchCriteria: { categoryId?: number | null; categoryName?: string | null }): Promise<Category[] | null> {
     try {
-      const limit = +searchCriteria.limit || 5
-      const page = +searchCriteria.page || 0
-
       const categories = await Category.query()
         .select()
         .from('categories')
@@ -14,8 +11,10 @@ export default class CategoriesService {
           if (searchCriteria.categoryId) {
             qb.where('categories.id', '=', +searchCriteria.categoryId)
           }
+          if (searchCriteria.categoryName) {
+            qb.orWhere('categories.name', 'like', `%${searchCriteria.categoryName}`)
+          }
         })
-        .page(page, limit)
 
       return categories
     } catch (error) {

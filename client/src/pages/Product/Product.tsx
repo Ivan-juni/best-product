@@ -12,6 +12,7 @@ import { FormikType } from '../../models/Formik.model'
 import * as Yup from 'yup'
 import { FormikCharacteristics } from '../../models/ICharacteristics'
 import Preloader from '../../components/Common/Preloader/Preloader'
+import { fetchCategories } from '../../store/slices/categories/ActionCreators.categories'
 
 const Product: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -30,6 +31,7 @@ const Product: React.FC = () => {
   const product = filteredProduct[0]
 
   useEffect(() => {
+    dispatch(fetchCategories({}))
     if (!productId || productId === 0) {
       const id = searchParams.get('productId')
       if (id) {
@@ -42,6 +44,7 @@ const Product: React.FC = () => {
   const initialValues = {
     name: product ? product.name : '',
     price: product ? `${product.price}` : '', // then convert to number (on submit)
+    categoryId: (product ? product.category : '') ? `${product.category.id}` : '',
     purpose: (product ? product.characteristics : '') ? product.characteristics.purpose : '',
     description: (product ? product.characteristics : '') ? product.characteristics.description : '',
     design: (product ? product.characteristics : '') ? `${product.characteristics.design}` : '',
@@ -53,18 +56,20 @@ const Product: React.FC = () => {
 
   type InitialValuesType = {
     name: string
-    price: string | number
+    price: string
+    categoryId: string
   } & FormikCharacteristics
 
   const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus }: FormikType) => {
-    const { price, batteryLiveTime, microphone, ...rest } = values
+    const { price, categoryId, batteryLiveTime, microphone, ...rest } = values
 
     dispatch(
       editProduct({
-        id: product.id,
         setStatus,
         setSubmitting,
+        id: product.id,
         price: values.price ? +values.price : product.price,
+        categoryId: values.categoryId ? +values.categoryId : product.category.id,
         batteryLiveTime: values.batteryLiveTime ? +values.batteryLiveTime : product.characteristics.batteryLiveTime,
         microphone: values.microphone === 'true' ? true : false,
         ...rest,
@@ -107,6 +112,11 @@ const Product: React.FC = () => {
         return value === '' || value === 'null' ? null : value
       })
       .nullable(true),
+    categoryId: Yup.string()
+      .matches(/^[0-9]+$/, 'Must be only digits')
+      .transform((_, value: string) => {
+        return value === '' ? null : value
+      }),
   })
 
   const editClickHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -124,8 +134,10 @@ const Product: React.FC = () => {
 
   const addImageHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files) {
-      if (e.target.files.length === 1) {
-        dispatch(addImage({ id: product.id, image: e.target.files[0] }))
+      if (e.target.files.length > 0) {
+        const files = Array.from(e.target.files)
+
+        dispatch(addImage({ id: product.id, images: files }))
       }
     }
   }

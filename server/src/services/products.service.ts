@@ -95,6 +95,7 @@ export default class ProductService {
           findProducts(qb, searchCriteria)
         })
         .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
+        .innerJoin('categories', 'categories.id', 'products.categoryId')
         .withGraphFetched('[category(selectNameIdParent), characteristics, images(selectIdAndSrc)]')
         .orderBy(`products.${sortParams.column}`, sortParams.order)
         .page(page, limit)
@@ -118,13 +119,13 @@ export default class ProductService {
   static async getStatistics(quantity = 5): StatisticsType {
     // 5 most viewed/liked/disliked/added to favorites
     try {
-      const views = await Product.query().select('name', 'views').orderBy('views', 'desc').limit(quantity)
+      const views = await Product.query().select('id', 'name', 'views').orderBy('views', 'desc').limit(quantity)
 
-      const likes = await Product.query().select('name', 'likes').orderBy('likes', 'desc').limit(quantity)
+      const likes = await Product.query().select('id', 'name', 'likes').orderBy('likes', 'desc').limit(quantity)
 
-      const dislikes = await Product.query().select('name', 'dislikes').orderBy('dislikes', 'desc').limit(quantity)
+      const dislikes = await Product.query().select('id', 'name', 'dislikes').orderBy('dislikes', 'desc').limit(quantity)
 
-      const favoriteStars = await Product.query().select('name', 'favoriteStars').orderBy('favoriteStars', 'desc').limit(quantity)
+      const favoriteStars = await Product.query().select('id', 'name', 'favoriteStars').orderBy('favoriteStars', 'desc').limit(quantity)
 
       return {
         topViews: views,
@@ -214,18 +215,36 @@ export default class ProductService {
     }
   }
 
-  static async addImage(productId: number, fileName: string): Promise<Image | null> {
+  static async addImage(
+    productId: number,
+    files:
+      | Express.Multer.File[]
+      | {
+          [fieldname: string]: Express.Multer.File[]
+        }
+  ): Promise<Image[] | null> {
     try {
+      let insertedImages: Image[] = []
+      let images: Express.Multer.File[]
+
       const product = await Product.query().findById(productId)
 
-      const image = `http://localhost:${process.env.PORT}/static/products/${replaceSpaces(product.name)}/${fileName}`
+      if (Array.isArray(files)) {
+        images = Array.from(files)
+      } else {
+        images = Array.from(files[0])
+      }
 
-      const insertedImage = await Image.query().insert({
-        productId,
-        src: image,
+      images.forEach(async (image) => {
+        const src = `http://localhost:${process.env.PORT}/static/products/${replaceSpaces(product.name)}/${image.filename}`
+        const insertedImage = await Image.query().insert({
+          productId,
+          src,
+        })
+        insertedImages.push(insertedImage)
       })
 
-      return insertedImage
+      return insertedImages
     } catch (error) {
       console.log('Error: ', error)
       return null
@@ -244,13 +263,15 @@ export default class ProductService {
         display: product.display,
       })
 
-      return Product.query().insert({
-        name: product.name,
-        price: +product.price,
-        image: product.image,
-        categoryId: +product.categoryId,
-        characteristicsId: +characteristics.id,
-      })
+      return Product.query()
+        .insert({
+          name: product.name,
+          price: +product.price,
+          image: product.image,
+          categoryId: +product.categoryId,
+          characteristicsId: +characteristics.id,
+        })
+        .withGraphFetched('[category(selectNameIdParent), characteristics, images(selectIdAndSrc)]')
     } catch (error) {
       console.log('Error: ', error)
       removePhoto(product.image, `products/${replaceSpaces(product.name)}`)

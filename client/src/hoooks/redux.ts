@@ -3,6 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { authAction } from '../store/slices/auth/Auth.slice'
 import { usersAction } from '../store/slices/users/Users.slice'
 import { productAction } from '../store/slices/product/Product.slice'
+import { categoriesAction } from '../store/slices/categories/Categories.slice'
 import { AppDispatchType, RootStateType } from '../store/store'
 
 export const useAppDispatch = () => useDispatch<AppDispatchType>()
@@ -13,6 +14,7 @@ const allActions = {
   ...productAction,
   ...authAction,
   ...usersAction,
+  ...categoriesAction,
 }
 
 export const useActions = () => {

@@ -2,8 +2,9 @@ import $api from '../index'
 import { AxiosResponse } from 'axios'
 import { DeleteResponse } from '../models/DeleteResponse'
 import { IProduct, IProductQuery } from '../../models/IProduct.model'
-import { ProductChangingValues, ProductResponse } from './product.model'
+import { ProductAddingValues, ProductChangingValues, ProductResponse } from './product.model'
 import { IImages } from '../../models/IImages.model'
+import { IStats } from '../../models/IStats.model'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductResponse>> {
@@ -19,6 +20,18 @@ export default class ProductService {
         ...searchCriteria,
       },
     })
+  }
+
+  static async addProduct(product: ProductAddingValues): Promise<AxiosResponse<IProduct>> {
+    const formData = new FormData()
+    formData.append('image', product.image)
+    return $api.post<IProduct>(
+      `/products`,
+      { ...product, ...formData },
+      {
+        headers: { 'Content-type': 'multipart/form-data' },
+      }
+    )
   }
 
   static async editProduct(id: number, changingValues: ProductChangingValues): Promise<AxiosResponse<IProduct>> {
@@ -39,10 +52,13 @@ export default class ProductService {
     return $api.delete<DeleteResponse>(`/products?productId=${id}`)
   }
 
-  static async addImage(id: number, image: File): Promise<AxiosResponse<IImages>> {
+  static async addImage(id: number, images: File[]): Promise<AxiosResponse<IImages>> {
     const formData = new FormData()
 
-    formData.append('image', image)
+    images.forEach((image) => {
+      formData.append('image', image)
+    })
+
     return $api.post<IImages>(`/products/images?productId=${id}`, formData, {
       headers: { 'Content-type': 'multipart/form-data' },
     })
@@ -50,5 +66,13 @@ export default class ProductService {
 
   static async deleteImage(productId: number, imageId: number): Promise<AxiosResponse<DeleteResponse>> {
     return $api.delete<DeleteResponse>(`/products/images?productId=${productId}&imageId=${imageId}`)
+  }
+
+  static async getStats(quantity?: number): Promise<AxiosResponse<IStats>> {
+    return $api.get<IStats>(`/products/statistics`, {
+      params: {
+        quantity,
+      },
+    })
   }
 }

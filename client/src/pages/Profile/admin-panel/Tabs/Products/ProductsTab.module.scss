@@ -14,14 +14,15 @@
         margin-bottom: 35px;
     }
 
-    .products {
+    .products__fetch {
         margin-bottom: 50px;
+    
         .body {
             .items {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 30px;
-
+    
                 .item {
                     display: flex;
                     justify-content: space-between;
@@ -30,18 +31,24 @@
                     background-color: rgba(99, 139, 136, 0.068);
                     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
                     border-radius: 10px;
-
+    
                     .menu {
                         display: flex;
                         align-items: center;
                         gap: 10px;
+                        a {
+                            max-height: 32px;
+                        }
                         svg {
                             width: 32px;
-
+    
                             &:hover {
                                 transition: 0.3s;
                                 opacity: 0.6;
                             }
+                        }
+                        .deleteIcon{
+                            width: 34px;
                         }
                     }
                 }
@@ -56,18 +63,23 @@
             align-items: center;
             margin-bottom: 50px;
         }
-
+    
         .noProducts {
             width: 100%;
             margin-bottom: 0px;
         }
+    
+        .pagination {
+            margin-top: 50px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
 
-    .pagination {
-        margin-top: 50px;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .products__add {
+
     }
-}
+}    
+

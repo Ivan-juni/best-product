@@ -102,18 +102,18 @@ class ProductsController {
     static addImage(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { productId } = req.query;
-            const fileName = req.file !== undefined ? req.file.filename : null;
+            const files = req.files !== undefined ? req.files : null;
             if (!productId) {
                 return next(ApiError_1.default.internal('Please, type product id'));
             }
-            if (!fileName || fileName == undefined) {
+            if (!files || files == undefined) {
                 return next(ApiError_1.default.internal('Please, add image'));
             }
-            const insertedImage = yield products_service_1.default.addImage(+productId, fileName);
-            if (!insertedImage) {
+            const insertedImages = yield products_service_1.default.addImage(+productId, files);
+            if (!insertedImages) {
                 return next(ApiError_1.default.badRequest(`Adding image error`));
             }
-            return res.json(insertedImage);
+            return res.json(insertedImages);
         });
     }
     static addProduct(req, res, next) {

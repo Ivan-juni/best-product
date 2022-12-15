@@ -4,9 +4,9 @@ import categoriesController from '../controllers/categories.controller'
 
 const router = express.Router()
 
-// @route GET /api/categories/:categoryId
-// @des Get  categories
-router.get('/:categoryId', categoriesController.getCategories)
+// @route GET /api/categories?categoryId=
+// @des Get categories
+router.get('/', categoriesController.getCategories)
 
 // ! Admin panel
 
@@ -14,12 +14,8 @@ router.get('/:categoryId', categoriesController.getCategories)
 // @des Add a category
 router.post('/', checkRole('ADMIN'), categoriesController.addCategory)
 
-// @route DELETE /api/categories/:categoryId
+// @route DELETE /api/categories?categoryId=
 // @des Delete a category
-router.delete(
-  '/:categoryId',
-  checkRole('ADMIN'),
-  categoriesController.deleteCategory
-)
+router.delete('/', checkRole('ADMIN'), categoriesController.deleteCategory)
 
 export default router

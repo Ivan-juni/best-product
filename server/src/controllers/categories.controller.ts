@@ -2,19 +2,16 @@ import { Request, Response, NextFunction } from 'express'
 import ApiError from '../errors/ApiError'
 import categoriesService from '../services/categories.service'
 import { ReturnType } from './types/return.type'
-import Objection from 'objection'
 import Category from '../db/models/category.model'
 
 export default class CategoriesController {
-  static async getCategories(req: Request, res: Response, next: NextFunction): ReturnType<Objection.Page<Category>> {
-    const categoryId = +req.params || null
-    const page = +req.query.page || 0
-    const limit = +req.query.limit || 5
+  static async getCategories(req: Request, res: Response, next: NextFunction): ReturnType<Category[]> {
+    const categoryId = +req.query || null
+    const categoryName = req.query || null
 
     const categories = await categoriesService.getCategories({
       categoryId,
-      page,
-      limit,
+      categoryName: categoryName.toString(),
     })
 
     if (!categories) {
@@ -49,7 +46,7 @@ export default class CategoriesController {
   }
 
   static async deleteCategory(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
-    const { categoryId } = req.params
+    const { categoryId } = req.query
 
     if (!categoryId) {
       return next(ApiError.internal('Please, type the category id'))

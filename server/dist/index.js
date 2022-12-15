@@ -27,14 +27,7 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
         (0, db_setup_1.default)();
         dotenv_1.default.config();
         const port = process.env.PORT || 8000;
-        app.use(function (req, res, next) {
-            res.header('Access-Control-Allow-Origin', '*');
-            res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
-            res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-            res.header('Access-Control-Allow-Credentials', 'true');
-            next();
-        });
-        app.use((0, cors_1.default)());
+        app.use((0, cors_1.default)({ credentials: true, origin: true }));
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: false }));
         app.use((0, cookie_parser_1.default)());

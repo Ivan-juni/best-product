@@ -2,7 +2,7 @@ import React from 'react'
 import { useAppDispatch } from '../../../../../../hoooks/redux'
 import styles from './ProductsMenu.module.scss'
 import { FormikType } from '../../../../../../models/Formik.model'
-import FindMenu from '../../../../../../components/Common/find-menu/FindMenu'
+import FindMenu from '../../../../../../components/Common/Find-menu/FindMenu'
 import { fetchProducts } from '../../../../../../store/slices/product/ActionCreators.product'
 
 const ProductsMenu: React.FC = () => {

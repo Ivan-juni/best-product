@@ -47,7 +47,7 @@ const ImagesSlider: React.FC<PropsType> = ({ product, isEditMode, changeMainImag
       <div className={isEditMode ? `${styles.first__slider} ${styles.editMode}` : styles.first__slider}>
         {isEditMode && (
           <>
-            <input type='file' id='add-image' hidden onChange={(e) => addImage(e)} />
+            <input type='file' id='add-image' name='image' hidden onChange={(e) => addImage(e)} multiple />
             <label htmlFor='add-image' className={styles.change}>
               <AddIcon className={styles.addIcon} />
             </label>
@@ -60,7 +60,7 @@ const ImagesSlider: React.FC<PropsType> = ({ product, isEditMode, changeMainImag
                 <div className={styles.menu}>
                   {image.src === product.image && (
                     <>
-                      <input type='file' id='change-image' hidden onChange={(e) => changeMainImage(e)} />
+                      <input type='file' id='change-image' hidden onChange={(e) => changeMainImage(e)} multiple />
                       <label htmlFor='change-image' className={styles.change}>
                         <EditIcon className={styles.editIcon} />
                       </label>

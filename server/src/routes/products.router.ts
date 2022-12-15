@@ -48,7 +48,7 @@ router.get('/statistics', checkRole('ADMIN'), productController.getStatistics)
 
 // @route GET /api/products/statistics/price-dynamics
 // @des Get products
-router.get('/statistics/price-dynamics', checkRole('ADMIN'), productController.getPriceDynamics)
+router.get('/statistics/price-dynamics', productController.getPriceDynamics)
 
 // @route GET /api/products/characteristics?productId=5
 // @des Get product characteristics
@@ -61,7 +61,7 @@ router.post('/', checkRole('ADMIN'), upload.single('image'), productController.a
 
 // @route POST /api/products/images?productId=
 // @des Add a product images
-router.post('/images', checkRole('ADMIN'), upload.single('image'), productController.addImage)
+router.post('/images', checkRole('ADMIN'), upload.array('image', 5), productController.addImage)
 
 // @route PUT /api/products?productId=
 // @des Update the product

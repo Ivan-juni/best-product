@@ -8,6 +8,7 @@ import { ReactComponent as FavoriteIcon } from '../../../assets/icons/stats/favo
 import { IProduct } from '../../../models/IProduct.model'
 import ImagesSlider from '../../../components/Common/Slider/Slider'
 import { Field, ErrorMessage } from 'formik'
+import { useAppSelector } from '../../../hoooks/redux'
 
 type PropsType = {
   product: IProduct
@@ -18,6 +19,8 @@ type PropsType = {
 }
 
 const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addImage, deleteImage }) => {
+  const { categories } = useAppSelector((state) => state.categoriesReducer)
+
   return (
     <div className={styles.wrapper}>
       <section className={styles.slider}>
@@ -65,6 +68,32 @@ const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addIm
                 <p>
                   <span>Connection type: </span>
                   {product.characteristics.connectionType}
+                </p>
+                <p>
+                  {isEditMode ? (
+                    <span className={styles.formControl}>
+                      <span className={styles.error}>
+                        <ErrorMessage name='categoryId' className={styles.error} />
+                      </span>
+                      <span className={styles.categorySelect}>
+                        <span>Category: </span>
+                        <Field as='select' name='categoryId'>
+                          {categories.map((category) => {
+                            return (
+                              <option key={category.id} value={category.id}>
+                                {category.name}
+                              </option>
+                            )
+                          })}
+                        </Field>
+                      </span>
+                    </span>
+                  ) : (
+                    <>
+                      <span>Category: </span>
+                      {product.category.name}
+                    </>
+                  )}
                 </p>
               </div>
             </div>

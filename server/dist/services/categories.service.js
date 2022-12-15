@@ -17,8 +17,6 @@ class CategoriesService {
     static getCategories(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const limit = +searchCriteria.limit || 5;
-                const page = +searchCriteria.page || 0;
                 const categories = yield category_model_1.default.query()
                     .select()
                     .from('categories')
@@ -26,8 +24,10 @@ class CategoriesService {
                     if (searchCriteria.categoryId) {
                         qb.where('categories.id', '=', +searchCriteria.categoryId);
                     }
-                })
-                    .page(page, limit);
+                    if (searchCriteria.categoryName) {
+                        qb.orWhere('categories.name', 'like', `%${searchCriteria.categoryName}`);
+                    }
+                });
                 return categories;
             }
             catch (error) {

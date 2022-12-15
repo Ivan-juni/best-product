@@ -105,24 +105,24 @@ export default class ProductsController {
     }
   }
 
-  static async addImage(req: Request, res: Response, next: NextFunction): ReturnType<Image> {
+  static async addImage(req: Request, res: Response, next: NextFunction): ReturnType<Image[]> {
     const { productId } = req.query
-    const fileName = req.file !== undefined ? req.file.filename : null
+    const files = req.files !== undefined ? req.files : null
 
     if (!productId) {
       return next(ApiError.internal('Please, type product id'))
     }
-    if (!fileName || fileName == undefined) {
+    if (!files || files == undefined) {
       return next(ApiError.internal('Please, add image'))
     }
 
-    const insertedImage = await productsService.addImage(+productId, fileName)
+    const insertedImages = await productsService.addImage(+productId, files)
 
-    if (!insertedImage) {
+    if (!insertedImages) {
       return next(ApiError.badRequest(`Adding image error`))
     }
 
-    return res.json(insertedImage)
+    return res.json(insertedImages)
   }
 
   static async addProduct(req: Request, res: Response, next: NextFunction): ReturnType<Product> {

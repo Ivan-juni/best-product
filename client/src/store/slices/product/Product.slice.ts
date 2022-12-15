@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ProductResponse } from '../../../http/product-service/product.model'
 import { ICategory } from '../../../models/ICategory'
 import { IProduct } from '../../../models/IProduct.model'
-import { fetchProducts, addImage, deleteImage, deleteProduct, editProduct } from './ActionCreators.product'
+import { IStats } from '../../../models/IStats.model'
+import { fetchProducts, addImage, deleteImage, deleteProduct, editProduct, addProduct } from './ActionCreators.product'
 
 export interface ProductState {
   products: IProduct[]
   parentCategories: ICategory[]
+  stats: IStats
   productId: number
   total: number
   limit: number
@@ -19,6 +21,7 @@ export interface ProductState {
 const initialState: ProductState = {
   products: [],
   parentCategories: [],
+  stats: {} as IStats,
   productId: 0,
   total: 0,
   limit: 6,
@@ -55,9 +58,6 @@ export const productSlice = createSlice({
         return (state = { ...state, products: action.payload.results, total: action.payload.total })
       }
     },
-    deleteProduct: (state: ProductState, action: PayloadAction<number>) => {
-      return (state = { ...state, products: state.products.filter((product) => product.id !== action.payload) })
-    },
     setProductsPage: (state: ProductState, action: PayloadAction<number>) => {
       return (state = { ...state, page: action.payload })
     },
@@ -66,6 +66,12 @@ export const productSlice = createSlice({
     },
     setEditMode: (state: ProductState, action: PayloadAction<boolean>) => {
       return (state = { ...state, isEditMode: action.payload })
+    },
+    setStats: (state: ProductState, action: PayloadAction<IStats>) => {
+      return (state = { ...state, stats: action.payload })
+    },
+    deleteProduct: (state: ProductState, action: PayloadAction<number>) => {
+      return (state = { ...state, products: state.products.filter((product) => product.id !== action.payload) })
     },
     // deleteImage: (state: ProductState, action: PayloadAction<{ productId: number; imageId: number }>) => {
     //   return (state = {
@@ -83,18 +89,21 @@ export const productSlice = createSlice({
     [fetchProducts.fulfilled.type]: fulfilledReducer,
     [deleteProduct.fulfilled.type]: fulfilledReducer,
     [editProduct.fulfilled.type]: fulfilledReducer,
+    [addProduct.fulfilled.type]: fulfilledReducer,
     [addImage.fulfilled.type]: fulfilledReducer,
     [deleteImage.fulfilled.type]: fulfilledReducer,
 
     [fetchProducts.pending.type]: pendingReducer,
     [deleteProduct.pending.type]: pendingReducer,
     [editProduct.pending.type]: pendingReducer,
+    [addProduct.pending.type]: pendingReducer,
     [addImage.pending.type]: pendingReducer,
     [deleteImage.pending.type]: pendingReducer,
 
     [fetchProducts.rejected.type]: rejectionReducer,
     [deleteProduct.rejected.type]: rejectionReducer,
     [editProduct.rejected.type]: rejectionReducer,
+    [addProduct.rejected.type]: rejectionReducer,
     [addImage.rejected.type]: rejectionReducer,
     [deleteImage.rejected.type]: rejectionReducer,
   },

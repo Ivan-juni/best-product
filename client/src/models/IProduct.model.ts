@@ -7,7 +7,7 @@ export interface IProduct {
   name: string
   price: number
   image: string
-  categories: ICategory
+  category: ICategory
   likes: number
   dislikes: number
   views: number

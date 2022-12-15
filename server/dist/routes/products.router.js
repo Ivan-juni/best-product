@@ -52,7 +52,7 @@ router.get('/', products_controller_1.default.getProducts);
 router.get('/statistics', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.getStatistics);
 // @route GET /api/products/statistics/price-dynamics
 // @des Get products
-router.get('/statistics/price-dynamics', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.getPriceDynamics);
+router.get('/statistics/price-dynamics', products_controller_1.default.getPriceDynamics);
 // @route GET /api/products/characteristics?productId=5
 // @des Get product characteristics
 router.get('/characteristics', products_controller_1.default.getCharacteristics);
@@ -62,7 +62,7 @@ router.get('/characteristics', products_controller_1.default.getCharacteristics)
 router.post('/', (0, check_role_middleware_1.default)('ADMIN'), upload.single('image'), products_controller_1.default.addProduct);
 // @route POST /api/products/images?productId=
 // @des Add a product images
-router.post('/images', (0, check_role_middleware_1.default)('ADMIN'), upload.single('image'), products_controller_1.default.addImage);
+router.post('/images', (0, check_role_middleware_1.default)('ADMIN'), upload.array('image', 5), products_controller_1.default.addImage);
 // @route PUT /api/products?productId=
 // @des Update the product
 router.put('/', (0, check_role_middleware_1.default)('ADMIN'), upload.single('image'), products_controller_1.default.updateProduct);

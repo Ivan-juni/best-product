@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import ProductMini from '../../../../../components/Products/product-mini/ProductMini'
-import CategoriesMenu from './categories-menu/CategoriesMenu'
 import ProductsMenu from './products-menu/ProductsMenu'
 import { ReactComponent as EditIcon } from '../../../../../assets/icons/other/edit-icon.svg'
 import { ReactComponent as DeleteIcon } from '../../../../../assets/icons/other/delete-icon.svg'
@@ -11,6 +10,8 @@ import Preloader from '../../../../../components/Common/Preloader/Preloader'
 import { IProduct } from '../../../../../models/IProduct.model'
 import Paginator from '../../../../../components/Common/Paginator/Paginator'
 import { NavLink, useNavigate } from 'react-router-dom'
+import AddProductForm from './product-add/AddProductForm'
+import { fetchCategories } from '../../../../../store/slices/categories/ActionCreators.categories'
 
 const ProductsTab: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -22,12 +23,18 @@ const ProductsTab: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchProducts({ page: `${page}`, limit: `${limit}` }))
-  }, [page])
+    dispatch(fetchCategories({}))
+  }, [page, total])
 
   const editProductHandler = (e: React.MouseEvent<SVGSVGElement, MouseEvent>, id: number) => {
     // e.stopPropagation()
     setEditMode(true)
     dispatch(fetchProducts({ id: `${id}` }))
+  }
+
+  const deleteProductHandler = (e: React.MouseEvent<SVGSVGElement, MouseEvent>, id: number) => {
+    e.stopPropagation()
+    dispatch(deleteProduct({ id }))
   }
 
   const showProductHandler = (id: number) => {
@@ -39,7 +46,7 @@ const ProductsTab: React.FC = () => {
 
   return (
     <div className={styles.wrapper}>
-      <section className={styles.products}>
+      <section className={styles.products__fetch}>
         <h2>Products</h2>
         <div className={styles.body}>
           <ProductsMenu />
@@ -54,7 +61,7 @@ const ProductsTab: React.FC = () => {
                     <NavLink to={`/product?productId=${product.id}`}>
                       <EditIcon onClick={(e) => editProductHandler(e, product.id)} />
                     </NavLink>
-                    <DeleteIcon onClick={() => dispatch(deleteProduct({ id: product.id }))} />
+                    <DeleteIcon className={styles.deleteIcon} onClick={(e) => deleteProductHandler(e, product.id)} />
                   </div>
                 </div>
               ))
@@ -70,10 +77,10 @@ const ProductsTab: React.FC = () => {
           </div>
         </div>
       </section>
-      <section className={styles.categories}>
-        <h2>Categories</h2>
+      <section className={styles.products__add}>
+        <h2>Add product</h2>
         <div className={styles.body}>
-          <CategoriesMenu />
+          <AddProductForm />
         </div>
       </section>
     </div>

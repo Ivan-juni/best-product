@@ -1,30 +1,16 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styles from './Profile.module.scss'
 import avatar from '../../assets/images/large-avatar.png'
-import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hoooks/redux'
 import Preloader from '../../components/Common/Preloader/Preloader'
-import { useNavigate } from 'react-router-dom'
 import { editProfile } from '../../store/slices/users/ActionCreators.users'
 import ProfileForm from './profile-form/ProfileForm'
 import AdminPanel from './admin-panel/AdminPanel'
+import { withAuthRedirect } from '../../hoc/withAuthRedirect.hoc'
 
 const Profile: React.FC = () => {
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
   const { user, isLoading, isAuth } = useAppSelector((state) => state.authReducer)
-  const { setLogModalOpen } = useActions()
-
-  useEffect(() => {
-    navigate('/profile')
-    setLogModalOpen(false)
-
-    if (!isLoading) {
-      if (!isAuth) {
-        navigate('/home')
-        setLogModalOpen(true)
-      }
-    }
-  }, [isAuth, isLoading])
 
   const changePhotoHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -61,4 +47,4 @@ const Profile: React.FC = () => {
   )
 }
 
-export default Profile
+export default withAuthRedirect(Profile)

@@ -95,6 +95,7 @@ class ProductService {
                     (0, find_products_util_1.findProducts)(qb, searchCriteria);
                 })
                     .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
+                    .innerJoin('categories', 'categories.id', 'products.categoryId')
                     .withGraphFetched('[category(selectNameIdParent), characteristics, images(selectIdAndSrc)]')
                     .orderBy(`products.${sortParams.column}`, sortParams.order)
                     .page(page, limit);
@@ -120,10 +121,10 @@ class ProductService {
         return __awaiter(this, void 0, void 0, function* () {
             // 5 most viewed/liked/disliked/added to favorites
             try {
-                const views = yield product_model_1.default.query().select('name', 'views').orderBy('views', 'desc').limit(quantity);
-                const likes = yield product_model_1.default.query().select('name', 'likes').orderBy('likes', 'desc').limit(quantity);
-                const dislikes = yield product_model_1.default.query().select('name', 'dislikes').orderBy('dislikes', 'desc').limit(quantity);
-                const favoriteStars = yield product_model_1.default.query().select('name', 'favoriteStars').orderBy('favoriteStars', 'desc').limit(quantity);
+                const views = yield product_model_1.default.query().select('id', 'name', 'views').orderBy('views', 'desc').limit(quantity);
+                const likes = yield product_model_1.default.query().select('id', 'name', 'likes').orderBy('likes', 'desc').limit(quantity);
+                const dislikes = yield product_model_1.default.query().select('id', 'name', 'dislikes').orderBy('dislikes', 'desc').limit(quantity);
+                const favoriteStars = yield product_model_1.default.query().select('id', 'name', 'favoriteStars').orderBy('favoriteStars', 'desc').limit(quantity);
                 return {
                     topViews: views,
                     topLikes: likes,
@@ -209,16 +210,27 @@ class ProductService {
             }
         });
     }
-    static addImage(productId, fileName) {
+    static addImage(productId, files) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                let insertedImages = [];
+                let images;
                 const product = yield product_model_1.default.query().findById(productId);
-                const image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(product.name)}/${fileName}`;
-                const insertedImage = yield image_module_1.default.query().insert({
-                    productId,
-                    src: image,
-                });
-                return insertedImage;
+                if (Array.isArray(files)) {
+                    images = Array.from(files);
+                }
+                else {
+                    images = Array.from(files[0]);
+                }
+                images.forEach((image) => __awaiter(this, void 0, void 0, function* () {
+                    const src = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(product.name)}/${image.filename}`;
+                    const insertedImage = yield image_module_1.default.query().insert({
+                        productId,
+                        src,
+                    });
+                    insertedImages.push(insertedImage);
+                }));
+                return insertedImages;
             }
             catch (error) {
                 console.log('Error: ', error);
@@ -238,13 +250,15 @@ class ProductService {
                     batteryLiveTime: product.batteryLiveTime,
                     display: product.display,
                 });
-                return product_model_1.default.query().insert({
+                return product_model_1.default.query()
+                    .insert({
                     name: product.name,
                     price: +product.price,
                     image: product.image,
                     categoryId: +product.categoryId,
                     characteristicsId: +characteristics.id,
-                });
+                })
+                    .withGraphFetched('[category(selectNameIdParent), characteristics, images(selectIdAndSrc)]');
             }
             catch (error) {
                 console.log('Error: ', error);
