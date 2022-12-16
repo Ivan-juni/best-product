@@ -131,12 +131,27 @@ export const deleteImage = createAsyncThunk<void, { productId: number; imageId: 
 // stats
 
 export const fetchStats = createAsyncThunk<void, { quantity?: number }, { rejectValue: string }>(
-  'product/fetchStats',
+  'product/stats/fetchStats',
   async ({ quantity }, thunkApi) => {
     try {
       const response = await ProductService.getStats(quantity)
 
       thunkApi.dispatch(productAction.setStats(response.data))
+    } catch (error: any) {
+      console.log(error.response?.data?.message)
+
+      return thunkApi.rejectWithValue(error.response?.data?.message)
+    }
+  }
+)
+
+export const fetchPriceDynamics = createAsyncThunk<void, { productId: number }, { rejectValue: string }>(
+  'product/stats/fetchPriceDynamics',
+  async ({ productId }, thunkApi) => {
+    try {
+      const response = await ProductService.getPriceDynamics(productId)
+
+      thunkApi.dispatch(productAction.setPriceDynamics(response.data))
     } catch (error: any) {
       console.log(error.response?.data?.message)
 

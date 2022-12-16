@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const comment_model_1 = __importDefault(require("../db/models/comment.model"));
+const sort_by_util_1 = require("../utils/sort-by.util");
 class CommentService {
     static getComments(userId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -47,6 +48,24 @@ class CommentService {
             }
         });
     }
+    static updateComment(userId, commentId, text) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const oldComment = yield comment_model_1.default.query().select().where({ userId, id: commentId });
+                if (!oldComment) {
+                    throw new Error("Can't find this comment");
+                }
+                const comment = yield comment_model_1.default.query().select().where({ userId, id: commentId }).patchAndFetch({
+                    text,
+                });
+                return comment;
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
     static deleteComment(userId, commentId, role) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -71,16 +90,19 @@ class CommentService {
             }
         });
     }
-    static getProductComments(productId, page = 0, limit = 5) {
+    static getProductComments(productId, searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                // параметры для сортировки
+                const sortParams = (0, sort_by_util_1.sort)(searchCriteria, ['date']);
                 const comments = yield comment_model_1.default.query()
                     .select('comments.id', 'comments.userId', 'users.email as userEmail', 'users.firstName as userFirstName', 'users.lastName as userLastName', 'users.photo as userPhoto', 'comments.text', 'comments.createdAt', 'comments.updatedAt')
                     .where({ productId })
                     .leftJoin('users', function () {
                     this.on('users.id', '=', 'comments.userId');
                 })
-                    .page(page, limit);
+                    .orderBy(`comments.createdAt`, sortParams.order)
+                    .page(searchCriteria.page, searchCriteria.limit);
                 return comments;
             }
             catch (error) {

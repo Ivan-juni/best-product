@@ -1,0 +1,54 @@
+import React, { useState } from 'react'
+import { useActions, useAppDispatch, useAppSelector } from '../../../../hoooks/redux'
+import { ReactComponent as SortIcon } from '../../../../assets/icons/filters/sort-icon.svg'
+import { ReactComponent as ArrowUpIcon } from '../../../../assets/icons/other/arrows/white-arrow-top.svg'
+import styles from './Comments.module.scss'
+import Comment from './Comment/Comment'
+import { IComment } from '../../../../models/IComment'
+import Paginator from '../../../../components/Common/Paginator/Paginator'
+import AddComment from './add-comment/AddComment'
+import { fetchComments } from '../../../../store/slices/comments/ActionCreators.comments'
+
+type PropsType = {
+  productId: number
+}
+
+const Comments: React.FC<PropsType> = ({ productId }) => {
+  const dispatch = useAppDispatch()
+  const [isSort, setSort] = useState(false)
+  const { comments, total, page } = useAppSelector((state) => state.commentsReducer)
+
+  const { setCommentsPage } = useActions()
+
+  const sortByDate = () => {
+    setSort((prev) => !prev)
+    isSort ? dispatch(fetchComments({ productId, orderByDate: 'low' })) : dispatch(fetchComments({ productId, orderByDate: 'high' }))
+  }
+
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.menu}>
+        <button className={styles.sort} onClick={() => sortByDate()}>
+          <SortIcon />
+          <div className={styles.text}>
+            <span>Date</span>
+            <ArrowUpIcon className={isSort ? `${styles.arrowUp}` : `${styles.arrowDown}`} />
+          </div>
+        </button>
+      </div>
+      <div className={styles.comments}>
+        {comments.map((comment: IComment) => {
+          return <Comment key={comment.id} comment={comment} productId={productId} />
+        })}
+      </div>
+      <div className={styles.pagination}>
+        <Paginator total={total} page={page} setPage={setCommentsPage} limit={3} />
+      </div>
+      <div className={styles.add}>
+        <AddComment productId={productId} />
+      </div>
+    </div>
+  )
+}
+
+export default Comments

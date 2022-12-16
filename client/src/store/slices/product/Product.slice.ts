@@ -2,17 +2,30 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ProductResponse } from '../../../http/product-service/product.model'
 import { ICategory } from '../../../models/ICategory'
 import { IProduct } from '../../../models/IProduct.model'
-import { IStats } from '../../../models/IStats.model'
-import { fetchProducts, addImage, deleteImage, deleteProduct, editProduct, addProduct } from './ActionCreators.product'
+import { IPriceDynamics, IStats } from '../../../models/IStats.model'
+import {
+  fetchProducts,
+  addImage,
+  deleteImage,
+  deleteProduct,
+  editProduct,
+  addProduct,
+  fetchStats,
+  fetchPriceDynamics,
+} from './ActionCreators.product'
 
 export interface ProductState {
   products: IProduct[]
   parentCategories: ICategory[]
   stats: IStats
+  priceDynamics: IPriceDynamics[]
   productId: number
   total: number
   limit: number
   page: number
+  isLiked: boolean
+  isDisliked: boolean
+  isFavorite: boolean
   isEditMode: boolean
   isLoading: boolean
   error: string
@@ -22,10 +35,14 @@ const initialState: ProductState = {
   products: [],
   parentCategories: [],
   stats: {} as IStats,
+  priceDynamics: [],
   productId: 0,
   total: 0,
   limit: 6,
   page: 0,
+  isLiked: false,
+  isDisliked: false,
+  isFavorite: false,
   isEditMode: false,
   isLoading: false,
   error: '',
@@ -70,20 +87,12 @@ export const productSlice = createSlice({
     setStats: (state: ProductState, action: PayloadAction<IStats>) => {
       return (state = { ...state, stats: action.payload })
     },
+    setPriceDynamics: (state: ProductState, action: PayloadAction<IPriceDynamics[]>) => {
+      return (state = { ...state, priceDynamics: action.payload })
+    },
     deleteProduct: (state: ProductState, action: PayloadAction<number>) => {
       return (state = { ...state, products: state.products.filter((product) => product.id !== action.payload) })
     },
-    // deleteImage: (state: ProductState, action: PayloadAction<{ productId: number; imageId: number }>) => {
-    //   return (state = {
-    //     ...state,
-    //     products: state.products.filter((product) => {
-    //       if (product.id === action.payload.productId) {
-    //         product.images.filter((image) => image.id !== action.payload.imageId)
-    //       }
-    //       return product
-    //     }),
-    //   })
-    // },
   },
   extraReducers: {
     [fetchProducts.fulfilled.type]: fulfilledReducer,
@@ -92,6 +101,8 @@ export const productSlice = createSlice({
     [addProduct.fulfilled.type]: fulfilledReducer,
     [addImage.fulfilled.type]: fulfilledReducer,
     [deleteImage.fulfilled.type]: fulfilledReducer,
+    [fetchStats.fulfilled.type]: fulfilledReducer,
+    [fetchPriceDynamics.fulfilled.type]: fulfilledReducer,
 
     [fetchProducts.pending.type]: pendingReducer,
     [deleteProduct.pending.type]: pendingReducer,
@@ -99,6 +110,8 @@ export const productSlice = createSlice({
     [addProduct.pending.type]: pendingReducer,
     [addImage.pending.type]: pendingReducer,
     [deleteImage.pending.type]: pendingReducer,
+    [fetchStats.pending.type]: pendingReducer,
+    [fetchPriceDynamics.pending.type]: pendingReducer,
 
     [fetchProducts.rejected.type]: rejectionReducer,
     [deleteProduct.rejected.type]: rejectionReducer,
@@ -106,6 +119,8 @@ export const productSlice = createSlice({
     [addProduct.rejected.type]: rejectionReducer,
     [addImage.rejected.type]: rejectionReducer,
     [deleteImage.rejected.type]: rejectionReducer,
+    [fetchStats.rejected.type]: rejectionReducer,
+    [fetchPriceDynamics.rejected.type]: rejectionReducer,
   },
 })
 

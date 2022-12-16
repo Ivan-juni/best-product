@@ -1,13 +1,14 @@
 import React from 'react'
-// import styles from './Paginator.module.scss'
-// import { ReactComponent as LeftArrow } from '../../../assets/icons/other/arrows/purple-arrow-left.svg'
-// import { ReactComponent as RightArrow } from '../../../assets/icons/other/arrows/purple-arrow-right.svg'
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import Pagination from '@mui/material/Pagination'
 import Stack from '@mui/material/Stack'
 
 type PropsType = {
-  setPage: ActionCreatorWithPayload<number, 'users/setUsersPage'> | ActionCreatorWithPayload<number, 'product/setProductsPage'>
+  setPage:
+    | ActionCreatorWithPayload<number, 'users/setUsersPage'>
+    | ActionCreatorWithPayload<number, 'product/setProductsPage'>
+    | ActionCreatorWithPayload<number, 'categories/setCategoriesPage'>
+    | ActionCreatorWithPayload<number, 'comments/setCommentsPage'>
   total: number
   page: number
   limit: number
@@ -30,19 +31,6 @@ const Paginator: React.FC<PropsType> = ({ page, total, limit, setPage }) => {
         }}
       />
     </Stack>
-    // <div className={styles.wrapper}>
-    //   <ul className={styles.items}>
-    //     <li className={page + 1 === 1 ? styles.disabled : styles.item} onClick={() => setPage(page < 1 ? page : page - 1)}>
-    //       <LeftArrow />
-    //     </li>
-    //     <li className={styles.item}>{page + 1}</li>
-    //     <li className={styles.item}>/</li>
-    //     <li className={styles.item}>{totalPages}</li>
-    //     <li className={page + 1 === totalPages ? styles.disabled : styles.item} onClick={() => setPage(page === totalPages - 1 ? page : page + 1)}>
-    //       <RightArrow />
-    //     </li>
-    //   </ul>
-    // </div>
   )
 }
 

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const favorites_service_1 = __importDefault(require("../services/favorites.service"));
 class FavoritesController {
+    //!todo pagination
     static getUserFavorites(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;

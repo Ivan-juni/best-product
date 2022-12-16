@@ -2,7 +2,7 @@ import { OrderByDirection } from 'objection'
 import { IProductsQuery } from '../services/types/products.type'
 
 export const sort = (
-  searchCriteria: IProductsQuery,
+  searchCriteria: IProductsQuery | { orderByDate?: string },
   params: Array<string> // price, favoriteStars
 ): {
   column: string

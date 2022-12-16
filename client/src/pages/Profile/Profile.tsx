@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../hoooks/redux'
 import Preloader from '../../components/Common/Preloader/Preloader'
 import { editProfile } from '../../store/slices/users/ActionCreators.users'
 import ProfileForm from './profile-form/ProfileForm'
-import AdminPanel from './admin-panel/AdminPanel'
+import AdminPanel from '../../components/admin-panel/AdminPanel'
 import { withAuthRedirect } from '../../hoc/withAuthRedirect.hoc'
 
 const Profile: React.FC = () => {

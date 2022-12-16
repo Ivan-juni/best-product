@@ -4,6 +4,8 @@ import { authAction } from '../store/slices/auth/Auth.slice'
 import { usersAction } from '../store/slices/users/Users.slice'
 import { productAction } from '../store/slices/product/Product.slice'
 import { categoriesAction } from '../store/slices/categories/Categories.slice'
+import { commentsAction } from '../store/slices/comments/Comments.slice'
+import { favoritesAction } from '../store/slices/favorites/Favorites.slice'
 import { AppDispatchType, RootStateType } from '../store/store'
 
 export const useAppDispatch = () => useDispatch<AppDispatchType>()
@@ -15,6 +17,8 @@ const allActions = {
   ...authAction,
   ...usersAction,
   ...categoriesAction,
+  ...commentsAction,
+  ...favoritesAction,
 }
 
 export const useActions = () => {

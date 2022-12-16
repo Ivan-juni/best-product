@@ -29,6 +29,7 @@ const FindMenu: React.FC<PropsType> = ({ onSubmit }) => {
       }),
     id: Yup.string()
       .min(1, 'ID should be at least 1 symbol')
+      .matches(/^[0-9]+$/, 'Must be only digits')
       .nullable(true)
       .transform((_, value: string) => {
         return value === '' ? null : value

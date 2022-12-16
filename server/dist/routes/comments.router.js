@@ -10,14 +10,17 @@ const router = express_1.default.Router();
 // @route get /api/comments/user
 // @des Get user's comments
 router.get('/user', auth_middleware_1.default, comments_controller_1.default.getUserComments);
-// @route GET /api/comments/:productId
+// @route GET /api/comments?productId=
 // @des Get product comments
-router.get('/:productId', comments_controller_1.default.getProductComments);
-// @route POST /api/comments/:productId
+router.get('/', comments_controller_1.default.getProductComments);
+// @route POST /api/comments?productId=
 // @des Add comment to product
-router.post('/:productId', auth_middleware_1.default, comments_controller_1.default.addComment);
-// @route DELETE /api/comments/:commentId
+router.post('/', auth_middleware_1.default, comments_controller_1.default.addComment);
+// @route PUT /api/comments?commentId=
+// @des Update comment
+router.put('/', auth_middleware_1.default, comments_controller_1.default.updateComment);
+// @route DELETE /api/comments?commentId=
 // @des Delete comment
-router.delete('/:commentId', auth_middleware_1.default, comments_controller_1.default.deleteComment);
+router.delete('/', auth_middleware_1.default, comments_controller_1.default.deleteComment);
 exports.default = router;
 //# sourceMappingURL=comments.router.js.map

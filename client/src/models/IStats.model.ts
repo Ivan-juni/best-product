@@ -13,3 +13,11 @@ export interface IStats {
   topDislikes: Array<StatsType>
   topFavoriteStars: Array<StatsType>
 }
+
+export interface IPriceDynamics {
+  productId: number
+  price: number
+  action: string
+  revision: number
+  datetime: string
+}

@@ -12,10 +12,13 @@ const router = express_1.default.Router();
 router.get('/', categories_controller_1.default.getCategories);
 // ! Admin panel
 // @route POST /api/categories
-// @des Add a category
+// @des Add the category
 router.post('/', (0, check_role_middleware_1.default)('ADMIN'), categories_controller_1.default.addCategory);
+// @route PUT /api/categories?categoryId=
+// @des Update the category
+router.put('/', (0, check_role_middleware_1.default)('ADMIN'), categories_controller_1.default.updateCategory);
 // @route DELETE /api/categories?categoryId=
-// @des Delete a category
+// @des Delete the category
 router.delete('/', (0, check_role_middleware_1.default)('ADMIN'), categories_controller_1.default.deleteCategory);
 exports.default = router;
 //# sourceMappingURL=categories.router.js.map

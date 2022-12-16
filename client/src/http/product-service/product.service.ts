@@ -4,7 +4,7 @@ import { DeleteResponse } from '../models/DeleteResponse'
 import { IProduct, IProductQuery } from '../../models/IProduct.model'
 import { ProductAddingValues, ProductChangingValues, ProductResponse } from './product.model'
 import { IImages } from '../../models/IImages.model'
-import { IStats } from '../../models/IStats.model'
+import { IPriceDynamics, IStats } from '../../models/IStats.model'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductResponse>> {
@@ -72,6 +72,13 @@ export default class ProductService {
     return $api.get<IStats>(`/products/statistics`, {
       params: {
         quantity,
+      },
+    })
+  }
+  static async getPriceDynamics(productId: number): Promise<AxiosResponse<IPriceDynamics[]>> {
+    return $api.get<IPriceDynamics[]>(`/products/statistics/price-dynamics`, {
+      params: {
+        productId,
       },
     })
   }

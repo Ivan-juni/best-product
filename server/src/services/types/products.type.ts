@@ -14,8 +14,8 @@ export interface IProductsQuery {
   connectionType?: string
   display?: string
   microphone?: 'true'
-  sortByPrice?: 'low' | 'high'
-  sortByFavoriteStars?: 'low' | 'high'
+  orderByPrice?: 'low' | 'high'
+  orderByFavoriteStars?: 'low' | 'high'
   page?: string
   limit?: string
 }

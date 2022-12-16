@@ -1,7 +1,7 @@
 import $api from '../index'
 import { AxiosResponse } from 'axios'
 import { ChangingValues } from './user.model'
-import { IUser } from '../../models/IUser.model'
+import { IUser } from './user.model'
 import { DeleteResponse } from '../models/DeleteResponse'
 import { ObjectionPage } from '../../models/ObjectionPage.model'
 

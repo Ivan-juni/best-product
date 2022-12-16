@@ -25,9 +25,10 @@ class CategoriesService {
                         qb.where('categories.id', '=', +searchCriteria.categoryId);
                     }
                     if (searchCriteria.categoryName) {
-                        qb.orWhere('categories.name', 'like', `%${searchCriteria.categoryName}`);
+                        qb.orWhere('categories.name', 'like', `%${searchCriteria.categoryName}%`);
                     }
-                });
+                })
+                    .page(searchCriteria.page, searchCriteria.limit);
                 return categories;
             }
             catch (error) {
@@ -66,6 +67,28 @@ class CategoriesService {
                 }
                 const deletedCategories = yield category_model_1.default.query().deleteById(categoryId);
                 return deletedCategories;
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static updateCategory(categoryId, changingValues) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const oldCategory = yield category_model_1.default.query().select().findById(categoryId);
+                if (!oldCategory) {
+                    throw new Error("Can't find this category");
+                }
+                // filtering null values
+                Object.keys(changingValues).forEach((key) => {
+                    if (changingValues[key] === null) {
+                        delete changingValues[key];
+                    }
+                });
+                const category = yield category_model_1.default.query().patchAndFetchById(categoryId, changingValues);
+                return category;
             }
             catch (error) {
                 console.log('Error: ', error);

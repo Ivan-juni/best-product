@@ -8,15 +8,20 @@ import Objection from 'objection'
 export default class CommentsController {
   // comments
   static async getProductComments(req: Request, res: Response, next: NextFunction): ReturnType<Objection.Page<Comment>> {
-    const { productId } = req.params
+    const { productId } = req.query
     const page = +req.query.page || 0
-    const limit = +req.query.page || 5
+    const limit = +req.query.limit || 5
+    const orderByDate: string = req.query.orderByDate ? req.query.orderByDate.toString() : 'high'
 
     if (!productId) {
       return next(ApiError.internal('Type the product id'))
     }
 
-    const comments = await commentService.getProductComments(+productId, page, limit)
+    if (orderByDate !== 'low' && orderByDate !== 'high') {
+      return next(ApiError.internal('Type the correct sort param (low or high)'))
+    }
+
+    const comments = await commentService.getProductComments(+productId, { orderByDate, page, limit })
 
     if (!comments) {
       return next(ApiError.badRequest(`Fetching comments error`))
@@ -43,7 +48,7 @@ export default class CommentsController {
 
   static async addComment(req: Request, res: Response, next: NextFunction): ReturnType<Comment> {
     const { id } = req.user
-    const { productId } = req.params
+    const { productId } = req.query
     const commentText: string = req.body.text
 
     if (!productId) {
@@ -69,7 +74,7 @@ export default class CommentsController {
 
   static async deleteComment(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { id, role } = req.user
-    const { commentId } = req.params
+    const { commentId } = req.query
 
     if (!commentId) {
       return next(ApiError.internal('Type comment id'))
@@ -90,5 +95,31 @@ export default class CommentsController {
     } else {
       return res.json(result)
     }
+  }
+
+  static async updateComment(req: Request, res: Response, next: NextFunction): ReturnType<Comment> {
+    const { id } = req.user
+    const { commentId } = req.query
+    const commentText: string = req.body.text
+
+    if (!commentId) {
+      return next(ApiError.internal('Please, type the comment id'))
+    }
+
+    if (!commentText) {
+      return next(ApiError.internal('Please, type the comment text'))
+    }
+
+    if (!id) {
+      return next(ApiError.unAuthorizedError())
+    }
+
+    const comment = await commentService.updateComment(+id, +commentId, commentText)
+
+    if (!comment) {
+      return next(ApiError.badRequest(`Updating comment error`))
+    }
+
+    return res.json(comment)
   }
 }

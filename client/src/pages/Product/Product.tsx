@@ -3,20 +3,22 @@ import styles from './Product.module.scss'
 import Card from './Card/Card'
 import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
 import { IProduct } from '../../models/IProduct.model'
-import { addImage, deleteImage, editProduct, fetchProducts } from '../../store/slices/product/ActionCreators.product'
+import { addImage, deleteImage, editProduct, fetchPriceDynamics, fetchProducts } from '../../store/slices/product/ActionCreators.product'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import ProductTabs from './Tabs/ProductTabs'
 import { ReactComponent as EditIcon } from '../../assets/icons/other/edit-icon.svg'
-import { Form, Formik } from 'formik'
+import { Form, Formik, useFormik } from 'formik'
 import { FormikType } from '../../models/Formik.model'
 import * as Yup from 'yup'
 import { FormikCharacteristics } from '../../models/ICharacteristics'
 import Preloader from '../../components/Common/Preloader/Preloader'
 import { fetchCategories } from '../../store/slices/categories/ActionCreators.categories'
+import { fetchComments } from '../../store/slices/comments/ActionCreators.comments'
 
 const Product: React.FC = () => {
   const dispatch = useAppDispatch()
-  const { products, isEditMode, productId, isLoading } = useAppSelector((state) => state.productReducer)
+  // const productForm = useFormik()
+  const { products, priceDynamics, isEditMode, productId, isLoading } = useAppSelector((state) => state.productReducer)
   const { role } = useAppSelector((state) => state.authReducer.user)
 
   // для подгрузки продукта при перезагрузке страницы
@@ -32,6 +34,8 @@ const Product: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchCategories({}))
+    dispatch(fetchComments({ productId }))
+    dispatch(fetchPriceDynamics({ productId }))
     if (!productId || productId === 0) {
       const id = searchParams.get('productId')
       if (id) {
@@ -165,7 +169,7 @@ const Product: React.FC = () => {
                   {isEditMode ? (
                     <div className={styles.right}>
                       <div className={styles.submit}>
-                        <button className={styles.changeInfo} type={'submit'} disabled={!formik.isValid || formik.isSubmitting}>
+                        <button className={styles.changeInfo} type='submit' disabled={!formik.isValid || formik.isSubmitting}>
                           {formik.isSubmitting ? 'Please wait...' : 'Save All'}
                         </button>
                         <button className={styles.cancel} type={'reset'} onClick={() => setEditMode(false)}>
@@ -188,7 +192,7 @@ const Product: React.FC = () => {
               )}
               <div className={styles.main}>
                 {!isLoading ? (
-                  filteredProduct.length !== 0 && (
+                  filteredProduct.length !== 0 ? (
                     <Card
                       product={product}
                       isEditMode={isEditMode}
@@ -196,11 +200,13 @@ const Product: React.FC = () => {
                       addImage={addImageHandler}
                       deleteImage={deleteImageHandler}
                     />
+                  ) : (
+                    <Preloader />
                   )
                 ) : (
                   <Preloader />
                 )}
-                {!isLoading && <ProductTabs product={product} isEditMode={isEditMode} />}
+                {!isLoading && <ProductTabs product={product} isEditMode={isEditMode} productId={productId} priceDynamics={priceDynamics} />}
               </div>
             </Form>
           )

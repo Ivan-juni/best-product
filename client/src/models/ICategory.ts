@@ -8,4 +8,7 @@ export interface ICategory {
 
 export interface ICategoryQuery {
   id?: number | null
+  name?: string | null
+  page?: number
+  limit?: number
 }

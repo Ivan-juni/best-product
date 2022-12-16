@@ -2,7 +2,7 @@ $purple: #766ED3;
 
 .wrapper{
     position: absolute;
-    right: 22px;
+    right: 0px;
     margin-top: 32px;
     min-width: 225px;
     display: flex;
@@ -14,7 +14,7 @@ $purple: #766ED3;
 
     &:after {
         bottom: 100%;
-        left: 75%;
+        left: 76.5%;
         border: solid transparent;
         content: " ";
         height: 0;

@@ -1,4 +1,5 @@
-@import "../../../variables.scss";
+@use "../../../styles/form.scss";
+@import "../../../styles/variables.scss";
 
 .wrapper {
     max-width: 1247px;
@@ -120,19 +121,5 @@
             }
         }
 
-    }
-
-    .error {
-        position: absolute;
-        color: $purple;
-        font-size: 14px;
-        margin-top: -30px;
-    }
-
-    .status {
-        margin-top: 20px;
-        color: red;
-        font-size: 18px;
-        text-align: center;
     }
 }

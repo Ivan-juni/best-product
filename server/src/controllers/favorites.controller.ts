@@ -5,6 +5,7 @@ import { ReturnType } from './types/return.type'
 import Favorite from '../db/models/favorite.model'
 
 export default class FavoritesController {
+  //!todo pagination
   static async getUserFavorites(req: Request, res: Response, next: NextFunction): ReturnType<Favorite[]> {
     const { id } = req.user
 

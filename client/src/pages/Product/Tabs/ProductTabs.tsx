@@ -7,6 +7,10 @@ import Typography from '@mui/material/Typography'
 import Characteristics from './Characteristics/Characteristics'
 import { IProduct } from '../../../models/IProduct.model'
 import Description from './Description/Description'
+import Comments from './Comments/Comments'
+import { useAppSelector } from '../../../hoooks/redux'
+import PriceDynamics from './Price-Dynamics/PriceDynamics'
+import { IPriceDynamics } from '../../../models/IStats.model'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -37,11 +41,14 @@ const a11yProps = (index: number) => {
 
 type PropsType = {
   product: IProduct
+  priceDynamics: IPriceDynamics[]
+  productId: number
   isEditMode: boolean
 }
 
-const ProductTabs: React.FC<PropsType> = ({ product, isEditMode }) => {
+const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode }) => {
   const [value, setValue] = useState(0)
+  const { total } = useAppSelector((state) => state.commentsReducer)
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -89,7 +96,7 @@ const ProductTabs: React.FC<PropsType> = ({ product, isEditMode }) => {
         >
           <Tab label='Description' {...a11yProps(0)} />
           <Tab label='Characteristics' {...a11yProps(1)} />
-          <Tab label={`Comments (3)`} {...a11yProps(2)} />
+          <Tab label={`Comments (${total})`} {...a11yProps(2)} />
           <Tab label='Price Dynamics' {...a11yProps(3)} />
         </Tabs>
       </Box>
@@ -100,10 +107,10 @@ const ProductTabs: React.FC<PropsType> = ({ product, isEditMode }) => {
         <Characteristics product={product} isEditMode={isEditMode} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Comments
+        <Comments productId={productId} />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Price dynamics
+        <PriceDynamics priceDynamics={priceDynamics} />
       </TabPanel>
     </div>
   )

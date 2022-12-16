@@ -1,4 +1,4 @@
-@import "../../../variables.scss";
+@import "../../../styles/variables.scss";
 
 .wrapper {
     .findProduct {
@@ -61,6 +61,8 @@
     }
 
     .error {
+        position: absolute;
+        margin-top: 100px;
         color: $purple;
         font-size: 14px;
     }

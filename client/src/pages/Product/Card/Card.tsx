@@ -19,7 +19,7 @@ type PropsType = {
 }
 
 const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addImage, deleteImage }) => {
-  const { categories } = useAppSelector((state) => state.categoriesReducer)
+  const { allCategories: categories } = useAppSelector((state) => state.categoriesReducer)
 
   return (
     <div className={styles.wrapper}>
@@ -65,10 +65,12 @@ const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addIm
                   <span>Purpose: </span>
                   {product.characteristics.purpose}
                 </p>
-                <p>
-                  <span>Connection type: </span>
-                  {product.characteristics.connectionType}
-                </p>
+                {product.characteristics.connectionType && (
+                  <p>
+                    <span>Connection type: </span>
+                    {product.characteristics.connectionType}
+                  </p>
+                )}
                 <p>
                   {isEditMode ? (
                     <span className={styles.formControl}>

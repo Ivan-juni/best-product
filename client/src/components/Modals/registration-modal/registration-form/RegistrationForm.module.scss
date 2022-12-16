@@ -1,4 +1,5 @@
-$purple: #766ED3;
+@use '../../../../styles/form.scss';
+@import '../../../../styles/variables.scss';
 
 .wrapper {
     .submit {
@@ -42,38 +43,16 @@ $purple: #766ED3;
     }
 
     .formControl {
-        display: flex;
-        flex-direction: column;
         gap: 5px;
         margin-bottom: 10px;
-
-        span {
-            font-style: normal;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 17px;
-            color: #000000;
-        }
-
-        input {
-            border: 2px solid rgba(118, 110, 211, 0.75);
-            border-radius: 7px;
-            width: 100%;
-            padding: 11px 0px 11px 23px;
-        }
     }
 
     
     .error {
+        position: relative;
+        margin-top: 0px;
         color: $purple;
         font-size: 14px;
-    }
-    
-    .status {
-        margin-top: 20px;
-        color: red;
-        font-size: 18px;
-        text-align: center;
     }
 }
 

@@ -1,5 +1,6 @@
 import Objection from 'objection'
 import Comment from '../db/models/comment.model'
+import { sort } from '../utils/sort-by.util'
 import { DeleteType } from './types/products.type'
 
 export default class CommentService {
@@ -34,6 +35,25 @@ export default class CommentService {
     }
   }
 
+  static async updateComment(userId: number, commentId: number, text: string): Promise<Comment | null> {
+    try {
+      const oldComment = await Comment.query().select().where({ userId, id: commentId })
+
+      if (!oldComment) {
+        throw new Error("Can't find this comment")
+      }
+
+      const comment = await Comment.query().select().where({ userId, id: commentId }).patchAndFetch({
+        text,
+      })
+
+      return comment
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
   static async deleteComment(userId: number, commentId: number, role: string): DeleteType {
     try {
       if (role === 'ADMIN') {
@@ -55,8 +75,14 @@ export default class CommentService {
     }
   }
 
-  static async getProductComments(productId: number, page = 0, limit = 5): Promise<Objection.Page<Comment> | null> {
+  static async getProductComments(
+    productId: number,
+    searchCriteria: { orderByDate: string; page: number; limit: number }
+  ): Promise<Objection.Page<Comment> | null> {
     try {
+      // параметры для сортировки
+      const sortParams = sort(searchCriteria, ['date'])
+
       const comments = await Comment.query()
         .select(
           'comments.id',
@@ -73,7 +99,8 @@ export default class CommentService {
         .leftJoin('users', function () {
           this.on('users.id', '=', 'comments.userId')
         })
-        .page(page, limit)
+        .orderBy(`comments.createdAt`, sortParams.order)
+        .page(searchCriteria.page, searchCriteria.limit)
 
       return comments
     } catch (error) {
