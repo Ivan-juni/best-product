@@ -11,7 +11,6 @@ export function withAuthRedirect<WCP extends JSX.IntrinsicAttributes>(WrappedCom
     const [redirect, setRedirect] = useState(false)
 
     useEffect(() => {
-      navigate('/profile')
       setLogModalOpen(false)
       setRedirect(true)
     }, [isAuth, isLoading])

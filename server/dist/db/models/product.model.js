@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const objection_1 = require("objection");
 const category_model_1 = __importDefault(require("./category.model"));
+const favorite_model_1 = __importDefault(require("./favorite.model"));
+const comment_model_1 = __importDefault(require("./comment.model"));
 const image_module_1 = __importDefault(require("./image.module"));
 const product_characteristics_model_1 = __importDefault(require("./product-characteristics.model"));
 class Product extends objection_1.Model {
@@ -87,6 +89,30 @@ Product.relationMappings = {
         join: {
             from: 'products.id',
             to: 'images.productId',
+        },
+    },
+    favorites: {
+        relation: objection_1.Model.ManyToManyRelation,
+        modelClass: favorite_model_1.default,
+        join: {
+            from: 'products.id',
+            through: {
+                from: 'favorites.productId',
+                to: 'favorites.userId',
+            },
+            to: 'users.id',
+        },
+    },
+    comments: {
+        relation: objection_1.Model.ManyToManyRelation,
+        modelClass: comment_model_1.default,
+        join: {
+            from: 'products.id',
+            through: {
+                from: 'comments.productId',
+                to: 'comments.userId',
+            },
+            to: 'users.id',
         },
     },
 };

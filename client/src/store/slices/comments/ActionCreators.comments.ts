@@ -43,18 +43,27 @@ export const deleteComment = createAsyncThunk<void, { id: number }, { rejectValu
   }
 })
 
-export const updateComment = createAsyncThunk<void, { id: number } & CommentChangingValues, { rejectValue: string }>(
+type UpdateCommentsType = FormikType & CommentChangingValues & { id: number }
+
+export const updateComment = createAsyncThunk<void, UpdateCommentsType, { rejectValue: string }>(
   'comments/updateComment',
   async (changingValues, thunkApi) => {
     try {
-      const { id, ...rest } = changingValues
+      const { setSubmitting, setStatus, id, ...rest } = changingValues
 
       const response = await CommentsService.updateComment(id, rest)
 
-      thunkApi.dispatch(commentsAction.updateComment(response.data))
+      thunkApi.dispatch(fetchComments({ productId: response.data.productId }))
+
+      if (setSubmitting) {
+        setSubmitting(false)
+      }
     } catch (error: any) {
       console.log(error.response?.data?.message)
-
+      if (changingValues.setSubmitting && changingValues.setStatus) {
+        changingValues.setStatus(error.response?.data?.message)
+        changingValues.setSubmitting(false)
+      }
       return thunkApi.rejectWithValue(error.response?.data?.message)
     }
   }

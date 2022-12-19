@@ -1,5 +1,7 @@
 import { Model, RelationMappings, RelationMappingsThunk } from 'objection'
 import Category from './category.model'
+import Favorite from './favorite.model'
+import Comment from './comment.model'
 import Image from './image.module'
 import ProductCharacteristics from './product-characteristics.model'
 
@@ -110,6 +112,32 @@ export default class Product extends Model {
       join: {
         from: 'products.id',
         to: 'images.productId',
+      },
+    },
+
+    favorites: {
+      relation: Model.ManyToManyRelation,
+      modelClass: Favorite,
+      join: {
+        from: 'products.id',
+        through: {
+          from: 'favorites.productId',
+          to: 'favorites.userId',
+        },
+        to: 'users.id',
+      },
+    },
+
+    comments: {
+      relation: Model.ManyToManyRelation,
+      modelClass: Comment,
+      join: {
+        from: 'products.id',
+        through: {
+          from: 'comments.productId',
+          to: 'comments.userId',
+        },
+        to: 'users.id',
       },
     },
   }

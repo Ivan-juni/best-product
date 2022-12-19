@@ -9,6 +9,7 @@ type PropsType = {
     | ActionCreatorWithPayload<number, 'product/setProductsPage'>
     | ActionCreatorWithPayload<number, 'categories/setCategoriesPage'>
     | ActionCreatorWithPayload<number, 'comments/setCommentsPage'>
+    | ActionCreatorWithPayload<number, 'favorites/setFavoritesPage'>
   total: number
   page: number
   limit: number

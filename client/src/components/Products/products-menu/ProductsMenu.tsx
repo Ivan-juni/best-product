@@ -6,10 +6,11 @@ import { ReactComponent as SortIcon } from '../../../assets/icons/filters/sort-i
 import { ReactComponent as ArrowUpIcon } from '../../../assets/icons/other/arrows/white-arrow-top.svg'
 import { ReactComponent as FiltersIcon } from '../../../assets/icons/filters/filter-icon.svg'
 import Dropdown from './Dropdown/Dropdown'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 
 type PropsType = {
+  setCardType: ActionCreatorWithPayload<boolean, 'favorites/setFavoritesCardType'> | ActionCreatorWithPayload<boolean, 'product/setProductsCardType'>
   cardType: boolean
-  setCardType: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ProductsMenu: React.FC<PropsType> = ({ cardType, setCardType }) => {
@@ -19,7 +20,7 @@ const ProductsMenu: React.FC<PropsType> = ({ cardType, setCardType }) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.menu}>
-        <button className={styles.view__change} onClick={() => setCardType((prev) => !prev)}>
+        <button className={styles.view__change} onClick={() => setCardType(!cardType)}>
           {cardType ? <ViewChangeBlockIcon /> : <ViewChangeCardsIcon />}
         </button>
         <button className={styles.sort} onClick={() => setSort((prev) => !prev)}>

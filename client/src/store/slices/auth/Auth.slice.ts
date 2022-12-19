@@ -4,6 +4,9 @@ import { checkAuth, login, logout, registration } from './ActionCreators.auth'
 
 export interface AuthState {
   user: IUser
+  likes: number[]
+  dislikes: number[]
+  favorites: number[]
   isLogModalOpen: boolean
   isRegModalOpen: boolean
   isAuth: boolean
@@ -19,11 +22,13 @@ const initialState: AuthState = {
     firstName: '',
     lastName: '',
     photo: null,
-    // password: '',
     role: 'USER',
     createdAt: '',
     updatedAt: '',
   },
+  likes: [],
+  dislikes: [],
+  favorites: [],
   isLogModalOpen: false,
   isRegModalOpen: false,
   isAuth: false,

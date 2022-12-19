@@ -39,6 +39,24 @@
                     align-items: center;
                     gap: 13px;
 
+                    .disabled {
+                        transition: 0.3s;
+                        opacity: 0.6;
+                    }
+
+                    button {
+                        border: none;
+                        background-color: transparent;
+                        width: 32px;
+                        height: 32px;
+                        padding: 0;
+
+                        &:disabled, &:hover {
+                            transition: 0.3s;
+                            opacity: 0.6;
+                        }
+                    }
+
                     span {
                         font-style: normal;
                         font-weight: 400;

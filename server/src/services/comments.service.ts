@@ -37,13 +37,13 @@ export default class CommentService {
 
   static async updateComment(userId: number, commentId: number, text: string): Promise<Comment | null> {
     try {
-      const oldComment = await Comment.query().select().where({ userId, id: commentId })
+      const oldComment = await Comment.query().findOne({ userId, id: commentId })
 
       if (!oldComment) {
         throw new Error("Can't find this comment")
       }
 
-      const comment = await Comment.query().select().where({ userId, id: commentId }).patchAndFetch({
+      const comment = await oldComment.$query().patchAndFetch({
         text,
       })
 

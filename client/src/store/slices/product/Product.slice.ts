@@ -23,9 +23,7 @@ export interface ProductState {
   total: number
   limit: number
   page: number
-  isLiked: boolean
-  isDisliked: boolean
-  isFavorite: boolean
+  cardType: boolean
   isEditMode: boolean
   isLoading: boolean
   error: string
@@ -40,9 +38,7 @@ const initialState: ProductState = {
   total: 0,
   limit: 6,
   page: 0,
-  isLiked: false,
-  isDisliked: false,
-  isFavorite: false,
+  cardType: false,
   isEditMode: false,
   isLoading: false,
   error: '',
@@ -89,6 +85,9 @@ export const productSlice = createSlice({
     },
     setPriceDynamics: (state: ProductState, action: PayloadAction<IPriceDynamics[]>) => {
       return (state = { ...state, priceDynamics: action.payload })
+    },
+    setProductsCardType: (state: ProductState, action: PayloadAction<boolean>) => {
+      return (state = { ...state, cardType: action.payload })
     },
     deleteProduct: (state: ProductState, action: PayloadAction<number>) => {
       return (state = { ...state, products: state.products.filter((product) => product.id !== action.payload) })

@@ -44,9 +44,11 @@ type PropsType = {
   priceDynamics: IPriceDynamics[]
   productId: number
   isEditMode: boolean
+  portalAddRef: React.MutableRefObject<null>
+  setRef: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode }) => {
+const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode, portalAddRef, setRef }) => {
   const [value, setValue] = useState(0)
   const { total } = useAppSelector((state) => state.commentsReducer)
 
@@ -107,7 +109,7 @@ const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, i
         <Characteristics product={product} isEditMode={isEditMode} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <Comments productId={productId} />
+        <Comments productId={productId} portalAddRef={portalAddRef} setRef={setRef} />
       </TabPanel>
       <TabPanel value={value} index={3}>
         <PriceDynamics priceDynamics={priceDynamics} />

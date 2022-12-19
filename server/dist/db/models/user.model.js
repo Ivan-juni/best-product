@@ -4,8 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const objection_1 = require("objection");
-const comment_model_1 = __importDefault(require("./comment.model"));
-const favorite_model_1 = __importDefault(require("./favorite.model"));
 const token_model_1 = __importDefault(require("./token.model"));
 class User extends objection_1.Model {
     static get tableName() {
@@ -62,30 +60,6 @@ class User extends objection_1.Model {
 }
 exports.default = User;
 User.relationMappings = {
-    favorites: {
-        relation: objection_1.Model.ManyToManyRelation,
-        modelClass: favorite_model_1.default,
-        join: {
-            from: 'users.id',
-            through: {
-                from: 'favorites.userId',
-                to: 'favorites.productId',
-            },
-            to: 'products.id',
-        },
-    },
-    comments: {
-        relation: objection_1.Model.ManyToManyRelation,
-        modelClass: comment_model_1.default,
-        join: {
-            from: 'users.id',
-            through: {
-                from: 'comments.userId',
-                to: 'comments.productId',
-            },
-            to: 'products.id',
-        },
-    },
     tokens: {
         relation: objection_1.Model.HasOneRelation,
         modelClass: token_model_1.default,

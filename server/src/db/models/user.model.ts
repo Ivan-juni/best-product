@@ -80,32 +80,6 @@ export default class User extends Model {
   }
 
   static relationMappings: RelationMappings | RelationMappingsThunk = {
-    favorites: {
-      relation: Model.ManyToManyRelation,
-      modelClass: Favorite,
-      join: {
-        from: 'users.id',
-        through: {
-          from: 'favorites.userId',
-          to: 'favorites.productId',
-        },
-        to: 'products.id',
-      },
-    },
-
-    comments: {
-      relation: Model.ManyToManyRelation,
-      modelClass: Comment,
-      join: {
-        from: 'users.id',
-        through: {
-          from: 'comments.userId',
-          to: 'comments.productId',
-        },
-        to: 'products.id',
-      },
-    },
-
     tokens: {
       relation: Model.HasOneRelation,
       modelClass: Token,

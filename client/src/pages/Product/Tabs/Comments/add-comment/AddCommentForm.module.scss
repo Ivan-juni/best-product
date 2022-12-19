@@ -21,6 +21,7 @@
             letter-spacing: 0.035em;
             color: #000000;
             resize: none;
+            overflow: auto;
 
             &::-webkit-scrollbar {
                 width: 5px;

@@ -51,13 +51,16 @@ class CommentService {
     static updateComment(userId, commentId, text) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const oldComment = yield comment_model_1.default.query().select().where({ userId, id: commentId });
+                const oldComment = yield comment_model_1.default.query().findOne({ userId, id: commentId });
                 if (!oldComment) {
                     throw new Error("Can't find this comment");
                 }
-                const comment = yield comment_model_1.default.query().select().where({ userId, id: commentId }).patchAndFetch({
+                const comment = yield oldComment.$query().patchAndFetch({
                     text,
                 });
+                // const comment = await Comment.query().select().where({ userId, id: commentId }).updateAndFetch({
+                //   text,
+                // })
                 return comment;
             }
             catch (error) {

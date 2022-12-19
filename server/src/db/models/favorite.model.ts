@@ -1,4 +1,4 @@
-import { Model } from 'objection'
+import { Model, RelationMappings, RelationMappingsThunk } from 'objection'
 
 export default class Favorite extends Model {
   static get tableName() {
