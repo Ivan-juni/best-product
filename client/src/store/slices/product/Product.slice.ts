@@ -24,10 +24,11 @@ export interface ProductState {
   productId: number
   total: number
   page: number
-  // limit: number
+  limit: number
   cardType: boolean
   isEditMode: boolean
   isLoading: boolean
+  isSearchLoading: boolean
   error: string
 }
 
@@ -40,10 +41,11 @@ const initialState: ProductState = {
   productId: 0,
   total: 0,
   page: 0,
-  // limit: 6,
+  limit: 9,
   cardType: false,
   isEditMode: false,
   isLoading: false,
+  isSearchLoading: false,
   error: '',
 }
 
@@ -84,6 +86,9 @@ export const productSlice = createSlice({
     setProductsPage: (state: ProductState, action: PayloadAction<number>) => {
       return (state = { ...state, page: action.payload })
     },
+    setLimit: (state: ProductState, action: PayloadAction<number>) => {
+      return (state = { ...state, limit: action.payload })
+    },
     setProductId: (state: ProductState, action: PayloadAction<number>) => {
       return (state = { ...state, productId: action.payload })
     },
@@ -105,7 +110,6 @@ export const productSlice = createSlice({
   },
   extraReducers: {
     [fetchProducts.fulfilled.type]: fulfilledReducer,
-    [fetchSearchProducts.fulfilled.type]: fulfilledReducer,
     [deleteProduct.fulfilled.type]: fulfilledReducer,
     [editProduct.fulfilled.type]: fulfilledReducer,
     [addProduct.fulfilled.type]: fulfilledReducer,
@@ -113,9 +117,12 @@ export const productSlice = createSlice({
     [deleteImage.fulfilled.type]: fulfilledReducer,
     [fetchStats.fulfilled.type]: fulfilledReducer,
     [fetchPriceDynamics.fulfilled.type]: fulfilledReducer,
+    [fetchSearchProducts.fulfilled.type]: (state: ProductState) => {
+      state.isSearchLoading = false
+      state.error = ''
+    },
 
     [fetchProducts.pending.type]: pendingReducer,
-    [fetchSearchProducts.pending.type]: pendingReducer,
     [deleteProduct.pending.type]: pendingReducer,
     [editProduct.pending.type]: pendingReducer,
     [addProduct.pending.type]: pendingReducer,
@@ -123,9 +130,11 @@ export const productSlice = createSlice({
     [deleteImage.pending.type]: pendingReducer,
     [fetchStats.pending.type]: pendingReducer,
     [fetchPriceDynamics.pending.type]: pendingReducer,
+    [fetchSearchProducts.pending.type]: (state: ProductState) => {
+      state.isSearchLoading = true
+    },
 
     [fetchProducts.rejected.type]: rejectionReducer,
-    [fetchSearchProducts.rejected.type]: rejectionReducer,
     [deleteProduct.rejected.type]: rejectionReducer,
     [editProduct.rejected.type]: rejectionReducer,
     [addProduct.rejected.type]: rejectionReducer,
@@ -133,6 +142,10 @@ export const productSlice = createSlice({
     [deleteImage.rejected.type]: rejectionReducer,
     [fetchStats.rejected.type]: rejectionReducer,
     [fetchPriceDynamics.rejected.type]: rejectionReducer,
+    [fetchSearchProducts.rejected.type]: (state: ProductState, action: PayloadAction<string>) => {
+      state.isSearchLoading = false
+      state.error = action.payload
+    },
   },
 })
 

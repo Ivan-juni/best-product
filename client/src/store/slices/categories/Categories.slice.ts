@@ -10,6 +10,7 @@ export interface CategoriesState {
   total: number
   page: number
   isLoading: boolean
+  isSearchLoading: boolean
   error: string
 }
 
@@ -20,6 +21,7 @@ const initialState: CategoriesState = {
   total: 0,
   page: 0,
   isLoading: false,
+  isSearchLoading: false,
   error: '',
 }
 
@@ -78,22 +80,30 @@ export const categoriesSlice = createSlice({
   },
   extraReducers: {
     [fetchCategories.fulfilled.type]: fulfilledReducer,
-    [fetchSearchCategories.fulfilled.type]: fulfilledReducer,
     [deleteCategory.fulfilled.type]: fulfilledReducer,
     [updateCategory.fulfilled.type]: fulfilledReducer,
     [addCategory.fulfilled.type]: fulfilledReducer,
+    [fetchSearchCategories.fulfilled.type]: (state: CategoriesState) => {
+      state.isSearchLoading = false
+      state.error = ''
+    },
 
     [fetchCategories.pending.type]: pendingReducer,
-    [fetchSearchCategories.pending.type]: pendingReducer,
     [deleteCategory.pending.type]: pendingReducer,
     [updateCategory.pending.type]: pendingReducer,
     [addCategory.pending.type]: pendingReducer,
+    [fetchSearchCategories.pending.type]: (state: CategoriesState) => {
+      state.isSearchLoading = true
+    },
 
     [fetchCategories.rejected.type]: rejectionReducer,
-    [fetchSearchCategories.rejected.type]: rejectionReducer,
     [deleteCategory.rejected.type]: rejectionReducer,
     [updateCategory.rejected.type]: rejectionReducer,
     [addCategory.rejected.type]: rejectionReducer,
+    [fetchSearchCategories.rejected.type]: (state: CategoriesState, action: PayloadAction<string>) => {
+      state.isLoading = false
+      state.error = action.payload
+    },
   },
 })
 

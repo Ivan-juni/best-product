@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import Preloader from '../../components/Common/Preloader/Preloader'
 import ProductsComponent from '../../components/Products/ProductsComponent'
 import { withAuthRedirect } from '../../hoc/withAuthRedirect.hoc'
@@ -8,11 +9,18 @@ import styles from './Favorites.module.scss'
 
 const Favorites: React.FC = () => {
   const dispatch = useAppDispatch()
-  const { favorites, isLoading, cardType, page, total } = useAppSelector((state) => state.favoritesReducer)
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const params: {
+    [index: string]: string
+  } = {}
+
+  const { favorites, isLoading, cardType, page, total, limit } = useAppSelector((state) => state.favoritesReducer)
+
   const { setFavoritesCardType, setFavoritesPage } = useActions()
 
   useEffect(() => {
-    dispatch(fetchFavorites({ page: `${page}` }))
+    dispatch(fetchFavorites({ page: `${page}`, limit: `${limit}` }))
     dispatch(fetchFavoritesIds())
   }, [page])
 

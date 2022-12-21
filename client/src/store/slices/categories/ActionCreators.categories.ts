@@ -31,7 +31,7 @@ export const fetchCategories = createAsyncThunk<void, FetchCategoriesType, { rej
 )
 
 export const fetchSearchCategories = createAsyncThunk<void, FetchCategoriesType, { rejectValue: string }>(
-  'categories/fetchCategories',
+  'categories/fetchSearchCategories',
   async (values, thunkApi) => {
     try {
       // убираем поля setSubmitting, setStatus из values

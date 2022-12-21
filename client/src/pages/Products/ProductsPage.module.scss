@@ -1,0 +1,29 @@
+@import '../../styles/variables.scss';
+
+.wrapper {
+    max-width: 953px;
+    margin: 0 auto;
+    padding-top: 27px;
+
+    .breadcrumbs {
+        margin-bottom: 19px;
+
+        .icon {
+            width: 36px;
+            height: 36px;
+        }
+
+        .breadcrumb {
+            color: #000000;
+            &:hover {
+                transition: 0.3s;
+                opacity: 0.6;
+            }
+        }
+    }
+
+    .preloader {
+        max-width: 60px;
+        margin: 0 auto;
+    }
+}

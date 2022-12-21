@@ -1,0 +1,21 @@
+@use "../../../styles/form.scss";
+@import "../../../styles/variables.scss";
+
+.formControl {
+    gap: 10px;
+    margin-bottom: 20px;
+    span {
+       font-style: normal;
+       font-weight: 400;
+       font-size: 18px;
+       line-height: 17px;
+       color: $purple;
+    }
+    .error {
+        color: red;
+        font-size: 14px;
+    }
+}
+
+
+

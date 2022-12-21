@@ -12,17 +12,17 @@ import Paginator from '../../../Common/Paginator/Paginator'
 import { NavLink, useNavigate } from 'react-router-dom'
 import AddProductForm from './add-product/AddProductForm'
 import { fetchCategories } from '../../../../store/slices/categories/ActionCreators.categories'
+import { showProductHandler } from '../../../../utils/showProductHandler'
 
 const ProductsTab: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { products, isLoading, total, page } = useAppSelector((state) => state.productReducer)
-  const limit = 6
+  const { products, isLoading, total, page, limit } = useAppSelector((state) => state.productReducer)
 
-  // pagination
-  const { setProductsPage, setEditMode, setProductId } = useActions()
+  const { setProductsPage, setEditMode, setProductId, setLimit } = useActions()
 
   useEffect(() => {
+    setLimit(6)
     dispatch(fetchProducts({ page: `${page}`, limit: `${limit}` }))
     dispatch(fetchCategories({}))
   }, [page, total])
@@ -38,11 +38,6 @@ const ProductsTab: React.FC = () => {
     dispatch(deleteProduct({ id }))
   }
 
-  const showProductHandler = (id: number) => {
-    setProductId(id)
-    navigate(`/product?productId=${id}`)
-  }
-
   return (
     <div className={styles.wrapper}>
       <section className={styles.products__fetch}>
@@ -54,7 +49,7 @@ const ProductsTab: React.FC = () => {
               <Preloader />
             ) : (
               products.map((product: IProduct) => (
-                <div className={styles.item} key={product.id} onClick={() => showProductHandler(product.id)}>
+                <div className={styles.item} key={product.id} onClick={() => showProductHandler(product.id, navigate, setProductId)}>
                   <ProductMini product={product} />
                   <div className={styles.menu}>
                     <NavLink to={`/product?productId=${product.id}`}>

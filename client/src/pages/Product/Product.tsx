@@ -8,6 +8,7 @@ import { fetchComments } from '../../store/slices/comments/ActionCreators.commen
 import { Portal } from '@mui/material'
 import AddCommentForm from './Tabs/Comments/add-comment/AddCommentForm'
 import UpdateProductForm from './update-product-form/UpdateProductForm'
+import GoToTop from '../../utils/GoToTop'
 
 const Product: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -48,6 +49,8 @@ const Product: React.FC = () => {
           <AddCommentForm productId={productId} />
         </Portal>
       )}
+      {/* auto scroll to top after redirecting */}
+      <GoToTop />
     </div>
   )
 }

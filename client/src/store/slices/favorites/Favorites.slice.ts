@@ -21,6 +21,7 @@ export interface FavoritesState {
   parentCategories: ICategory[]
   total: number
   page: number
+  limit: number
   cardType: boolean
   isEditMode: boolean
   isLoading: boolean
@@ -35,6 +36,7 @@ const initialState: FavoritesState = {
   parentCategories: [],
   total: 0,
   page: 0,
+  limit: 9,
   cardType: false,
   isEditMode: false,
   isLoading: false,
@@ -76,6 +78,9 @@ export const favoritesSlice = createSlice({
     },
     setFavoritesPage: (state: FavoritesState, action: PayloadAction<number>) => {
       return (state = { ...state, page: action.payload })
+    },
+    setLimit: (state: FavoritesState, action: PayloadAction<number>) => {
+      return (state = { ...state, limit: action.payload })
     },
     setFavoritesCardType: (state: FavoritesState, action: PayloadAction<boolean>) => {
       return (state = { ...state, cardType: action.payload })

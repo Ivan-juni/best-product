@@ -9,8 +9,10 @@ import { ReactComponent as DislikeIcon } from '../../../assets/icons/stats/disli
 import { ReactComponent as FavoriteIcon } from '../../../assets/icons/stats/favorite-stats-icon.svg'
 import productImage from '../../../assets/images/JBLT110.png'
 import { IProduct } from '../../../models/IProduct.model'
-import { useAppDispatch, useAppSelector } from '../../../hoooks/redux'
+import { useActions, useAppDispatch, useAppSelector } from '../../../hoooks/redux'
 import { addToFavorites, deleteFromFavorites } from '../../../store/slices/favorites/ActionCreators.favorites'
+import { useNavigate } from 'react-router-dom'
+import { showProductHandler } from '../../../utils/showProductHandler'
 
 type PropsType = {
   product: IProduct
@@ -20,6 +22,9 @@ const ProductShort: React.FC<PropsType> = ({ product }) => {
   const dispatch = useAppDispatch()
   const { ids: favorites } = useAppSelector((state) => state.favoritesReducer)
   const isFavorite = favorites.some((id) => id === product.id)
+
+  const navigate = useNavigate()
+  const { setProductId } = useActions()
 
   const favoriteAddHandler = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     e.stopPropagation()
@@ -33,8 +38,11 @@ const ProductShort: React.FC<PropsType> = ({ product }) => {
 
   return (
     <div className={styles.card__short}>
-      <div className={styles.main}>
-        <div className={isFavorite ? `${styles.favorite__section} ${styles.filled}` : `${styles.favorite__section} ${styles.empty}`}>
+      <div className={styles.main} onClick={() => showProductHandler(product.id, navigate, setProductId)}>
+        <div
+          className={isFavorite ? `${styles.favorite__section} ${styles.filled}` : `${styles.favorite__section} ${styles.empty}`}
+          onClick={(e) => e.stopPropagation()}
+        >
           {isFavorite ? (
             <FavoriteFilledIcon onClick={(e) => favoriteAddHandler(e)} />
           ) : (

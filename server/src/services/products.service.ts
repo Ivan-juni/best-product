@@ -103,7 +103,7 @@ export default class ProductService {
       // записываем в объект результат
       if (searchCriteria.category) {
         return {
-          products: products.results,
+          results: products.results,
           categories: categoryParents,
           total: products.total,
         }
