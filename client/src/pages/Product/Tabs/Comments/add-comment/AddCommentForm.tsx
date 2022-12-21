@@ -3,7 +3,7 @@ import styles from './AddCommentForm.module.scss'
 import { Form, Formik, Field, ErrorMessage } from 'formik'
 import { FormikType } from '../../../../../models/Formik.model'
 import * as Yup from 'yup'
-import { useAppDispatch } from '../../../../../hoooks/redux'
+import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
 import { addComment } from '../../../../../store/slices/comments/ActionCreators.comments'
 
 type PropsType = {
@@ -12,6 +12,7 @@ type PropsType = {
 
 const AddCommentForm: React.FC<PropsType> = ({ productId }) => {
   const dispatch = useAppDispatch()
+  const { isAuth } = useAppSelector((state) => state.authReducer)
 
   const initialValues = {
     text: '',
@@ -43,7 +44,7 @@ const AddCommentForm: React.FC<PropsType> = ({ productId }) => {
                     <Field as='textarea' name='text' />
                   </div>
 
-                  <button type='submit' className={styles.submit} disabled={!formik.isValid || formik.isSubmitting}>
+                  <button type='submit' className={styles.submit} disabled={!isAuth || !formik.isValid || formik.isSubmitting}>
                     {formik.isSubmitting ? 'Please wait...' : 'Add comment'}
                   </button>
 

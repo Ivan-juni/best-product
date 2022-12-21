@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './Header.module.scss'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as LogoIcon } from '../../assets/icons/logo-main.svg'
-import { ReactComponent as SearchIcon } from '../../assets/icons/other/search-icon.svg'
 import userAvatar from '../../assets/images/unknown-user.png'
 import withoutPhotoUserAvatar from '../../assets/images/without-photo-user.png'
 import Auth from './Auth/Auth'
@@ -10,6 +9,8 @@ import LoginModal from '../Modals/login-modal/LoginModal'
 import RegistrationModal from '../Modals/registration-modal/RegistrationModal'
 import { useAppSelector } from '../../hoooks/redux'
 import Preloader from '../Common/Preloader/Preloader'
+import Search from './Search/Search'
+import SearchModal from './Search/Modal/SearchModal'
 
 type PropsType = {
   authOpen: boolean
@@ -18,10 +19,15 @@ type PropsType = {
 
 const Header: React.FC<PropsType> = ({ authOpen, setAuthOpen }) => {
   const { user, isAuth, isLoading, isLogModalOpen, isRegModalOpen } = useAppSelector((state) => state.authReducer)
+  const [isModalOpen, setModalOpen] = useState(false)
+
+  const closeModalHandler = () => {
+    setModalOpen(false)
+  }
 
   return (
     <>
-      <div className={styles.wrapper}>
+      <div className={styles.wrapper} onClick={closeModalHandler}>
         <div className={styles.logo}>
           <NavLink className={styles.link} to='/home'>
             <LogoIcon className={styles.logo__thumb} />
@@ -29,8 +35,7 @@ const Header: React.FC<PropsType> = ({ authOpen, setAuthOpen }) => {
           </NavLink>
         </div>
         <div className={styles.search}>
-          <SearchIcon className={styles.search__icon} />
-          <input type='text' className={styles.search__input} placeholder='Search' />
+          <Search setModalOpen={setModalOpen} isModalOpen={isModalOpen} />
         </div>
         <div className={styles.auth} onClick={(e) => e.stopPropagation()}>
           {isLoading ? (
@@ -48,6 +53,7 @@ const Header: React.FC<PropsType> = ({ authOpen, setAuthOpen }) => {
       </div>
       {isLogModalOpen && <LoginModal />}
       {isRegModalOpen && <RegistrationModal />}
+      {isModalOpen && <SearchModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />}
     </>
   )
 }

@@ -7,7 +7,7 @@ $purple: #766ED3;
 
     max-width: 410px;
     width: 300px;
-    // height: 52px;
+    height: 52px;
     background: transparent;
 
     &:hover {
@@ -24,6 +24,7 @@ $purple: #766ED3;
         // justify-content: center;
 
         .image {
+            width: 52px;
             img {
                 max-width: 52px;
                 max-height: 52px;

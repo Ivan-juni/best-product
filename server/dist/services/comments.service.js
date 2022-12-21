@@ -58,9 +58,6 @@ class CommentService {
                 const comment = yield oldComment.$query().patchAndFetch({
                     text,
                 });
-                // const comment = await Comment.query().select().where({ userId, id: commentId }).updateAndFetch({
-                //   text,
-                // })
                 return comment;
             }
             catch (error) {

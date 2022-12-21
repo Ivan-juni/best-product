@@ -43,7 +43,7 @@ export const usersSlice = createSlice({
       return (state = { ...state, users: action.payload.results, total: action.payload.total })
     },
     deleteUser: (state: UsersState, action: PayloadAction<number>) => {
-      return (state = { ...state, users: state.users.filter((user) => user.id !== action.payload) })
+      return (state = { ...state, users: state.users.filter((user) => user.id !== action.payload), total: state.total - 1 })
     },
     setUsersPage: (state: UsersState, action: PayloadAction<number>) => {
       return (state = { ...state, page: action.payload })

@@ -1,29 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './AddProductForm.module.scss'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
 import { FormikType } from '../../../../../models/Formik.model'
 import { FormikCharacteristics } from '../../../../../models/ICharacteristics'
-import { useNavigate } from 'react-router-dom'
 import { addProduct } from '../../../../../store/slices/product/ActionCreators.product'
+import FormControl from '../../../../Common/Form-control/FormControl'
 
 const AddProductForm = () => {
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
   const [fileName, setFileName] = useState('')
-  const [oldProductId, setProductId] = useState(0)
 
   const { allCategories: categories } = useAppSelector((state) => state.categoriesReducer)
-  const { productId } = useAppSelector((state) => state.productReducer)
-
-  // useEffect(() => {
-  //   setProductId(productId)
-  //   navigate(`/profile`)
-  //   if (productId !== 0 && productId !== oldProductId) {
-  //     navigate(`/product?productId=${productId}`)
-  //   }
-  // }, [productId])
 
   const initialValues = {
     name: '',
@@ -46,7 +35,7 @@ const AddProductForm = () => {
     image: File | string
   } & FormikCharacteristics
 
-  const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus }: FormikType) => {
+  const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus, resetForm }: FormikType) => {
     const { price, categoryId, batteryLiveTime, microphone, ...rest } = values
     dispatch(
       addProduct({
@@ -59,6 +48,9 @@ const AddProductForm = () => {
         ...rest,
       })
     )
+    if (resetForm) {
+      resetForm()
+    }
   }
 
   const validationSchema = Yup.object({
@@ -174,22 +166,6 @@ const AddProductForm = () => {
           )
         }}
       </Formik>
-    </div>
-  )
-}
-
-type FormControlProps = {
-  name: string
-}
-
-const FormControl: React.FC<FormControlProps> = ({ name }) => {
-  return (
-    <div className={styles.formControl}>
-      <span>{name.charAt(0).toLocaleUpperCase() + name.slice(1)}</span>
-      <Field type='text' name={name} />
-      <div className={styles.error}>
-        <ErrorMessage name={name} className={styles.error} />
-      </div>
     </div>
   )
 }

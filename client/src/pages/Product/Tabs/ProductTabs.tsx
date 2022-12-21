@@ -50,6 +50,7 @@ type PropsType = {
 
 const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode, portalAddRef, setRef }) => {
   const [value, setValue] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
   const { total } = useAppSelector((state) => state.commentsReducer)
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -98,7 +99,7 @@ const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, i
         >
           <Tab label='Description' {...a11yProps(0)} />
           <Tab label='Characteristics' {...a11yProps(1)} />
-          <Tab label={`Comments (${total})`} {...a11yProps(2)} />
+          <Tab label={`Comments (${total})`} {...a11yProps(2)} onClick={() => setIsLoaded((prev) => !prev)} />
           <Tab label='Price Dynamics' {...a11yProps(3)} />
         </Tabs>
       </Box>
@@ -109,7 +110,7 @@ const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, i
         <Characteristics product={product} isEditMode={isEditMode} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <Comments productId={productId} portalAddRef={portalAddRef} setRef={setRef} />
+        <Comments productId={productId} portalAddRef={portalAddRef} setRef={setRef} isLoaded={isLoaded} />
       </TabPanel>
       <TabPanel value={value} index={3}>
         <PriceDynamics priceDynamics={priceDynamics} />

@@ -12,17 +12,19 @@ import {
   addProduct,
   fetchStats,
   fetchPriceDynamics,
+  fetchSearchProducts,
 } from './ActionCreators.product'
 
 export interface ProductState {
   products: IProduct[]
+  searchProducts: IProduct[]
   parentCategories: ICategory[]
   stats: IStats
   priceDynamics: IPriceDynamics[]
   productId: number
   total: number
-  limit: number
   page: number
+  // limit: number
   cardType: boolean
   isEditMode: boolean
   isLoading: boolean
@@ -31,13 +33,14 @@ export interface ProductState {
 
 const initialState: ProductState = {
   products: [],
+  searchProducts: [],
   parentCategories: [],
   stats: {} as IStats,
   priceDynamics: [],
   productId: 0,
   total: 0,
-  limit: 6,
   page: 0,
+  // limit: 6,
   cardType: false,
   isEditMode: false,
   isLoading: false,
@@ -71,6 +74,13 @@ export const productSlice = createSlice({
         return (state = { ...state, products: action.payload.results, total: action.payload.total })
       }
     },
+    setSearchProducts: (state: ProductState, action: PayloadAction<ProductResponse>) => {
+      return (state = {
+        ...state,
+        searchProducts: action.payload.results,
+        total: action.payload.total,
+      })
+    },
     setProductsPage: (state: ProductState, action: PayloadAction<number>) => {
       return (state = { ...state, page: action.payload })
     },
@@ -90,11 +100,12 @@ export const productSlice = createSlice({
       return (state = { ...state, cardType: action.payload })
     },
     deleteProduct: (state: ProductState, action: PayloadAction<number>) => {
-      return (state = { ...state, products: state.products.filter((product) => product.id !== action.payload) })
+      return (state = { ...state, products: state.products.filter((product) => product.id !== action.payload), total: state.total - 1 })
     },
   },
   extraReducers: {
     [fetchProducts.fulfilled.type]: fulfilledReducer,
+    [fetchSearchProducts.fulfilled.type]: fulfilledReducer,
     [deleteProduct.fulfilled.type]: fulfilledReducer,
     [editProduct.fulfilled.type]: fulfilledReducer,
     [addProduct.fulfilled.type]: fulfilledReducer,
@@ -104,6 +115,7 @@ export const productSlice = createSlice({
     [fetchPriceDynamics.fulfilled.type]: fulfilledReducer,
 
     [fetchProducts.pending.type]: pendingReducer,
+    [fetchSearchProducts.pending.type]: pendingReducer,
     [deleteProduct.pending.type]: pendingReducer,
     [editProduct.pending.type]: pendingReducer,
     [addProduct.pending.type]: pendingReducer,
@@ -113,6 +125,7 @@ export const productSlice = createSlice({
     [fetchPriceDynamics.pending.type]: pendingReducer,
 
     [fetchProducts.rejected.type]: rejectionReducer,
+    [fetchSearchProducts.rejected.type]: rejectionReducer,
     [deleteProduct.rejected.type]: rejectionReducer,
     [editProduct.rejected.type]: rejectionReducer,
     [addProduct.rejected.type]: rejectionReducer,

@@ -3,10 +3,10 @@ import { ProductAddingValues, ProductChangingValues } from '../../../http/produc
 import ProductService from '../../../http/product-service/product.service'
 import { FormikType } from '../../../models/Formik.model'
 import { IProductQuery } from '../../../models/IProduct.model'
+import { errorLogic } from '../../utils/errorLogic'
 import { productAction } from './Product.slice'
 
 // product
-
 type FetchProductsType = FormikType & IProductQuery
 
 export const fetchProducts = createAsyncThunk<void, FetchProductsType, { rejectValue: string }>(
@@ -24,11 +24,28 @@ export const fetchProducts = createAsyncThunk<void, FetchProductsType, { rejectV
         searchCriteria.setSubmitting(false)
       }
     } catch (error: any) {
-      console.log(error.response?.data?.message)
-      if (searchCriteria.setSubmitting && searchCriteria.setStatus) {
-        searchCriteria.setStatus(error.response?.data?.message)
+      errorLogic(error, searchCriteria)
+      return thunkApi.rejectWithValue(error.response?.data?.message)
+    }
+  }
+)
+
+export const fetchSearchProducts = createAsyncThunk<void, FetchProductsType, { rejectValue: string }>(
+  'product/fetchSearchProducts',
+  async (searchCriteria, thunkApi) => {
+    try {
+      // убираем поля setSubmitting, setStatus из searchCriteria
+      const { setSubmitting, setStatus, ...rest } = searchCriteria
+
+      const response = await ProductService.getProducts(rest)
+
+      thunkApi.dispatch(productAction.setSearchProducts(response.data))
+
+      if (searchCriteria.setSubmitting) {
         searchCriteria.setSubmitting(false)
       }
+    } catch (error: any) {
+      errorLogic(error, searchCriteria)
       return thunkApi.rejectWithValue(error.response?.data?.message)
     }
   }
@@ -50,11 +67,7 @@ export const addProduct = createAsyncThunk<void, AddProductType, { rejectValue: 
         setSubmitting(false)
       }
     } catch (error: any) {
-      console.log(error.response?.data?.message)
-      if (setSubmitting && setStatus) {
-        setStatus(error.response?.data?.message)
-        setSubmitting(false)
-      }
+      errorLogic(error, { setStatus, setSubmitting })
       return thunkApi.rejectWithValue(error.response?.data?.message)
     }
   }
@@ -74,11 +87,7 @@ export const editProduct = createAsyncThunk<void, EditProductType, { rejectValue
         setSubmitting(false)
       }
     } catch (error: any) {
-      console.log(error.response?.data?.message)
-      if (setSubmitting && setStatus) {
-        setStatus(error.response?.data?.message)
-        setSubmitting(false)
-      }
+      errorLogic(error, { setStatus, setSubmitting })
       return thunkApi.rejectWithValue(error.response?.data?.message)
     }
   }

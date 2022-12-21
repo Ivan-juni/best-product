@@ -10,15 +10,17 @@ import { fetchComments } from '../../../../store/slices/comments/ActionCreators.
 
 type PropsType = {
   productId: number
+  isLoaded: boolean
   portalAddRef: React.MutableRefObject<null>
   setRef: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Comments: React.FC<PropsType> = ({ productId, portalAddRef, setRef }) => {
+const Comments: React.FC<PropsType> = ({ productId, portalAddRef, setRef, isLoaded }) => {
   const dispatch = useAppDispatch()
 
   const [isSort, setSort] = useState(false)
   const { comments, total, page } = useAppSelector((state) => state.commentsReducer)
+  const { isAuth } = useAppSelector((state) => state.authReducer)
 
   const { setCommentsPage } = useActions()
 
@@ -28,8 +30,8 @@ const Comments: React.FC<PropsType> = ({ productId, portalAddRef, setRef }) => {
   }
 
   useEffect(() => {
-    setRef(true)
-  }, [])
+    setRef(isLoaded)
+  }, [isLoaded])
 
   return (
     <div className={styles.wrapper}>
@@ -47,12 +49,16 @@ const Comments: React.FC<PropsType> = ({ productId, portalAddRef, setRef }) => {
           return <Comment key={comment.id} comment={comment} productId={productId} />
         })}
       </div>
-      <div className={styles.pagination}>
-        <Paginator total={total} page={page} setPage={setCommentsPage} limit={3} />
-      </div>
-      <div className={styles.add}>
-        <div ref={portalAddRef} className='add-form'></div>
-      </div>
+      {comments.length > 0 && (
+        <div className={styles.pagination}>
+          <Paginator total={total} page={page} setPage={setCommentsPage} limit={3} />
+        </div>
+      )}
+      {isAuth && (
+        <div className={styles.add}>
+          <div ref={portalAddRef} className='add-form'></div>
+        </div>
+      )}
     </div>
   )
 }

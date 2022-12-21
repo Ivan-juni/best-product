@@ -57,7 +57,7 @@ export const commentsSlice = createSlice({
       return (state = { ...state, page: action.payload })
     },
     deleteComment: (state: CommentsState, action: PayloadAction<number>) => {
-      return (state = { ...state, comments: state.comments.filter((comment) => comment.id !== action.payload) })
+      return (state = { ...state, comments: state.comments.filter((comment) => comment.id !== action.payload), total: state.total - 1 })
     },
   },
   extraReducers: {

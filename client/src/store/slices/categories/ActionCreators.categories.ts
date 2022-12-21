@@ -3,6 +3,7 @@ import { CategoryAddingValues, CategoryChangingValues } from '../../../http/cate
 import CategoriesService from '../../../http/categories-service/categories.service'
 import { FormikType } from '../../../models/Formik.model'
 import { ICategoryQuery } from '../../../models/ICategory'
+import { errorLogic } from '../../utils/errorLogic'
 import { categoriesAction } from './Categories.slice'
 
 type FetchCategoriesType = FormikType & ICategoryQuery
@@ -23,11 +24,27 @@ export const fetchCategories = createAsyncThunk<void, FetchCategoriesType, { rej
         setSubmitting(false)
       }
     } catch (error: any) {
-      console.log(error.response?.data?.message)
-      if (values.setSubmitting && values.setStatus) {
-        values.setStatus(error.response?.data?.message)
-        values.setSubmitting(false)
+      errorLogic(error, values)
+      return thunkApi.rejectWithValue(error.response?.data?.message)
+    }
+  }
+)
+
+export const fetchSearchCategories = createAsyncThunk<void, FetchCategoriesType, { rejectValue: string }>(
+  'categories/fetchCategories',
+  async (values, thunkApi) => {
+    try {
+      // убираем поля setSubmitting, setStatus из values
+      const { setSubmitting, setStatus, ...searchCriteria } = values
+
+      const criteriaCategories = await CategoriesService.getCategories(searchCriteria)
+
+      thunkApi.dispatch(categoriesAction.setSearchCategories(criteriaCategories.data))
+      if (setSubmitting) {
+        setSubmitting(false)
       }
+    } catch (error: any) {
+      errorLogic(error, values)
       return thunkApi.rejectWithValue(error.response?.data?.message)
     }
   }
@@ -80,12 +97,7 @@ export const addCategory = createAsyncThunk<void, AddCategoryType, { rejectValue
       setSubmitting(false)
     }
   } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    if (values.setSubmitting && values.setStatus) {
-      values.setStatus(error.response?.data?.message)
-      values.setSubmitting(false)
-    }
+    errorLogic(error, values)
 
     return thunkApi.rejectWithValue(error.response?.data?.message)
   }

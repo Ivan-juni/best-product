@@ -16,7 +16,8 @@ import { fetchCategories } from '../../../../store/slices/categories/ActionCreat
 const ProductsTab: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { products, isLoading, total, limit, page } = useAppSelector((state) => state.productReducer)
+  const { products, isLoading, total, page } = useAppSelector((state) => state.productReducer)
+  const limit = 6
 
   // pagination
   const { setProductsPage, setEditMode, setProductId } = useActions()
@@ -38,8 +39,6 @@ const ProductsTab: React.FC = () => {
   }
 
   const showProductHandler = (id: number) => {
-    // подгружаю продукт теперь на странице продукта
-    // dispatch(fetchProducts({ id: `${id}` }))
     setProductId(id)
     navigate(`/product?productId=${id}`)
   }

@@ -85,6 +85,7 @@ export const favoritesSlice = createSlice({
         ...state,
         favorites: state.favorites.filter((product) => product.id !== action.payload),
         ids: state.ids.filter((id) => id !== action.payload),
+        total: state.total - 1,
       })
     },
     setLike: (state: FavoritesState, action: PayloadAction<number>) => {
