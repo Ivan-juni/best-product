@@ -44,9 +44,9 @@ const ProductShort: React.FC<PropsType> = ({ product }) => {
           onClick={(e) => e.stopPropagation()}
         >
           {isFavorite ? (
-            <FavoriteFilledIcon onClick={(e) => favoriteAddHandler(e)} />
+            <FavoriteFilledIcon onClick={(e) => favoriteDeleteHandler(e)} />
           ) : (
-            <FavoriteEmptyIcon onClick={(e) => favoriteDeleteHandler(e)} />
+            <FavoriteEmptyIcon onClick={(e) => favoriteAddHandler(e)} />
           )}
         </div>
         <div className={styles.info}>

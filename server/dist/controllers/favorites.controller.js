@@ -82,7 +82,7 @@ class FavoritesController {
             }
         });
     }
-    // likes / dislikes
+    // likes / dislikes / views
     static addLike(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { productId } = req.query;
@@ -97,7 +97,7 @@ class FavoritesController {
                 return res.json({ message: 'Like successfully added' });
             }
             else {
-                return res.json({ message: 'Like does not added' });
+                return res.json({ message: 'Like has not added' });
             }
         });
     }
@@ -133,7 +133,7 @@ class FavoritesController {
                 return res.json({ message: 'Dislike successfully added' });
             }
             else {
-                return res.json({ message: 'Dislike does not added' });
+                return res.json({ message: 'Dislike has not added' });
             }
         });
     }
@@ -152,6 +152,24 @@ class FavoritesController {
             }
             else {
                 return res.json({ message: 'Dislike has not deleted' });
+            }
+        });
+    }
+    static addView(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            const views = yield favorites_service_1.default.addView(+productId);
+            if (!views) {
+                return next(ApiError_1.default.badRequest(`Adding view error`));
+            }
+            if (views === 1) {
+                return res.json({ message: 'View successfully added' });
+            }
+            else {
+                return res.json({ message: 'View has not added' });
             }
         });
     }

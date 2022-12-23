@@ -20,12 +20,14 @@ router.post('/', authMiddleware, favoritesController.addToFavorite)
 // @des Remove product from user favorites
 router.delete('/', authMiddleware, favoritesController.deleteFromFavorite)
 
-// likes, dislikes
+// likes, dislikes, views
 
 router.post('/likes', authMiddleware, favoritesController.addLike)
 router.delete('/likes', authMiddleware, favoritesController.deleteLike)
 
 router.post('/dislikes', authMiddleware, favoritesController.addDislike)
 router.delete('/dislikes', authMiddleware, favoritesController.deleteDislike)
+
+router.post('/views', authMiddleware, favoritesController.addView)
 
 export default router

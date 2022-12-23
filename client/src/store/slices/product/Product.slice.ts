@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ProductResponse } from '../../../http/product-service/product.model'
+import { ProductMenuInfo, ProductResponse } from '../../../http/product-service/product.model'
 import { ICategory } from '../../../models/ICategory'
 import { IProduct } from '../../../models/IProduct.model'
 import { IPriceDynamics, IStats } from '../../../models/IStats.model'
@@ -13,6 +13,7 @@ import {
   fetchStats,
   fetchPriceDynamics,
   fetchSearchProducts,
+  fetchMenuInfo,
 } from './ActionCreators.product'
 
 export interface ProductState {
@@ -20,6 +21,7 @@ export interface ProductState {
   searchProducts: IProduct[]
   parentCategories: ICategory[]
   stats: IStats
+  menuInfo: ProductMenuInfo
   priceDynamics: IPriceDynamics[]
   productId: number
   total: number
@@ -37,6 +39,7 @@ const initialState: ProductState = {
   searchProducts: [],
   parentCategories: [],
   stats: {} as IStats,
+  menuInfo: {} as ProductMenuInfo,
   priceDynamics: [],
   productId: 0,
   total: 0,
@@ -83,6 +86,12 @@ export const productSlice = createSlice({
         total: action.payload.total,
       })
     },
+    setMenuInfo: (state: ProductState, action: PayloadAction<ProductMenuInfo>) => {
+      return (state = {
+        ...state,
+        menuInfo: action.payload,
+      })
+    },
     setProductsPage: (state: ProductState, action: PayloadAction<number>) => {
       return (state = { ...state, page: action.payload })
     },
@@ -110,6 +119,7 @@ export const productSlice = createSlice({
   },
   extraReducers: {
     [fetchProducts.fulfilled.type]: fulfilledReducer,
+    [fetchMenuInfo.fulfilled.type]: fulfilledReducer,
     [deleteProduct.fulfilled.type]: fulfilledReducer,
     [editProduct.fulfilled.type]: fulfilledReducer,
     [addProduct.fulfilled.type]: fulfilledReducer,
@@ -123,6 +133,7 @@ export const productSlice = createSlice({
     },
 
     [fetchProducts.pending.type]: pendingReducer,
+    [fetchMenuInfo.pending.type]: pendingReducer,
     [deleteProduct.pending.type]: pendingReducer,
     [editProduct.pending.type]: pendingReducer,
     [addProduct.pending.type]: pendingReducer,
@@ -135,6 +146,7 @@ export const productSlice = createSlice({
     },
 
     [fetchProducts.rejected.type]: rejectionReducer,
+    [fetchMenuInfo.rejected.type]: rejectionReducer,
     [deleteProduct.rejected.type]: rejectionReducer,
     [editProduct.rejected.type]: rejectionReducer,
     [addProduct.rejected.type]: rejectionReducer,

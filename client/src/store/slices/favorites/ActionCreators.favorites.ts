@@ -73,7 +73,7 @@ export const addToFavorites = createAsyncThunk<void, { id: number }, { rejectVal
   }
 })
 
-// likes / dislikes
+// likes / dislikes / views
 export const addLike = createAsyncThunk<void, { id: number }, { rejectValue: string }>('favorites/addLike', async ({ id }, thunkApi) => {
   try {
     await FavoriteService.setLike(id)
@@ -90,7 +90,7 @@ export const addDislike = createAsyncThunk<void, { id: number }, { rejectValue: 
   try {
     await FavoriteService.setDislike(id)
 
-    thunkApi.dispatch(favoritesAction.setLike(id))
+    thunkApi.dispatch(favoritesAction.setDislike(id))
   } catch (error: any) {
     console.log(error.response?.data?.message)
 
@@ -101,6 +101,8 @@ export const addDislike = createAsyncThunk<void, { id: number }, { rejectValue: 
 export const deleteLike = createAsyncThunk<void, { id: number }, { rejectValue: string }>('favorites/deleteLike', async ({ id }, thunkApi) => {
   try {
     await FavoriteService.deleteLike(id)
+
+    thunkApi.dispatch(favoritesAction.unsetLike(id))
   } catch (error: any) {
     console.log(error.response?.data?.message)
 
@@ -111,6 +113,20 @@ export const deleteLike = createAsyncThunk<void, { id: number }, { rejectValue: 
 export const deleteDislike = createAsyncThunk<void, { id: number }, { rejectValue: string }>('favorites/deleteDislike', async ({ id }, thunkApi) => {
   try {
     await FavoriteService.deleteDislike(id)
+
+    thunkApi.dispatch(favoritesAction.unsetDislike(id))
+  } catch (error: any) {
+    console.log(error.response?.data?.message)
+
+    return thunkApi.rejectWithValue(error.response?.data?.message)
+  }
+})
+
+export const addView = createAsyncThunk<void, { id: number }, { rejectValue: string }>('favorites/addView', async ({ id }, thunkApi) => {
+  try {
+    await FavoriteService.setView(id)
+
+    thunkApi.dispatch(favoritesAction.setView(id))
   } catch (error: any) {
     console.log(error.response?.data?.message)
 

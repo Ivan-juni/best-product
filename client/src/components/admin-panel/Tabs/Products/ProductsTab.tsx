@@ -19,11 +19,10 @@ const ProductsTab: React.FC = () => {
   const navigate = useNavigate()
   const { products, isLoading, total, page, limit } = useAppSelector((state) => state.productReducer)
 
-  const { setProductsPage, setEditMode, setProductId, setLimit } = useActions()
+  const { setProductsPage, setEditMode, setProductId } = useActions()
 
   useEffect(() => {
-    setLimit(6)
-    dispatch(fetchProducts({ page: `${page}`, limit: `${limit}` }))
+    dispatch(fetchProducts({ page: `${page}`, limit: `${6}` }))
     dispatch(fetchCategories({}))
   }, [page, total])
 

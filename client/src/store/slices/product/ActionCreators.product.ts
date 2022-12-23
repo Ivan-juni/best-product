@@ -19,6 +19,9 @@ export const fetchProducts = createAsyncThunk<void, FetchProductsType, { rejectV
       const response = await ProductService.getProducts(rest)
 
       thunkApi.dispatch(productAction.setProducts(response.data))
+      if (searchCriteria.limit) {
+        thunkApi.dispatch(productAction.setLimit(+searchCriteria.limit))
+      }
 
       if (searchCriteria.setSubmitting) {
         searchCriteria.setSubmitting(false)
@@ -46,6 +49,21 @@ export const fetchSearchProducts = createAsyncThunk<void, FetchProductsType, { r
       }
     } catch (error: any) {
       errorLogic(error, searchCriteria)
+      return thunkApi.rejectWithValue(error.response?.data?.message)
+    }
+  }
+)
+
+export const fetchMenuInfo = createAsyncThunk<void, IProductQuery, { rejectValue: string }>(
+  'product/fetchMenuInfo',
+  async (searchCriteria, thunkApi) => {
+    try {
+      const response = await ProductService.getMenuInfo(searchCriteria)
+
+      thunkApi.dispatch(productAction.setMenuInfo(response.data))
+    } catch (error: any) {
+      console.log('Error: ', error)
+
       return thunkApi.rejectWithValue(error.response?.data?.message)
     }
   }

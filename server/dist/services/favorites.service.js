@@ -190,6 +190,25 @@ class FavoritesService {
             }
         });
     }
+    static addView(productId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const product = yield product_model_1.default.query().findOne({ id: productId });
+                if (!product) {
+                    throw new Error("Can't find this product");
+                }
+                // increment 'views' option in Product model
+                const views = yield product_model_1.default.query()
+                    .patch({ views: (0, objection_1.raw)('views + 1') })
+                    .where({ id: productId });
+                return views;
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
 }
 exports.default = FavoritesService;
 //# sourceMappingURL=favorites.service.js.map

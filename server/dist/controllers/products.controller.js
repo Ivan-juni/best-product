@@ -59,6 +59,15 @@ class ProductsController {
             return res.json(characteristics);
         });
     }
+    static getDropdownMenuInfo(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const info = yield products_service_1.default.getMenuInfo(req.query);
+            if (!info) {
+                return next(ApiError_1.default.badRequest(`Fetching info error`));
+            }
+            return res.json(info);
+        });
+    }
     // products admin panel
     static deleteProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {

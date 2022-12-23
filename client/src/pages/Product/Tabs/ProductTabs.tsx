@@ -11,6 +11,7 @@ import Comments from './Comments/Comments'
 import { useAppSelector } from '../../../hoooks/redux'
 import PriceDynamics from './Price-Dynamics/PriceDynamics'
 import { IPriceDynamics } from '../../../models/IStats.model'
+import { FormikProps } from 'formik'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -46,9 +47,21 @@ type PropsType = {
   isEditMode: boolean
   portalAddRef: React.MutableRefObject<null>
   setRef: React.Dispatch<React.SetStateAction<boolean>>
+  formik: FormikProps<{
+    name: string
+    price: string
+    categoryId: string
+    purpose: string
+    description: string
+    design: string
+    connectionType: string
+    microphone: boolean
+    batteryLiveTime: string
+    display: string
+  }>
 }
 
-const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode, portalAddRef, setRef }) => {
+const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode, portalAddRef, setRef, formik }) => {
   const [value, setValue] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const { total } = useAppSelector((state) => state.commentsReducer)
@@ -107,7 +120,7 @@ const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, i
         <Description product={product} isEditMode={isEditMode} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Characteristics product={product} isEditMode={isEditMode} />
+        <Characteristics product={product} isEditMode={isEditMode} formik={formik} />
       </TabPanel>
       <TabPanel value={value} index={2}>
         <Comments productId={productId} portalAddRef={portalAddRef} setRef={setRef} isLoaded={isLoaded} />

@@ -25,8 +25,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const product_characteristics_model_1 = __importDefault(require("../db/models/product-characteristics.model"));
 const product_model_1 = __importDefault(require("../db/models/product.model"));
-const category_model_1 = __importDefault(require("../db/models/category.model"));
-const get_category_id_util_1 = require("../utils/get-category-id.util");
 const remove_photo_util_1 = require("../utils/remove-photo.util");
 const sort_by_util_1 = require("../utils/sort-by.util");
 const favorite_model_1 = __importDefault(require("../db/models/favorite.model"));
@@ -34,52 +32,19 @@ const product_history_model_1 = __importDefault(require("../db/models/product-hi
 const find_products_util_1 = require("../utils/find-products.util");
 const replace_spaces_util_1 = require("../utils/replace-spaces.util");
 const image_module_1 = __importDefault(require("../db/models/image.module"));
+const get_category_childs_1 = require("../utils/get-category-childs");
+const get_category_parents_1 = require("../utils/get-category-parents");
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // введенная категория и её дочерние
-                let categoryChilds = { categoryIds: '' };
+                const categoryChilds = yield (0, get_category_childs_1.getCategoryChilds)(searchCriteria);
                 // родители введенной категории
-                let categoryParents = [];
+                const categoryParents = yield (0, get_category_parents_1.getCategoryParents)(searchCriteria);
                 // пагинация
                 const limit = +searchCriteria.limit || 5;
                 const page = +searchCriteria.page || 0;
-                if (searchCriteria.category) {
-                    // находим id написанной категории
-                    const categoryId = yield (0, get_category_id_util_1.getCategoryId)(searchCriteria.category);
-                    // получаем список категорий родителей
-                    const knex = category_model_1.default.knex();
-                    const parentResult = yield knex.raw(`SELECT t2.id,
-                t2.parent,
-                t2.name
-                from (
-                  select @r as _id,
-                    (select @r := parent from categories where id = _id) AS parent,
-                    @l := @l + 1 AS lvl from (select @r := ${categoryId}, @l := 0) vars, categories c
-                    where @r <> 0) t1
-                    join categories t2
-                    on  t1._id = t2.id
-                    order by t1.lvl desc`);
-                    categoryParents = parentResult[0];
-                    // находим id дочерних категорий
-                    const childResult = yield knex.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
-              SELECT @pv:=(
-                  SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
-                  ) AS lv FROM categories
-                  JOIN
-                  (SELECT @pv:=${categoryId}) tmp
-              ) a
-              WHERE lv IS NOT NULL;`);
-                    categoryChilds = childResult[0][0];
-                    // для корректного поиска также добавляем айди введенной категории
-                    if (categoryChilds.categoryIds === '' || categoryChilds.categoryIds == null) {
-                        categoryChilds.categoryIds = `${categoryId}`;
-                    }
-                    else {
-                        categoryChilds.categoryIds.concat(`, ${categoryId}`);
-                    }
-                }
                 // параметры для сортировки
                 const sortParams = (0, sort_by_util_1.sort)(searchCriteria, ['price', 'favoriteStars']);
                 // запрос в базу
@@ -161,6 +126,81 @@ class ProductService {
                     .where('products.id', '=', productId)
                     .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId');
                 return characteristics;
+            }
+            catch (error) {
+                console.log('Error: ', error);
+                return null;
+            }
+        });
+    }
+    static getMenuInfo(searchCriteria) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const info = {
+                    purpose: [],
+                    connectionType: [],
+                    display: [],
+                    design: [],
+                    price: [],
+                };
+                // введенная категория и её дочерние
+                const categoryChilds = yield (0, get_category_childs_1.getCategoryChilds)(searchCriteria);
+                //!todo дублирование кода
+                const priceMin = yield product_model_1.default.query()
+                    .min('products.price as price')
+                    .where((qb) => {
+                    if (searchCriteria.category) {
+                        // получаем товары из данной категории и дочерних
+                        qb.whereIn('categories.id', categoryChilds.categoryIds.split(','));
+                    }
+                    // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+                    (0, find_products_util_1.findProducts)(qb, searchCriteria);
+                })
+                    .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
+                    .innerJoin('categories', 'categories.id', 'products.categoryId');
+                const priceMax = yield product_model_1.default.query()
+                    .max('products.price as price')
+                    .where((qb) => {
+                    if (searchCriteria.category) {
+                        // получаем товары из данной категории и дочерних
+                        qb.whereIn('categories.id', categoryChilds.categoryIds.split(','));
+                    }
+                    // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+                    (0, find_products_util_1.findProducts)(qb, searchCriteria);
+                })
+                    .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
+                    .innerJoin('categories', 'categories.id', 'products.categoryId');
+                info.price[0] = `${priceMin[0].price}`;
+                info.price[1] = `${priceMax[0].price}`;
+                const knex = product_characteristics_model_1.default.knex();
+                const _purpose = yield knex.raw('SELECT GROUP_CONCAT(DISTINCT purpose ORDER BY purpose ASC SEPARATOR "," ) AS purpose FROM product_characteristics');
+                const _connectionType = yield knex.raw('SELECT GROUP_CONCAT(DISTINCT connectionType ORDER BY connectionType ASC SEPARATOR "," ) AS connectionType FROM product_characteristics');
+                const _display = yield knex.raw('SELECT GROUP_CONCAT(DISTINCT display ORDER BY display ASC SEPARATOR "," ) AS display FROM product_characteristics');
+                const _design = yield knex.raw('SELECT GROUP_CONCAT(DISTINCT design ORDER BY design ASC SEPARATOR "," ) AS design FROM product_characteristics');
+                // удаляем пробелы в начале строки, делаем первую букву большой
+                const format = (s) => {
+                    while (s.charAt(0) === ' ') {
+                        return s.substring(1).charAt(0).toLocaleUpperCase() + s.slice(2);
+                    }
+                    return s.charAt(0).toLocaleUpperCase() + s.slice(1);
+                };
+                info.purpose = _purpose[0][0].purpose
+                    .split(',')
+                    .map((s) => format(s))
+                    .filter((s) => s !== 'null');
+                info.connectionType = _connectionType[0][0].connectionType
+                    .split(',')
+                    .map((s) => format(s))
+                    .filter((s) => s !== 'null');
+                info.display = _display[0][0].display
+                    .split(',')
+                    .map((s) => format(s))
+                    .filter((s) => s !== 'null');
+                info.design = _design[0][0].design
+                    .split(',')
+                    .map((s) => format(s))
+                    .filter((s) => s !== 'null');
+                return info;
             }
             catch (error) {
                 console.log('Error: ', error);

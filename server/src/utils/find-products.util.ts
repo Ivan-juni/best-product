@@ -59,9 +59,14 @@ export const findProducts = (
     searchUtil(qb, searchCriteria, 'connectionType')
   }
 
-  if (searchCriteria.microphone && searchCriteria.microphone === 'true') {
-    const microphone = true
-    qb.andWhere('product_characteristics.microphone', '=', microphone)
+  if (searchCriteria.microphone) {
+    if (searchCriteria.microphone === 'true' || searchCriteria.microphone === 'built-in') {
+      const microphone = true
+      qb.andWhere('product_characteristics.microphone', '=', microphone)
+    } else if (searchCriteria.microphone === 'false' || searchCriteria.microphone === 'none') {
+      const microphone = false
+      qb.andWhere('product_characteristics.microphone', '=', microphone)
+    }
   }
 
   if (searchCriteria.price) {

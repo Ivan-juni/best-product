@@ -134,8 +134,19 @@
                 padding: 11px 0px 11px 23px;
             }
 
-            .categorySelect select {
-                width: 200px;
+            .categorySelect {
+                select {
+                    width: 200px;
+                    font-size: 20px;
+                }
+
+                span {
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 20px;
+                    line-height: 24px;
+                    color: #000000;
+                }
             }
         }
 

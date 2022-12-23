@@ -32,12 +32,15 @@ export default class FavoriteService {
     return $api.delete<DeleteResponse>(`/favorites?productId=${productId}`)
   }
 
-  // likes / dislikes
+  // likes / dislikes / views
   static async setLike(productId: number): Promise<AxiosResponse<DeleteResponse>> {
     return $api.post<DeleteResponse>(`/favorites/likes?productId=${productId}`)
   }
   static async setDislike(productId: number): Promise<AxiosResponse<DeleteResponse>> {
     return $api.post<DeleteResponse>(`/favorites/dislikes?productId=${productId}`)
+  }
+  static async setView(productId: number): Promise<AxiosResponse<DeleteResponse>> {
+    return $api.post<DeleteResponse>(`/favorites/views?productId=${productId}`)
   }
 
   static async deleteLike(productId: number): Promise<AxiosResponse<DeleteResponse>> {

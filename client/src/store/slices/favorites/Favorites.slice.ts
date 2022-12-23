@@ -6,6 +6,7 @@ import {
   addDislike,
   addLike,
   addToFavorites,
+  addView,
   deleteDislike,
   deleteFromFavorites,
   deleteLike,
@@ -18,6 +19,7 @@ export interface FavoritesState {
   ids: number[]
   likes: number[]
   dislikes: number[]
+  views: number[]
   parentCategories: ICategory[]
   total: number
   page: number
@@ -33,6 +35,7 @@ const initialState: FavoritesState = {
   ids: [],
   likes: [],
   dislikes: [],
+  views: [],
   parentCategories: [],
   total: 0,
   page: 0,
@@ -105,6 +108,9 @@ export const favoritesSlice = createSlice({
     unsetDislike: (state: FavoritesState, action: PayloadAction<number>) => {
       return (state = { ...state, dislikes: state.dislikes.filter((value) => value !== action.payload) })
     },
+    setView: (state: FavoritesState, action: PayloadAction<number>) => {
+      return (state = { ...state, views: [...state.views, action.payload] })
+    },
   },
   extraReducers: {
     [fetchFavorites.fulfilled.type]: fulfilledReducer,
@@ -115,6 +121,7 @@ export const favoritesSlice = createSlice({
     [addDislike.fulfilled.type]: fulfilledReducer,
     [deleteLike.fulfilled.type]: fulfilledReducer,
     [deleteDislike.fulfilled.type]: fulfilledReducer,
+    [addView.fulfilled.type]: fulfilledReducer,
 
     [fetchFavorites.pending.type]: pendingReducer,
     [fetchFavoritesIds.pending.type]: pendingReducer,
@@ -124,6 +131,7 @@ export const favoritesSlice = createSlice({
     [addDislike.fulfilled.type]: pendingReducer,
     [deleteLike.fulfilled.type]: pendingReducer,
     [deleteDislike.fulfilled.type]: pendingReducer,
+    [addView.fulfilled.type]: pendingReducer,
 
     [fetchFavorites.rejected.type]: rejectionReducer,
     [fetchFavoritesIds.rejected.type]: rejectionReducer,
@@ -133,6 +141,7 @@ export const favoritesSlice = createSlice({
     [addDislike.fulfilled.type]: rejectionReducer,
     [deleteLike.fulfilled.type]: rejectionReducer,
     [deleteDislike.fulfilled.type]: rejectionReducer,
+    [addView.fulfilled.type]: rejectionReducer,
   },
 })
 

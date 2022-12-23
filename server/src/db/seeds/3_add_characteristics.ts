@@ -2,8 +2,7 @@ import { Knex } from 'knex'
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
-  await knex('product_characteristics').del()
-
+  // await knex('product_characteristics').del()
   // Inserts seed entries
   await knex('product_characteristics').insert([
     {

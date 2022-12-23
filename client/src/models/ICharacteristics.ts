@@ -12,11 +12,11 @@ export interface ICharacteristics {
 }
 
 export interface FormikCharacteristics {
-  purpose: string
-  description: string
-  design: string
-  connectionType: string
-  microphone: string
-  batteryLiveTime: string
-  display: string
+  purpose: string | null
+  description: string | null
+  design: string | null
+  connectionType: string | null
+  microphone: boolean
+  batteryLiveTime: string | null
+  display: string | null
 }

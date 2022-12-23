@@ -92,7 +92,7 @@ $purple: #766ED3;
         .filter {
             border-radius: 10px;
             background-color: $purple;
-            padding: 9px;
+            padding: 9px 11px;
     
             span {
                 font-style: normal;
@@ -110,23 +110,60 @@ $purple: #766ED3;
     }
     
     .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
         position: absolute;
-        top: 10%;
         right: 0%;
         max-width: 427px;
+        max-height: calc(100vh - 115px);
+        overflow: auto;
         width: 100%;
         background: #FFFFFF;
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
         border-radius: 20px 0px 0px 20px;
         overflow: auto;
         padding: 20px 24px 20px 24px;
+        z-index: 5;
+
+        &::-webkit-scrollbar {
+            width: 9px;
+        }
+    
+        &::-webkit-scrollbar-track {
+            background-color: #E6E6E6;
+        }
+    
+        &::-webkit-scrollbar-thumb {
+            background-color: #D1D1D1;
+            border-radius: 10px;
+        }
 
         ul {
             list-style-type: none;
         }
 
-        .categories {
-            max-height: 269px;
+        .reset {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+
+            button {
+                width: 100px;
+                border: 1px solid $purple;
+                background: $purple;
+                border-radius: 10px;
+                padding:  5px 10px;
+                font-weight: 300;
+                font-size: 24px;
+                line-height: 29px;
+                color: #FFFFFF;
+
+                &:hover, &:disabled {
+                    transition: 0.3s;
+                    opacity: 0.8;
+                }
+            }
         }
     }
 }

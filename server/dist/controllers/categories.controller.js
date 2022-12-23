@@ -36,11 +36,11 @@ class CategoriesController {
     static addCategory(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const categoryName = req.body.name;
-            const parent = +req.body.parent || 0;
+            const parent = req.body.parent ? +req.body.parent : 0;
             if (!categoryName) {
                 return next(ApiError_1.default.internal('Please, type the category name'));
             }
-            if (!parent) {
+            if (parent !== 0 && !parent) {
                 return next(ApiError_1.default.internal('Please, type the category parent'));
             }
             const category = yield categories_service_1.default.addCategory({

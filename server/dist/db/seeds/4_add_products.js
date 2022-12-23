@@ -13,7 +13,7 @@ exports.seed = void 0;
 function seed(knex) {
     return __awaiter(this, void 0, void 0, function* () {
         // Deletes ALL existing entries
-        yield knex('products').del();
+        // await knex('products').del()
         // Inserts seed entries
         yield knex('products').insert([
             {

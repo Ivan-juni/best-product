@@ -31,3 +31,11 @@ export interface ProductAddingValues {
   batteryLiveTime: number | null
   display: string | null
 }
+
+export interface ProductMenuInfo {
+  purpose: Array<string>
+  connectionType: Array<string>
+  display: Array<string>
+  design: Array<string>
+  price: Array<string>
+}

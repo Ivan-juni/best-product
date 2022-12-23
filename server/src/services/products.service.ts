@@ -10,63 +10,20 @@ import ProductHistory from '../db/models/product-history.model'
 import { findProducts } from '../utils/find-products.util'
 import { replaceSpaces } from '../utils/replace-spaces.util'
 import Image from '../db/models/image.module'
+import { getCategoryChilds } from '../utils/get-category-childs'
+import { getCategoryParents } from '../utils/get-category-parents'
 
 export default class ProductService {
   static async getProducts(searchCriteria: IProductsQuery): resultType {
     try {
       // введенная категория и её дочерние
-      let categoryChilds: { categoryIds: string } = { categoryIds: '' }
-
+      const categoryChilds = await getCategoryChilds(searchCriteria)
       // родители введенной категории
-      let categoryParents: Array<{
-        id: number
-        parent: number
-        name: string
-      }> = []
+      const categoryParents = await getCategoryParents(searchCriteria)
 
       // пагинация
       const limit = +searchCriteria.limit || 5
       const page = +searchCriteria.page || 0
-
-      if (searchCriteria.category) {
-        // находим id написанной категории
-        const categoryId = await getCategoryId(searchCriteria.category)
-
-        // получаем список категорий родителей
-        const knex = Category.knex()
-        const parentResult = await knex.raw(`SELECT t2.id,
-                t2.parent,
-                t2.name
-                from (
-                  select @r as _id,
-                    (select @r := parent from categories where id = _id) AS parent,
-                    @l := @l + 1 AS lvl from (select @r := ${categoryId}, @l := 0) vars, categories c
-                    where @r <> 0) t1
-                    join categories t2
-                    on  t1._id = t2.id
-                    order by t1.lvl desc`)
-
-        categoryParents = parentResult[0]
-
-        // находим id дочерних категорий
-        const childResult = await knex.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
-              SELECT @pv:=(
-                  SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
-                  ) AS lv FROM categories
-                  JOIN
-                  (SELECT @pv:=${categoryId}) tmp
-              ) a
-              WHERE lv IS NOT NULL;`)
-
-        categoryChilds = childResult[0][0]
-
-        // для корректного поиска также добавляем айди введенной категории
-        if (categoryChilds.categoryIds === '' || categoryChilds.categoryIds == null) {
-          categoryChilds.categoryIds = `${categoryId}`
-        } else {
-          categoryChilds.categoryIds.concat(`, ${categoryId}`)
-        }
-      }
 
       // параметры для сортировки
       const sortParams = sort(searchCriteria, ['price', 'favoriteStars'])
@@ -139,7 +96,7 @@ export default class ProductService {
     }
   }
 
-  static async getPriceDynamics(productId: number): Promise<ProductHistory[]> {
+  static async getPriceDynamics(productId: number): Promise<ProductHistory[] | null> {
     try {
       const priceDynamics = await ProductHistory.query()
         .select('price', 'name', 'action', 'revision', 'datetime', 'id as productId')
@@ -161,6 +118,97 @@ export default class ProductService {
         .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
 
       return characteristics
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async getMenuInfo(searchCriteria: IProductsQuery): Promise<{
+    purpose: string[]
+    connectionType: string[]
+    display: string[]
+    price: string[]
+  } | null> {
+    try {
+      const info = {
+        purpose: [] as Array<string>,
+        connectionType: [] as Array<string>,
+        display: [] as Array<string>,
+        design: [] as Array<string>,
+        price: [] as Array<string>,
+      }
+      // введенная категория и её дочерние
+      const categoryChilds = await getCategoryChilds(searchCriteria)
+
+      //!todo дублирование кода
+      const priceMin = await Product.query()
+        .min('products.price as price')
+        .where((qb) => {
+          if (searchCriteria.category) {
+            // получаем товары из данной категории и дочерних
+            qb.whereIn('categories.id', categoryChilds.categoryIds.split(','))
+          }
+          // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+          findProducts(qb, searchCriteria)
+        })
+        .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
+        .innerJoin('categories', 'categories.id', 'products.categoryId')
+
+      const priceMax = await Product.query()
+        .max('products.price as price')
+        .where((qb) => {
+          if (searchCriteria.category) {
+            // получаем товары из данной категории и дочерних
+            qb.whereIn('categories.id', categoryChilds.categoryIds.split(','))
+          }
+          // id, name, purpose, display, connectionType, microphone, price, views, likes, dislikes, favoriteStars
+          findProducts(qb, searchCriteria)
+        })
+        .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
+        .innerJoin('categories', 'categories.id', 'products.categoryId')
+
+      info.price[0] = `${priceMin[0].price}`
+      info.price[1] = `${priceMax[0].price}`
+
+      const knex = ProductCharacteristics.knex()
+      const _purpose = await knex.raw(
+        'SELECT GROUP_CONCAT(DISTINCT purpose ORDER BY purpose ASC SEPARATOR "," ) AS purpose FROM product_characteristics'
+      )
+      const _connectionType = await knex.raw(
+        'SELECT GROUP_CONCAT(DISTINCT connectionType ORDER BY connectionType ASC SEPARATOR "," ) AS connectionType FROM product_characteristics'
+      )
+      const _display = await knex.raw(
+        'SELECT GROUP_CONCAT(DISTINCT display ORDER BY display ASC SEPARATOR "," ) AS display FROM product_characteristics'
+      )
+      const _design = await knex.raw('SELECT GROUP_CONCAT(DISTINCT design ORDER BY design ASC SEPARATOR "," ) AS design FROM product_characteristics')
+
+      // удаляем пробелы в начале строки, делаем первую букву большой
+      const format = (s: string) => {
+        while (s.charAt(0) === ' ') {
+          return s.substring(1).charAt(0).toLocaleUpperCase() + s.slice(2)
+        }
+        return s.charAt(0).toLocaleUpperCase() + s.slice(1)
+      }
+
+      info.purpose = _purpose[0][0].purpose
+        .split(',')
+        .map((s: string) => format(s))
+        .filter((s: string) => s !== 'null')
+      info.connectionType = _connectionType[0][0].connectionType
+        .split(',')
+        .map((s: string) => format(s))
+        .filter((s: string) => s !== 'null')
+      info.display = _display[0][0].display
+        .split(',')
+        .map((s: string) => format(s))
+        .filter((s: string) => s !== 'null')
+      info.design = _design[0][0].design
+        .split(',')
+        .map((s: string) => format(s))
+        .filter((s: string) => s !== 'null')
+
+      return info
     } catch (error) {
       console.log('Error: ', error)
       return null

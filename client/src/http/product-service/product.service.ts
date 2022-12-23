@@ -2,7 +2,7 @@ import $api from '../index'
 import { AxiosResponse } from 'axios'
 import { DeleteResponse } from '../models/DeleteResponse'
 import { IProduct, IProductQuery } from '../../models/IProduct.model'
-import { ProductAddingValues, ProductChangingValues, ProductResponse } from './product.model'
+import { ProductAddingValues, ProductChangingValues, ProductMenuInfo, ProductResponse } from './product.model'
 import { IImages } from '../../models/IImages.model'
 import { IPriceDynamics, IStats } from '../../models/IStats.model'
 
@@ -16,6 +16,21 @@ export default class ProductService {
     }
 
     return $api.get<ProductResponse>(`/products`, {
+      params: {
+        ...searchCriteria,
+      },
+    })
+  }
+
+  static async getMenuInfo(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductMenuInfo>> {
+    if (!searchCriteria.limit) {
+      searchCriteria.limit = '6'
+    }
+    if (!searchCriteria.page) {
+      searchCriteria.page = '0'
+    }
+
+    return $api.get<ProductMenuInfo>(`/products/menuInfo`, {
       params: {
         ...searchCriteria,
       },

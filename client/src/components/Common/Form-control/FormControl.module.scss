@@ -4,6 +4,7 @@
 .formControl {
     gap: 10px;
     margin-bottom: 20px;
+
     span {
        font-style: normal;
        font-weight: 400;
@@ -11,7 +12,9 @@
        line-height: 17px;
        color: $purple;
     }
+
     .error {
+        margin-top: 75px;
         color: red;
         font-size: 14px;
     }

@@ -30,7 +30,7 @@ const SearchModal: React.FC<PropsType> = ({ isModalOpen, setModalOpen }) => {
   const showCategoryHandler = (name: string) => {
     setModalOpen(false)
 
-    dispatch(fetchProducts({ page: '0', limit: '9', category: name }))
+    dispatch(fetchProducts({ category: name }))
     navigate(`/products?page=0&limit=9&category=${name}`)
   }
 

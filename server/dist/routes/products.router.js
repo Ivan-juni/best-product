@@ -56,6 +56,9 @@ router.get('/statistics/price-dynamics', products_controller_1.default.getPriceD
 // @route GET /api/products/characteristics?productId=5
 // @des Get product characteristics
 router.get('/characteristics', products_controller_1.default.getCharacteristics);
+// @route GET /api/products/menuInfo
+// @des Get menu info
+router.get('/menuInfo', products_controller_1.default.getDropdownMenuInfo);
 // ! Admin panel
 // @route POST /api/products/
 // @des Add a product

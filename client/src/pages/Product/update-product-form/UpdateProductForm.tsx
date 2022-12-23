@@ -40,7 +40,7 @@ const UpdateProductForm: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
     description: (product ? product.characteristics : '') ? product.characteristics.description : '',
     design: (product ? product.characteristics : '') ? `${product.characteristics.design}` : '',
     connectionType: (product ? product.characteristics : '') ? `${product.characteristics.connectionType}` : '',
-    microphone: (product ? product.characteristics : '') ? `${product.characteristics.microphone}` : '', // then convert to boolean (on submit)
+    microphone: (product ? product.characteristics : false) ? (product.characteristics.microphone == true ? true : false) : false,
     batteryLiveTime: (product ? product.characteristics : '') ? `${product.characteristics.batteryLiveTime}` : '', // then convert to number (on submit)
     display: (product ? product.characteristics : '') ? `${product.characteristics.display}` : '',
   }
@@ -52,7 +52,7 @@ const UpdateProductForm: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
   } & FormikCharacteristics
 
   const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus }: FormikType) => {
-    const { price, categoryId, batteryLiveTime, microphone, ...rest } = values
+    const { price, categoryId, batteryLiveTime, ...rest } = values
 
     dispatch(
       editProduct({
@@ -62,7 +62,6 @@ const UpdateProductForm: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
         price: values.price ? +values.price : product.price,
         categoryId: values.categoryId ? +values.categoryId : product.category.id,
         batteryLiveTime: values.batteryLiveTime ? +values.batteryLiveTime : product.characteristics.batteryLiveTime,
-        microphone: values.microphone === 'true' ? true : false,
         ...rest,
       })
     )
@@ -88,11 +87,7 @@ const UpdateProductForm: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
         return value === '' || value === 'null' ? null : value
       })
       .nullable(true),
-    microphone: Yup.string()
-      .transform((_, value: string) => {
-        return value === '' || value === 'null' || value === '0' || value === 'false' ? 'false' : 'true'
-      })
-      .nullable(true),
+    // microphone: Yup.bool().oneOf([true, false]),
     batteryLiveTime: Yup.string()
       .transform((_, value: string) => {
         return value === '' || value === 'null' ? null : value
@@ -194,6 +189,7 @@ const UpdateProductForm: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
                       priceDynamics={priceDynamics}
                       portalAddRef={portalAddRef}
                       setRef={setRef}
+                      formik={formik}
                     />
                   </>
                 ) : (

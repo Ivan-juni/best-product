@@ -3,7 +3,7 @@ import styles from './ProductsPage.module.scss'
 import Preloader from '../../components/Common/Preloader/Preloader'
 import ProductsComponent from '../../components/Products/ProductsComponent'
 import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
-import { fetchProducts } from '../../store/slices/product/ActionCreators.product'
+import { fetchMenuInfo, fetchProducts } from '../../store/slices/product/ActionCreators.product'
 import { Breadcrumbs, Typography } from '@mui/material'
 import { ReactComponent as BreadcrumbIcon } from '../../assets/icons/other/arrows/purple-arrow-right.svg'
 import { useSearchParams } from 'react-router-dom'
@@ -20,12 +20,11 @@ const ProductsPage: React.FC = () => {
 
   const { products, parentCategories, isLoading, cardType, page, limit, total } = useAppSelector((state) => state.productReducer)
 
-  const { setProductsCardType, setProductsPage, setLimit } = useActions()
+  const { setProductsCardType, setProductsPage } = useActions()
 
   useEffect(() => {
-    setLimit(9)
     searchParams.set('page', `${page}`)
-    searchParams.set('limit', `${limit}`)
+    searchParams.set('limit', `${9}`)
     setSearchParams(searchParams)
 
     searchParams.forEach((key, value) => {
@@ -33,6 +32,7 @@ const ProductsPage: React.FC = () => {
     })
 
     dispatch(fetchProducts(params))
+    dispatch(fetchMenuInfo(params))
     dispatch(fetchFavoritesIds())
   }, [page, searchParams])
 
@@ -74,22 +74,17 @@ const ProductsPage: React.FC = () => {
           </Breadcrumbs>
         </div>
       )}
-      {!isLoading && products && products.length > 0 ? (
-        <ProductsComponent
-          products={products}
-          setPage={setProductsPage}
-          page={page}
-          total={total}
-          limit={limit}
-          isLoading={isLoading}
-          cardType={cardType}
-          setCardType={setProductsCardType}
-        />
-      ) : (
-        <div className={styles.preloader}>
-          <Preloader />
-        </div>
-      )}
+      <ProductsComponent
+        products={products}
+        setPage={setProductsPage}
+        page={page}
+        total={total}
+        limit={limit}
+        isLoading={isLoading}
+        cardType={cardType}
+        setCardType={setProductsCardType}
+      />
+
       {/* auto scroll to top after redirecting */}
       <GoToTop />
     </div>

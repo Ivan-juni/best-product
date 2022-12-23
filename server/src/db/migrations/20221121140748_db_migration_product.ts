@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
     table.integer('dislikes').defaultTo(0).unsigned()
     table.integer('views').defaultTo(0).unsigned()
     table.integer('favoriteStars').defaultTo(0).unsigned()
-    table.integer('characteristicsId', 5).notNullable().unsigned().references('id').inTable('product_characteristics')
+    table.integer('characteristicsId', 5).notNullable().unsigned().references('id').inTable('product_characteristics').onDelete('CASCADE')
 
     table.timestamps(true, true, true)
   })

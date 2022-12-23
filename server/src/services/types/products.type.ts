@@ -13,7 +13,7 @@ export interface IProductsQuery {
   favoriteStars?: string
   connectionType?: string
   display?: string
-  microphone?: 'true'
+  microphone?: 'true' | 'built-in' | 'false' | 'none'
   orderByPrice?: 'low' | 'high'
   orderByFavoriteStars?: 'low' | 'high'
   page?: string
@@ -30,6 +30,7 @@ export interface IProductBody {
   design: string | null
   connectionType: string | null
   microphone: string | boolean | null
+  // microphone: boolean | null
   batteryLiveTime: string | number | null
   display: string | null
 }

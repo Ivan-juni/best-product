@@ -8,11 +8,12 @@ import { ReactComponent as FavoriteIcon } from '../../../assets/icons/stats/favo
 import { IProduct } from '../../../models/IProduct.model'
 import ImagesSlider from '../../../components/Common/Slider/Slider'
 import { Field, ErrorMessage } from 'formik'
-import { useAppDispatch, useAppSelector } from '../../../hoooks/redux'
+import { useActions, useAppDispatch, useAppSelector } from '../../../hoooks/redux'
 import {
   addDislike,
   addLike,
   addToFavorites,
+  addView,
   deleteDislike,
   deleteFromFavorites,
   deleteLike,
@@ -33,14 +34,16 @@ const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addIm
   const dispatch = useAppDispatch()
   const { isAuth } = useAppSelector((state) => state.authReducer)
   const { allCategories: categories } = useAppSelector((state) => state.categoriesReducer)
-  const { likes, dislikes, ids: favorites } = useAppSelector((state) => state.favoritesReducer)
+  const { likes, dislikes, views, ids: favorites } = useAppSelector((state) => state.favoritesReducer)
 
   const isLiked = likes.some((id) => id === product.id)
   const isDisliked = dislikes.some((id) => id === product.id)
+  const isViewed = views.some((id) => id === product.id)
   const isFavorite = favorites.some((id) => id === product.id)
 
   const likeHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
+
     if (!isLiked) {
       dispatch(addLike({ id: product.id }))
     } else {
@@ -50,6 +53,9 @@ const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addIm
 
   const dislikeHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
+
+    console.log(isDisliked)
+
     if (!isDisliked) {
       dispatch(addDislike({ id: product.id }))
     } else {
@@ -67,13 +73,20 @@ const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addIm
   }
 
   useEffect(() => {
+    if (!isViewed) {
+      dispatch(addView({ id: product.id }))
+    }
     dispatch(fetchCategories({}))
   }, [])
 
   useEffect(() => {
     dispatch(fetchProducts({ id: `${product.id}` }))
     dispatch(fetchFavoritesIds())
-  }, [isLiked, isFavorite, isDisliked])
+  }, [views, likes, dislikes, isFavorite])
+
+  useEffect(() => {
+    dispatch(fetchFavoritesIds())
+  }, [isFavorite])
 
   return (
     <div className={styles.wrapper}>
@@ -95,13 +108,23 @@ const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addIm
                 <span>{product.favoriteStars}</span>
               </div>
               <div className={styles.item}>
-                <button type='button' onClick={(e) => likeHandler(e)} className={isLiked ? styles.disabled : styles.button} disabled={!isAuth}>
+                <button
+                  type='button'
+                  onClick={(e) => likeHandler(e)}
+                  className={isLiked ? styles.disabled : styles.button}
+                  disabled={!isAuth || isDisliked}
+                >
                   <LikeIcon />
                 </button>
                 <span>{product.likes}</span>
               </div>
               <div className={styles.item}>
-                <button type='button' onClick={(e) => dislikeHandler(e)} className={isDisliked ? styles.disabled : styles.button} disabled={!isAuth}>
+                <button
+                  type='button'
+                  onClick={(e) => dislikeHandler(e)}
+                  className={isDisliked ? styles.disabled : styles.button}
+                  disabled={!isAuth || isLiked}
+                >
                   <DislikeIcon />
                 </button>
                 <span>{product.dislikes}</span>

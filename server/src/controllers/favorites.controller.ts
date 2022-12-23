@@ -87,7 +87,7 @@ export default class FavoritesController {
     }
   }
 
-  // likes / dislikes
+  // likes / dislikes / views
 
   static async addLike(req: Request, res: Response, next: NextFunction): ReturnType<number> {
     const { productId } = req.query
@@ -105,7 +105,7 @@ export default class FavoritesController {
     if (likes === 1) {
       return res.json({ message: 'Like successfully added' })
     } else {
-      return res.json({ message: 'Like does not added' })
+      return res.json({ message: 'Like has not added' })
     }
   }
 
@@ -145,7 +145,7 @@ export default class FavoritesController {
     if (dislikes === 1) {
       return res.json({ message: 'Dislike successfully added' })
     } else {
-      return res.json({ message: 'Dislike does not added' })
+      return res.json({ message: 'Dislike has not added' })
     }
   }
 
@@ -166,6 +166,26 @@ export default class FavoritesController {
       return res.json({ message: 'Dislike successfully deleted' })
     } else {
       return res.json({ message: 'Dislike has not deleted' })
+    }
+  }
+
+  static async addView(req: Request, res: Response, next: NextFunction): ReturnType<number> {
+    const { productId } = req.query
+
+    if (!productId) {
+      return next(ApiError.internal('Type product id'))
+    }
+
+    const views = await favoritesService.addView(+productId)
+
+    if (!views) {
+      return next(ApiError.badRequest(`Adding view error`))
+    }
+
+    if (views === 1) {
+      return res.json({ message: 'View successfully added' })
+    } else {
+      return res.json({ message: 'View has not added' })
     }
   }
 }

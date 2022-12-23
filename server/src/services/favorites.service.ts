@@ -200,4 +200,24 @@ export default class FavoritesService {
       return null
     }
   }
+
+  static async addView(productId: number): Promise<number | null> {
+    try {
+      const product = await Product.query().findOne({ id: productId })
+
+      if (!product) {
+        throw new Error("Can't find this product")
+      }
+
+      // increment 'views' option in Product model
+      const views = await Product.query()
+        .patch({ views: raw('views + 1') })
+        .where({ id: productId })
+
+      return views
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
 }

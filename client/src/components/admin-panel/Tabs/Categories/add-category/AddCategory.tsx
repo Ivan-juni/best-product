@@ -5,8 +5,9 @@ import * as Yup from 'yup'
 import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
 import { FormikType } from '../../../../../models/Formik.model'
 import { addCategory } from '../../../../../store/slices/categories/ActionCreators.categories'
+import FormControl from '../../../../Common/Form-control/FormControl'
 
-const AddProductForm = () => {
+const AddCategoryForm = () => {
   const dispatch = useAppDispatch()
 
   const { allCategories: categories } = useAppSelector((state) => state.categoriesReducer)
@@ -44,6 +45,9 @@ const AddProductForm = () => {
                 <div className={styles.formControl}>
                   <span>Parent: </span>
                   <Field as='select' name='parent'>
+                    <option key={0} value={0}>
+                      Without parent
+                    </option>
                     {categories.map((category) => {
                       return (
                         <option key={category.id} value={category.id}>
@@ -71,20 +75,4 @@ const AddProductForm = () => {
   )
 }
 
-type FormControlProps = {
-  name: string
-}
-
-const FormControl: React.FC<FormControlProps> = ({ name }) => {
-  return (
-    <div className={styles.formControl}>
-      <span>{name.charAt(0).toLocaleUpperCase() + name.slice(1)}</span>
-      <Field type='text' name={name} />
-      <div className={styles.error}>
-        <ErrorMessage name={name} className={styles.error} />
-      </div>
-    </div>
-  )
-}
-
-export default AddProductForm
+export default AddCategoryForm

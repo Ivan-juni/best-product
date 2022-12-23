@@ -23,7 +23,7 @@ const AddProductForm = () => {
     description: '',
     design: '',
     connectionType: '',
-    microphone: '', // then convert to boolean (on submit)
+    microphone: false,
     batteryLiveTime: '', // then convert to number (on submit)
     display: '',
   }
@@ -36,20 +36,26 @@ const AddProductForm = () => {
   } & FormikCharacteristics
 
   const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus, resetForm }: FormikType) => {
-    const { price, categoryId, batteryLiveTime, microphone, ...rest } = values
+    const { price, categoryId, batteryLiveTime, purpose, description, design, connectionType, display, ...rest } = values
+
     dispatch(
       addProduct({
         setStatus,
         setSubmitting,
         price: +values.price,
         categoryId: +values.categoryId,
-        batteryLiveTime: +values.batteryLiveTime,
-        microphone: values.microphone === 'true' ? true : false,
+        batteryLiveTime: values.batteryLiveTime ? +values.batteryLiveTime : null,
+        purpose: values.purpose ? values.purpose : null,
+        description: values.description ? values.description : null,
+        design: values.design ? values.design : null,
+        connectionType: values.connectionType ? values.connectionType : null,
+        display: values.display ? values.display : null,
         ...rest,
       })
     )
     if (resetForm) {
       resetForm()
+      setFileName('')
     }
   }
 
@@ -72,11 +78,11 @@ const AddProductForm = () => {
         return value === '' || value === 'null' ? null : value
       })
       .nullable(true),
-    microphone: Yup.string()
-      .transform((_, value: string) => {
-        return value === '' || value === 'null' || value === '0' || value === 'false' || value === 'none' ? 'false' : 'true'
-      })
-      .nullable(true),
+    // microphone: Yup.string()
+    //   .transform((_, value: string) => {
+    //     return value === '' || value === 'null' || value === '0' || value === 'false' || value === 'none' ? 'false' : 'true'
+    //   })
+    //   .nullable(true),
     batteryLiveTime: Yup.string()
       .transform((_, value: string) => {
         return value === '' || value === 'null' ? null : value
@@ -151,7 +157,20 @@ const AddProductForm = () => {
                   <FormControl name={'purpose'} />
                   <FormControl name={'design'} />
                   <FormControl name={'connectionType'} />
-                  <FormControl name={'microphone'} />
+                  <div className={styles.formControl + ' ' + styles.checkbox}>
+                    <span>Microphone</span>
+                    <input
+                      type='checkbox'
+                      name={`microphone`}
+                      id={`microphone`}
+                      onChange={formik.handleChange}
+                      onReset={formik.handleReset}
+                      defaultChecked={formik.values.microphone}
+                    />
+                    <div className={styles.error}>
+                      <ErrorMessage name={'microphone'} className={styles.error} />
+                    </div>
+                  </div>
                   <FormControl name={'batteryLiveTime'} />
                   <FormControl name={'display'} />
                 </div>

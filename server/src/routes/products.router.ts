@@ -54,6 +54,10 @@ router.get('/statistics/price-dynamics', productController.getPriceDynamics)
 // @des Get product characteristics
 router.get('/characteristics', productController.getCharacteristics)
 
+// @route GET /api/products/menuInfo
+// @des Get menu info
+router.get('/menuInfo', productController.getDropdownMenuInfo)
+
 // ! Admin panel
 // @route POST /api/products/
 // @des Add a product

@@ -13,7 +13,7 @@ exports.seed = void 0;
 function seed(knex) {
     return __awaiter(this, void 0, void 0, function* () {
         // Deletes ALL existing entries
-        yield knex('images').del();
+        // await knex('images').del()
         // Inserts seed entries
         yield knex('images').insert([
             { productId: 1, src: 'http://localhost:8000/static/products/JBL_T450/jblt450cable.png' },

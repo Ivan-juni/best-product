@@ -59,6 +59,26 @@ export default class ProductsController {
     return res.json(characteristics)
   }
 
+  static async getDropdownMenuInfo(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): ReturnType<{
+    purpose: string[]
+    connectionType: string[]
+    display: string[]
+    design: string[]
+    price: string[]
+  }> {
+    const info = await productsService.getMenuInfo(req.query)
+
+    if (!info) {
+      return next(ApiError.badRequest(`Fetching info error`))
+    }
+
+    return res.json(info)
+  }
+
   // products admin panel
 
   static async deleteProduct(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {

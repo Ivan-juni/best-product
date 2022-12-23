@@ -19,10 +19,11 @@ router.post('/', auth_middleware_1.default, favorites_controller_1.default.addTo
 // @route DELETE /api/products/favorite?id=$productId$
 // @des Remove product from user favorites
 router.delete('/', auth_middleware_1.default, favorites_controller_1.default.deleteFromFavorite);
-// likes, dislikes
+// likes, dislikes, views
 router.post('/likes', auth_middleware_1.default, favorites_controller_1.default.addLike);
 router.delete('/likes', auth_middleware_1.default, favorites_controller_1.default.deleteLike);
 router.post('/dislikes', auth_middleware_1.default, favorites_controller_1.default.addDislike);
 router.delete('/dislikes', auth_middleware_1.default, favorites_controller_1.default.deleteDislike);
+router.post('/views', auth_middleware_1.default, favorites_controller_1.default.addView);
 exports.default = router;
 //# sourceMappingURL=favorites.router.js.map

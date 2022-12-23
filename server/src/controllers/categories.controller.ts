@@ -29,13 +29,13 @@ export default class CategoriesController {
 
   static async addCategory(req: Request, res: Response, next: NextFunction): ReturnType<Category> {
     const categoryName: string = req.body.name
-    const parent: number = +req.body.parent || 0
+    const parent: number = req.body.parent ? +req.body.parent : 0
 
     if (!categoryName) {
       return next(ApiError.internal('Please, type the category name'))
     }
 
-    if (!parent) {
+    if (parent !== 0 && !parent) {
       return next(ApiError.internal('Please, type the category parent'))
     }
 
