@@ -45,25 +45,10 @@ type PropsType = {
   priceDynamics: IPriceDynamics[]
   productId: number
   isEditMode: boolean
-  portalAddRef: React.MutableRefObject<null>
-  setRef: React.Dispatch<React.SetStateAction<boolean>>
-  formik: FormikProps<{
-    name: string
-    price: string
-    categoryId: string
-    purpose: string
-    description: string
-    design: string
-    connectionType: string
-    microphone: boolean
-    batteryLiveTime: string
-    display: string
-  }>
 }
 
-const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode, portalAddRef, setRef, formik }) => {
+const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode }) => {
   const [value, setValue] = useState(0)
-  const [isLoaded, setIsLoaded] = useState(false)
   const { total } = useAppSelector((state) => state.commentsReducer)
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -112,7 +97,7 @@ const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, i
         >
           <Tab label='Description' {...a11yProps(0)} />
           <Tab label='Characteristics' {...a11yProps(1)} />
-          <Tab label={`Comments (${total})`} {...a11yProps(2)} onClick={() => setIsLoaded((prev) => !prev)} />
+          <Tab label={`Comments (${total})`} {...a11yProps(2)} />
           <Tab label='Price Dynamics' {...a11yProps(3)} />
         </Tabs>
       </Box>
@@ -120,10 +105,10 @@ const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, i
         <Description product={product} isEditMode={isEditMode} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Characteristics product={product} isEditMode={isEditMode} formik={formik} />
+        <Characteristics product={product} isEditMode={isEditMode} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <Comments productId={productId} portalAddRef={portalAddRef} setRef={setRef} isLoaded={isLoaded} />
+        <Comments productId={productId} />
       </TabPanel>
       <TabPanel value={value} index={3}>
         <PriceDynamics priceDynamics={priceDynamics} />

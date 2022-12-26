@@ -25,10 +25,11 @@ const ImagesSlider: React.FC<PropsType> = ({ product, isEditMode, changeMainImag
   const [nav2, setNav2] = useState<Slider | null>(null)
 
   useEffect(() => {
+    setImages([{ id: 0, src: product.image }])
     product.images.map((obj) => {
       setImages((prev) => [...prev, obj])
     })
-  }, [])
+  }, [product.images.length])
 
   const settings = {
     dots: false,
@@ -95,4 +96,4 @@ const ImagesSlider: React.FC<PropsType> = ({ product, isEditMode, changeMainImag
   )
 }
 
-export default ImagesSlider
+export default React.memo(ImagesSlider)

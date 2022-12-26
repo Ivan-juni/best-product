@@ -20,9 +20,11 @@ const AddCommentForm: React.FC<PropsType> = ({ productId }) => {
 
   type InitialValuesType = typeof initialValues
 
-  const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus, resetForm }: FormikType & { resetForm: () => void }) => {
+  const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus, resetForm }: FormikType) => {
     dispatch(addComment({ setSubmitting, setStatus, productId, ...values }))
-    resetForm()
+    if (resetForm) {
+      resetForm()
+    }
   }
 
   const validationSchema = Yup.object({

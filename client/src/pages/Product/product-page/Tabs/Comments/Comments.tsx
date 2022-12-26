@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styles from './Comments.module.scss'
 import { useActions, useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
 import { ReactComponent as SortIcon } from '../../../../../assets/icons/filters/sort-icon.svg'
@@ -7,15 +7,13 @@ import Comment from './Comment/Comment'
 import { IComment } from '../../../../../models/IComment'
 import Paginator from '../../../../../components/Common/Paginator/Paginator'
 import { fetchComments } from '../../../../../store/slices/comments/ActionCreators.comments'
+import AddCommentForm from './add-comment/AddCommentForm'
 
 type PropsType = {
   productId: number
-  isLoaded: boolean
-  portalAddRef: React.MutableRefObject<null>
-  setRef: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Comments: React.FC<PropsType> = ({ productId, portalAddRef, setRef, isLoaded }) => {
+const Comments: React.FC<PropsType> = ({ productId }) => {
   const dispatch = useAppDispatch()
 
   const [isSort, setSort] = useState(false)
@@ -28,10 +26,6 @@ const Comments: React.FC<PropsType> = ({ productId, portalAddRef, setRef, isLoad
     setSort((prev) => !prev)
     isSort ? dispatch(fetchComments({ productId, orderByDate: 'low' })) : dispatch(fetchComments({ productId, orderByDate: 'high' }))
   }
-
-  useEffect(() => {
-    setRef(isLoaded)
-  }, [isLoaded])
 
   return (
     <div className={styles.wrapper}>
@@ -56,7 +50,7 @@ const Comments: React.FC<PropsType> = ({ productId, portalAddRef, setRef, isLoad
       )}
       {isAuth && (
         <div className={styles.add}>
-          <div ref={portalAddRef} className='add-form'></div>
+          <AddCommentForm productId={productId} />
         </div>
       )}
     </div>
