@@ -1,11 +1,10 @@
 import { Knex } from 'knex'
 
 export async function seed(knex: Knex): Promise<void> {
-  // Deletes ALL existing entries
-  // await knex('product_characteristics').del()
   // Inserts seed entries
   await knex('product_characteristics').insert([
     {
+      id: 1,
       purpose: 'Listening music',
       description: "It's description for Headphones JBL T110",
       design: 'overhead, closed',
@@ -14,6 +13,7 @@ export async function seed(knex: Knex): Promise<void> {
       batteryLiveTime: 12,
     },
     {
+      id: 2,
       purpose: 'Relax, intertaiment',
       description: 'It\'s description for Samsung Smart TV 40"',
       design: 'flat',
@@ -21,6 +21,7 @@ export async function seed(knex: Knex): Promise<void> {
       display: '40 inch, amoled',
     },
     {
+      id: 3,
       purpose: 'Work',
       description: "It's description for MacBook Pro M2 2022",
       design: 'space grey corps',
@@ -30,6 +31,7 @@ export async function seed(knex: Knex): Promise<void> {
       display: '14 inch, retina',
     },
     {
+      id: 4,
       purpose: 'For smartphone',
       description: "It's description for Apple Iphone 11",
       design: 'PRODUCT RED',
@@ -39,6 +41,7 @@ export async function seed(knex: Knex): Promise<void> {
       display: '5.7 inch, retina',
     },
     {
+      id: 5,
       purpose: 'For auto',
       description: "It's description for USB converter",
       connectionType: '12v to usb 3.0',

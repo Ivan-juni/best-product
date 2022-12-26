@@ -13,11 +13,14 @@ export function withAuthRedirect<WCP extends JSX.IntrinsicAttributes>(WrappedCom
     useEffect(() => {
       setLogModalOpen(false)
       setRedirect(true)
-    }, [isAuth, isLoading])
+      console.log('in')
+    }, [isAuth])
 
     if (redirect === true) {
       if (!isLoading) {
         if (!isAuth) {
+          console.log('out')
+
           setLogModalOpen(true)
           navigate('/home')
         }

@@ -32,14 +32,14 @@ const product_history_model_1 = __importDefault(require("../db/models/product-hi
 const find_products_util_1 = require("../utils/find-products.util");
 const replace_spaces_util_1 = require("../utils/replace-spaces.util");
 const image_module_1 = __importDefault(require("../db/models/image.module"));
-const get_category_childs_1 = require("../utils/get-category-childs");
+const get_category_childs_ids_1 = require("../utils/get-category-childs-ids");
 const get_category_parents_1 = require("../utils/get-category-parents");
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // введенная категория и её дочерние
-                const categoryChilds = yield (0, get_category_childs_1.getCategoryChilds)(searchCriteria);
+                const categoryChilds = yield (0, get_category_childs_ids_1.getCategoryChilds)(searchCriteria);
                 // родители введенной категории
                 const categoryParents = yield (0, get_category_parents_1.getCategoryParents)(searchCriteria);
                 // пагинация
@@ -144,7 +144,7 @@ class ProductService {
                     price: [],
                 };
                 // введенная категория и её дочерние
-                const categoryChilds = yield (0, get_category_childs_1.getCategoryChilds)(searchCriteria);
+                const categoryChilds = yield (0, get_category_childs_ids_1.getCategoryChilds)(searchCriteria);
                 const priceMin = yield product_model_1.default.query()
                     .min('products.price as price')
                     .where((qb) => {

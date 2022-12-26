@@ -12,31 +12,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCategoryParents = void 0;
+exports.getCategoryChilds = void 0;
 const category_model_1 = __importDefault(require("../db/models/category.model"));
 const get_category_id_util_1 = require("./get-category-id.util");
-const getCategoryParents = (searchCriteria) => __awaiter(void 0, void 0, void 0, function* () {
+const getCategoryChilds = (searchCriteria) => __awaiter(void 0, void 0, void 0, function* () {
     if (searchCriteria.category) {
         // находим id написанной категории
         const categoryId = yield (0, get_category_id_util_1.getCategoryId)(searchCriteria.category);
-        // получаем список категорий родителей
-        const knex = category_model_1.default.knex();
-        const parentResult = yield knex.raw(`WITH RECURSIVE cte(id, parent, name) as 
+        // находим id дочерних категорий
+        const category = category_model_1.default.knex();
+        const childResult = yield category.raw(`WITH RECURSIVE cte(id, parent, name) as 
                         (
                         SELECT id, parent, name FROM categories WHERE id = ${categoryId}
                         UNION ALL
-                        
                         SELECT c.id, c.parent, c.name
                         FROM categories c
-                        INNER JOIN cte on c.id = cte.parent
+                        INNER JOIN cte on c.parent = cte.id
                         )
-                        SELECT * FROM cte ORDER BY id ASC`);
-        const categoryParents = parentResult[0];
-        return categoryParents;
+                        SELECT GROUP_CONCAT( cte.id SEPARATOR "," ) AS categoryIds FROM cte`);
+        const categoryChilds = childResult[0][0];
+        return categoryChilds;
     }
     else {
-        return [];
+        return { categoryIds: '' };
     }
 });
-exports.getCategoryParents = getCategoryParents;
-//# sourceMappingURL=get-category-parents.js.map
+exports.getCategoryChilds = getCategoryChilds;
+//# sourceMappingURL=get-category-childs-ids.js.map

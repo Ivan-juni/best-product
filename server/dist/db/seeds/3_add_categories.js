@@ -12,21 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seed = void 0;
 function seed(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        // Deletes ALL existing entries
-        yield knex('users').del();
         // Inserts seed entries
-        yield knex('users').insert([
-            {
-                email: 'admin@gmail.com',
-                phone: 380994960349,
-                password: '$2b$04$AJz/c1BJBnMhckc4vJfv2.r5ZoPKkhTnoMgmNUrPpPY4CLfpHqwV2',
-                firstName: 'Admin',
-                lastName: 'Admin',
-                role: 'ADMIN',
-                photo: 'http://localhost:8000/static/users/admin-1669204612771.png',
-            },
+        // 'id' добавляю, так в таблице `products` указываются id категорий. Иначе при повторном seed'е id категорий слетят (будет 9-16)
+        // аналогично и с другими таблицами
+        yield knex('categories').insert([
+            { id: 1, parent: 0, name: 'Electronics' },
+            { id: 2, parent: 1, name: 'Accessories' },
+            { id: 3, parent: 1, name: 'Laptops' },
+            { id: 4, parent: 1, name: 'Tablets' },
+            { id: 5, parent: 1, name: 'TV' },
+            { id: 6, parent: 2, name: 'Headphones' },
+            { id: 7, parent: 1, name: 'Smartphones' },
+            { id: 8, parent: 2, name: 'Car Accessories' },
         ]);
     });
 }
 exports.seed = seed;
-//# sourceMappingURL=add_admin.js.map
+//# sourceMappingURL=3_add_categories.js.map

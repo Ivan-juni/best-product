@@ -4,6 +4,7 @@ import Favorites from './pages/Favorites/Favorites'
 import Home from './pages/Home/Home'
 import Product from './pages/Product/ProductContainer'
 import Profile from './pages/Profile/Profile'
+import NotFound from './components/not-found/NotFound'
 
 const AppRouter = () => {
   return (
@@ -14,6 +15,7 @@ const AppRouter = () => {
       <Route path='/profile' element={<Profile />} />
       <Route path='/product' element={<Product />} />
       <Route path='/products' element={<ProductsPage />} />
+      <Route path='*' element={<NotFound />} />
     </Routes>
   )
 }

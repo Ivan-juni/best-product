@@ -9,26 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.down = exports.up = void 0;
-function up(knex) {
+exports.seed = void 0;
+function seed(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        // return knex.schema.createTable('user', (table) => {
-        //   table.increments()
-        //   table.string('email').notNullable().unique()
-        //   table.bigInteger('phone').unsigned().nullable()
-        //   table.string('password').notNullable()
-        //   table.string('firstName').notNullable()
-        //   table.string('lastName').notNullable()
-        //   table.string('role').defaultTo('USER')
-        //   table.timestamps(true, true)
-        // })
+        // Inserts seed entries
+        yield knex('images').insert([
+            { productId: 1, src: 'http://localhost:8000/static/products/JBL_T450/jbl_t450_white-1671010577802.jpeg' },
+            { productId: 1, src: 'http://localhost:8000/static/products/JBL_T450/jblt450blue.jpeg' },
+            { productId: 1, src: 'http://localhost:8000/static/products/JBL_T450/jblt450blue.jpeg' },
+        ]);
     });
 }
-exports.up = up;
-function down(knex) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return knex.schema.dropTableIfExists('user');
-    });
-}
-exports.down = down;
-//# sourceMappingURL=20221121093852_db_migration_init.js.map
+exports.seed = seed;
+//# sourceMappingURL=6_add_images.js.map

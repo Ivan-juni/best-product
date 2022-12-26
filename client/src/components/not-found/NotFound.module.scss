@@ -1,0 +1,29 @@
+@import '../../styles/variables.scss';
+
+.wrapper {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 50px;
+    color: $purple;
+
+    h1 {
+        text-align: center;
+    }
+    p {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .links {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+
+        a {
+            font-size: 18px;
+            color: black;
+        }
+    }
+}

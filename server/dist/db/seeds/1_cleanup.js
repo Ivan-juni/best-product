@@ -12,23 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seed = void 0;
 function seed(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        // Deletes ALL existing entries
-        // await knex('product_characteristics').del()
+        yield knex('users').del();
         yield knex('images').del();
         yield knex('products').del();
         yield knex('categories').del();
-        // Inserts seed entries
-        yield knex('categories').insert([
-            { parent: 0, name: 'Electronics' },
-            { parent: 1, name: 'Accessories' },
-            { parent: 1, name: 'Laptops' },
-            { parent: 1, name: 'Tablets' },
-            { parent: 1, name: 'TV' },
-            { parent: 2, name: 'Headphones' },
-            { parent: 1, name: 'Smartphones' },
-            { parent: 2, name: 'Car Accessories' },
-        ]);
+        yield knex('product_characteristics').del();
+        yield knex('products_history').del();
     });
 }
 exports.seed = seed;
-//# sourceMappingURL=2_add_categories.js.map
+//# sourceMappingURL=1_cleanup.js.map

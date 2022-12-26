@@ -12,14 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seed = void 0;
 function seed(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        // Deletes ALL existing entries
-        yield knex('images').del();
         // Inserts seed entries
-        yield knex('images').insert([
-            { productId: 1, src: 'http://localhost:8000/static/products/JBL_T450/jblt450cable.png' },
-            { productId: 1, src: 'http://localhost:8000/static/products/JBL_T450/jblt450blue.png' },
+        yield knex('users').insert([
+            {
+                email: 'admin@gmail.com',
+                phone: 380994960349,
+                password: '$2b$04$AJz/c1BJBnMhckc4vJfv2.r5ZoPKkhTnoMgmNUrPpPY4CLfpHqwV2',
+                firstName: 'Admin',
+                lastName: 'Admin',
+                role: 'ADMIN',
+                photo: 'http://localhost:8000/static/users/admin-1669204612771.png',
+            },
         ]);
     });
 }
 exports.seed = seed;
-//# sourceMappingURL=add_images.js.map
+//# sourceMappingURL=2_add_admin.js.map
