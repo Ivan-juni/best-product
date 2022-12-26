@@ -3,6 +3,7 @@ import { CategoryAddingValues, CategoryChangingValues } from '../../../http/cate
 import CategoriesService from '../../../http/categories-service/categories.service'
 import { FormikType } from '../../../models/Formik.model'
 import { ICategoryQuery } from '../../../models/ICategory'
+import { ErrorType } from '../../../models/IError.model'
 import { errorLogic } from '../../utils/errorLogic'
 import { categoriesAction } from './Categories.slice'
 
@@ -23,9 +24,9 @@ export const fetchCategories = createAsyncThunk<void, FetchCategoriesType, { rej
       if (setSubmitting) {
         setSubmitting(false)
       }
-    } catch (error: any) {
-      errorLogic(error, values)
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, values))
     }
   }
 )
@@ -43,9 +44,9 @@ export const fetchSearchCategories = createAsyncThunk<void, FetchCategoriesType,
       if (setSubmitting) {
         setSubmitting(false)
       }
-    } catch (error: any) {
-      errorLogic(error, values)
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, values))
     }
   }
 )
@@ -57,10 +58,9 @@ export const deleteCategory = createAsyncThunk<void, { id: number }, { rejectVal
       await CategoriesService.deleteCategory(id)
 
       thunkApi.dispatch(categoriesAction.deleteCategory(id))
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError))
     }
   }
 )
@@ -75,10 +75,9 @@ export const updateCategory = createAsyncThunk<void, { id: number } & CategoryCh
 
       thunkApi.dispatch(categoriesAction.updateCategory(response.data))
       // thunkApi.dispatch(fetchCategories({}))
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError))
     }
   }
 )
@@ -96,9 +95,8 @@ export const addCategory = createAsyncThunk<void, AddCategoryType, { rejectValue
     if (setSubmitting) {
       setSubmitting(false)
     }
-  } catch (error: any) {
-    errorLogic(error, values)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError, values))
   }
 })

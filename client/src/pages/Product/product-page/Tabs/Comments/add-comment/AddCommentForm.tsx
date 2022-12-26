@@ -1,10 +1,10 @@
 import React from 'react'
 import styles from './AddCommentForm.module.scss'
 import { Form, Formik, Field, ErrorMessage } from 'formik'
-import { FormikType } from '../../../../../models/Formik.model'
+import { FormikType } from '../../../../../../models/Formik.model'
 import * as Yup from 'yup'
-import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
-import { addComment } from '../../../../../store/slices/comments/ActionCreators.comments'
+import { useAppDispatch, useAppSelector } from '../../../../../../hoooks/redux'
+import { addComment } from '../../../../../../store/slices/comments/ActionCreators.comments'
 
 type PropsType = {
   productId: number
@@ -41,7 +41,15 @@ const AddCommentForm: React.FC<PropsType> = ({ productId }) => {
                     <div className={styles.error}>
                       <ErrorMessage name='text' className={styles.error} />
                     </div>
-                    <Field as='textarea' name='text' />
+                    <Field
+                      as='textarea'
+                      name='text'
+                      onKeyPress={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                        if (e.key === 'Enter' && e.shiftKey) {
+                          formik.submitForm()
+                        }
+                      }}
+                    />
                   </div>
 
                   <button type='submit' className={styles.submit} disabled={!isAuth || !formik.isValid || formik.isSubmitting}>

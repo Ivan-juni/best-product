@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from './PriceDynamics.module.scss'
-import { IPriceDynamics } from '../../../../models/IStats.model'
+import { IPriceDynamics } from '../../../../../models/IStats.model'
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
 import moment from 'moment'
 

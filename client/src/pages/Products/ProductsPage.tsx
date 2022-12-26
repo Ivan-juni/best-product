@@ -8,7 +8,7 @@ import { Breadcrumbs, Typography } from '@mui/material'
 import { ReactComponent as BreadcrumbIcon } from '../../assets/icons/other/arrows/purple-arrow-right.svg'
 import { useSearchParams } from 'react-router-dom'
 import { fetchFavoritesIds } from '../../store/slices/favorites/ActionCreators.favorites'
-import GoToTop from '../../utils/GoToTop'
+import GoToTop from '../../utils/go-to-top'
 
 const ProductsPage: React.FC = () => {
   const dispatch = useAppDispatch()

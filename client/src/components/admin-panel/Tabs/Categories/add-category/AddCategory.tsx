@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
 import { FormikType } from '../../../../../models/Formik.model'
 import { addCategory } from '../../../../../store/slices/categories/ActionCreators.categories'
-import FormControl from '../../../../Common/Form-control/FormControl'
+import FormControl from '../../../../Common/form-control/FormControl'
 
 const AddCategoryForm = () => {
   const dispatch = useAppDispatch()

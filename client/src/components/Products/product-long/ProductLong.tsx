@@ -12,7 +12,7 @@ import { IProduct } from '../../../models/IProduct.model'
 import { useActions, useAppDispatch, useAppSelector } from '../../../hoooks/redux'
 import { addToFavorites, deleteFromFavorites } from '../../../store/slices/favorites/ActionCreators.favorites'
 import { useNavigate } from 'react-router-dom'
-import { showProductHandler } from '../../../utils/showProductHandler'
+import { showProductHandler } from '../../../utils/show-product-handler'
 
 type PropsType = {
   product: IProduct

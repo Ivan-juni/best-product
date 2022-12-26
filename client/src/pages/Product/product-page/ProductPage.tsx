@@ -1,11 +1,11 @@
 import React from 'react'
-import styles from './UpdateProductForm.module.scss'
-import Card from '../Card/Card'
+import styles from './ProductPage.module.scss'
+import Card from './Card/Card'
 import { useActions, useAppDispatch, useAppSelector } from '../../../hoooks/redux'
 import { IProduct } from '../../../models/IProduct.model'
 import { addImage, deleteImage, editProduct } from '../../../store/slices/product/ActionCreators.product'
 import { useNavigate } from 'react-router-dom'
-import ProductTabs from '../Tabs/ProductTabs'
+import ProductTabs from './Tabs/ProductTabs'
 import { ReactComponent as EditIcon } from '../../../assets/icons/other/edit-icon.svg'
 import { Form, Formik } from 'formik'
 import { FormikType } from '../../../models/Formik.model'
@@ -18,7 +18,7 @@ type PropsType = {
   portalAddRef: React.MutableRefObject<null>
 }
 
-const UpdateProductForm: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
+const ProductPage: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
   const dispatch = useAppDispatch()
 
   const { products, priceDynamics, isEditMode, productId } = useAppSelector((state) => state.productReducer)
@@ -204,4 +204,4 @@ const UpdateProductForm: React.FC<PropsType> = ({ setRef, portalAddRef }) => {
   )
 }
 
-export default UpdateProductForm
+export default ProductPage

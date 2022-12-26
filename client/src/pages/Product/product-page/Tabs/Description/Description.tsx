@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './Description.module.scss'
-import { IProduct } from '../../../../models/IProduct.model'
+import { IProduct } from '../../../../../models/IProduct.model'
 import { Field, ErrorMessage } from 'formik'
 
 type PropsType = {

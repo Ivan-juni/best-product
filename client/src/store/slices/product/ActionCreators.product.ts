@@ -5,6 +5,7 @@ import { FormikType } from '../../../models/Formik.model'
 import { IProductQuery } from '../../../models/IProduct.model'
 import { errorLogic } from '../../utils/errorLogic'
 import { productAction } from './Product.slice'
+import { ErrorType } from '../../../models/IError.model'
 
 // product
 type FetchProductsType = FormikType & IProductQuery
@@ -26,9 +27,9 @@ export const fetchProducts = createAsyncThunk<void, FetchProductsType, { rejectV
       if (searchCriteria.setSubmitting) {
         searchCriteria.setSubmitting(false)
       }
-    } catch (error: any) {
-      errorLogic(error, searchCriteria)
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, searchCriteria))
     }
   }
 )
@@ -47,9 +48,9 @@ export const fetchSearchProducts = createAsyncThunk<void, FetchProductsType, { r
       if (searchCriteria.setSubmitting) {
         searchCriteria.setSubmitting(false)
       }
-    } catch (error: any) {
-      errorLogic(error, searchCriteria)
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, searchCriteria))
     }
   }
 )
@@ -61,10 +62,9 @@ export const fetchMenuInfo = createAsyncThunk<void, IProductQuery, { rejectValue
       const response = await ProductService.getMenuInfo(searchCriteria)
 
       thunkApi.dispatch(productAction.setMenuInfo(response.data))
-    } catch (error: any) {
-      console.log('Error: ', error)
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError))
     }
   }
 )
@@ -84,9 +84,9 @@ export const addProduct = createAsyncThunk<void, AddProductType, { rejectValue: 
       if (setSubmitting) {
         setSubmitting(false)
       }
-    } catch (error: any) {
-      errorLogic(error, { setStatus, setSubmitting })
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, { setStatus, setSubmitting }))
     }
   }
 )
@@ -104,9 +104,9 @@ export const editProduct = createAsyncThunk<void, EditProductType, { rejectValue
       if (setSubmitting) {
         setSubmitting(false)
       }
-    } catch (error: any) {
-      errorLogic(error, { setStatus, setSubmitting })
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, { setStatus, setSubmitting }))
     }
   }
 )
@@ -116,10 +116,9 @@ export const deleteProduct = createAsyncThunk<void, { id: number }, { rejectValu
     await ProductService.deleteProduct(id)
 
     thunkApi.dispatch(productAction.deleteProduct(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -132,10 +131,9 @@ export const addImage = createAsyncThunk<void, { id: number; images: File[] }, {
       await ProductService.addImage(id, images)
 
       await thunkApi.dispatch(fetchProducts({ id: `${id}` }))
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError))
     }
   }
 )
@@ -147,10 +145,9 @@ export const deleteImage = createAsyncThunk<void, { productId: number; imageId: 
       await ProductService.deleteImage(productId, imageId)
 
       await thunkApi.dispatch(fetchProducts({ id: `${productId}` }))
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError))
     }
   }
 )
@@ -164,10 +161,9 @@ export const fetchStats = createAsyncThunk<void, { quantity?: number }, { reject
       const response = await ProductService.getStats(quantity)
 
       thunkApi.dispatch(productAction.setStats(response.data))
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError))
     }
   }
 )
@@ -179,10 +175,9 @@ export const fetchPriceDynamics = createAsyncThunk<void, { productId: number }, 
       const response = await ProductService.getPriceDynamics(productId)
 
       thunkApi.dispatch(productAction.setPriceDynamics(response.data))
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError))
     }
   }
 )

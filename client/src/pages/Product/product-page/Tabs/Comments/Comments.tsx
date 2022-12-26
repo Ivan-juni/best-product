@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { useActions, useAppDispatch, useAppSelector } from '../../../../hoooks/redux'
-import { ReactComponent as SortIcon } from '../../../../assets/icons/filters/sort-icon.svg'
-import { ReactComponent as ArrowUpIcon } from '../../../../assets/icons/other/arrows/white-arrow-top.svg'
+import { useEffect, useState } from 'react'
 import styles from './Comments.module.scss'
+import { useActions, useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
+import { ReactComponent as SortIcon } from '../../../../../assets/icons/filters/sort-icon.svg'
+import { ReactComponent as ArrowUpIcon } from '../../../../../assets/icons/other/arrows/white-arrow-top.svg'
 import Comment from './Comment/Comment'
-import { IComment } from '../../../../models/IComment'
-import Paginator from '../../../../components/Common/Paginator/Paginator'
-import { fetchComments } from '../../../../store/slices/comments/ActionCreators.comments'
+import { IComment } from '../../../../../models/IComment'
+import Paginator from '../../../../../components/Common/Paginator/Paginator'
+import { fetchComments } from '../../../../../store/slices/comments/ActionCreators.comments'
 
 type PropsType = {
   productId: number

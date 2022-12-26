@@ -3,6 +3,8 @@ import { CommentAddingValues, CommentChangingValues } from '../../../http/commen
 import CommentsService from '../../../http/comments-service/comments.service'
 import { FormikType } from '../../../models/Formik.model'
 import { ICommentsQuery } from '../../../models/IComment'
+import { ErrorType } from '../../../models/IError.model'
+import { errorLogic } from '../../utils/errorLogic'
 import { commentsAction } from './Comments.slice'
 
 type FetchCommentsType = FormikType & ICommentsQuery
@@ -20,13 +22,9 @@ export const fetchComments = createAsyncThunk<void, FetchCommentsType, { rejectV
       if (setSubmitting) {
         setSubmitting(false)
       }
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-      if (values.setSubmitting && values.setStatus) {
-        values.setStatus(error.response?.data?.message)
-        values.setSubmitting(false)
-      }
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, values))
     }
   }
 )
@@ -36,10 +34,9 @@ export const deleteComment = createAsyncThunk<void, { id: number }, { rejectValu
     await CommentsService.deleteComment(id)
 
     thunkApi.dispatch(commentsAction.deleteComment(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -47,9 +44,9 @@ type UpdateCommentsType = FormikType & CommentChangingValues & { id: number }
 
 export const updateComment = createAsyncThunk<void, UpdateCommentsType, { rejectValue: string }>(
   'comments/updateComment',
-  async (changingValues, thunkApi) => {
+  async (values, thunkApi) => {
     try {
-      const { setSubmitting, setStatus, id, ...rest } = changingValues
+      const { setSubmitting, setStatus, id, ...rest } = values
 
       const response = await CommentsService.updateComment(id, rest)
 
@@ -58,13 +55,9 @@ export const updateComment = createAsyncThunk<void, UpdateCommentsType, { reject
       if (setSubmitting) {
         setSubmitting(false)
       }
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-      if (changingValues.setSubmitting && changingValues.setStatus) {
-        changingValues.setStatus(error.response?.data?.message)
-        changingValues.setSubmitting(false)
-      }
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, values))
     }
   }
 )
@@ -84,15 +77,9 @@ export const addComment = createAsyncThunk<void, { productId: number } & AddComm
       if (setSubmitting) {
         setSubmitting(false)
       }
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-
-      if (values.setSubmitting && values.setStatus) {
-        values.setStatus(error.response?.data?.message)
-        values.setSubmitting(false)
-      }
-
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, values))
     }
   }
 )

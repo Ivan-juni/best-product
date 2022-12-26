@@ -12,7 +12,7 @@ import Paginator from '../../../Common/Paginator/Paginator'
 import { NavLink, useNavigate } from 'react-router-dom'
 import AddProductForm from './add-product/AddProductForm'
 import { fetchCategories } from '../../../../store/slices/categories/ActionCreators.categories'
-import { showProductHandler } from '../../../../utils/showProductHandler'
+import { showProductHandler } from '../../../../utils/show-product-handler'
 
 const ProductsTab: React.FC = () => {
   const dispatch = useAppDispatch()

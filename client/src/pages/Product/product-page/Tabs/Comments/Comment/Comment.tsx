@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import styles from './Comment.module.scss'
-import { ReactComponent as EditIcon } from '../../../../../assets/icons/other/edit-icon.svg'
-import { ReactComponent as DeleteIcon } from '../../../../../assets/icons/other/delete-icon.svg'
-import { IComment } from '../../../../../models/IComment'
-import withoutAvatar from '../../../../../assets/images/without-photo-user.png'
+import { ReactComponent as EditIcon } from '../../../../../../assets/icons/other/edit-icon.svg'
+import { ReactComponent as DeleteIcon } from '../../../../../../assets/icons/other/delete-icon.svg'
+import withoutAvatar from '../../../../../../assets/images/without-photo-user.png'
+import { IComment } from '../../../../../../models/IComment'
 import moment from 'moment'
-import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
-import { deleteComment, updateComment } from '../../../../../store/slices/comments/ActionCreators.comments'
+import { useAppDispatch, useAppSelector } from '../../../../../../hoooks/redux'
+import { deleteComment, updateComment } from '../../../../../../store/slices/comments/ActionCreators.comments'
 
 type PropsType = {
   comment: IComment
@@ -22,6 +22,8 @@ const Comment: React.FC<PropsType> = ({ comment }) => {
   const dispatch = useAppDispatch()
   const { id: userId, role } = useAppSelector((state) => state.authReducer.user)
   const [isEditMode, setEditMode] = useState(false)
+
+  // достаем значение из текстового поля (при клике на кнопку)
   const commentText: React.RefObject<HTMLTextAreaElement> = useRef(null)
 
   const deleteCommentHandler = () => {
@@ -47,7 +49,16 @@ const Comment: React.FC<PropsType> = ({ comment }) => {
       <div className={styles.text}>
         {isEditMode ? (
           <div className={styles.formControl}>
-            <textarea className={styles.textarea} defaultValue={comment.text} ref={commentText} />
+            <textarea
+              className={styles.textarea}
+              defaultValue={comment.text}
+              ref={commentText}
+              onKeyPress={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter' && e.shiftKey) {
+                  updateCommentHandler()
+                }
+              }}
+            />
             <button type='button' className={styles.submit} disabled={false} onClick={updateCommentHandler}>
               Save changes
             </button>

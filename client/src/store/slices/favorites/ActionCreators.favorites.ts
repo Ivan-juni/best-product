@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import FavoriteService from '../../../http/favorites-service/favorites.service'
 import { FormikType } from '../../../models/Formik.model'
+import { ErrorType } from '../../../models/IError.model'
 import { IProductQuery } from '../../../models/IProduct.model'
-import { authAction } from '../auth/Auth.slice'
+import { errorLogic } from '../../utils/errorLogic'
 import { favoritesAction } from './Favorites.slice'
 
 // product
@@ -23,13 +24,9 @@ export const fetchFavorites = createAsyncThunk<void, FetchProductsType, { reject
       if (searchCriteria.setSubmitting) {
         searchCriteria.setSubmitting(false)
       }
-    } catch (error: any) {
-      console.log(error.response?.data?.message)
-      if (searchCriteria.setSubmitting && searchCriteria.setStatus) {
-        searchCriteria.setStatus(error.response?.data?.message)
-        searchCriteria.setSubmitting(false)
-      }
-      return thunkApi.rejectWithValue(error.response?.data?.message)
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, searchCriteria))
     }
   }
 )
@@ -41,10 +38,9 @@ export const fetchFavoritesIds = createAsyncThunk<void, void, { rejectValue: str
     const ids = response.data[0].ids.split(',').map(Number)
 
     thunkApi.dispatch(favoritesAction.setFavoritesIds(ids))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -53,10 +49,9 @@ export const deleteFromFavorites = createAsyncThunk<void, { id: number }, { reje
     await FavoriteService.deleteFromFavorites(id)
 
     thunkApi.dispatch(favoritesAction.deleteFromFavorites(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -66,10 +61,9 @@ export const addToFavorites = createAsyncThunk<void, { id: number }, { rejectVal
 
     thunkApi.dispatch(favoritesAction.setFavoriteId(id))
     thunkApi.dispatch(fetchFavorites({}))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -79,10 +73,9 @@ export const addLike = createAsyncThunk<void, { id: number }, { rejectValue: str
     await FavoriteService.setLike(id)
 
     thunkApi.dispatch(favoritesAction.setLike(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -91,10 +84,9 @@ export const addDislike = createAsyncThunk<void, { id: number }, { rejectValue: 
     await FavoriteService.setDislike(id)
 
     thunkApi.dispatch(favoritesAction.setDislike(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -103,10 +95,9 @@ export const deleteLike = createAsyncThunk<void, { id: number }, { rejectValue: 
     await FavoriteService.deleteLike(id)
 
     thunkApi.dispatch(favoritesAction.unsetLike(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -115,10 +106,9 @@ export const deleteDislike = createAsyncThunk<void, { id: number }, { rejectValu
     await FavoriteService.deleteDislike(id)
 
     thunkApi.dispatch(favoritesAction.unsetDislike(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -127,9 +117,8 @@ export const addView = createAsyncThunk<void, { id: number }, { rejectValue: str
     await FavoriteService.setView(id)
 
     thunkApi.dispatch(favoritesAction.setView(id))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })

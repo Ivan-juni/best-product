@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-import styles from './Product.module.scss'
+import styles from './ProductContainer.module.scss'
 import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
 import { fetchPriceDynamics, fetchProducts } from '../../store/slices/product/ActionCreators.product'
 import { useSearchParams } from 'react-router-dom'
-import Preloader from '../../components/Common/Preloader/Preloader'
 import { fetchComments } from '../../store/slices/comments/ActionCreators.comments'
 import { Portal } from '@mui/material'
-import AddCommentForm from './Tabs/Comments/add-comment/AddCommentForm'
-import UpdateProductForm from './update-product-form/UpdateProductForm'
-import GoToTop from '../../utils/GoToTop'
+import AddCommentForm from './product-page/Tabs/Comments/add-comment/AddCommentForm'
+import ProductPage from './product-page/ProductPage'
+import GoToTop from '../../utils/go-to-top'
 
-const Product: React.FC = () => {
+const ProductContainer: React.FC = () => {
   const dispatch = useAppDispatch()
 
   // для рендера формы добавления комментария в CommentsTab
@@ -18,7 +17,7 @@ const Product: React.FC = () => {
   const [isRef, setRef] = useState(false)
 
   const { isEditMode, productId } = useAppSelector((state) => state.productReducer)
-  const { page, total, isLoading } = useAppSelector((state) => state.commentsReducer)
+  const { page, total } = useAppSelector((state) => state.commentsReducer)
 
   // для подгрузки продукта при перезагрузке страницы
   const [searchParams, setSearchParams] = useSearchParams()
@@ -43,7 +42,7 @@ const Product: React.FC = () => {
 
   return (
     <div className={styles.wrapper}>
-      {<UpdateProductForm setRef={setRef} portalAddRef={portalAddRef} />}
+      {<ProductPage setRef={setRef} portalAddRef={portalAddRef} />}
       {portalAddRef.current && (
         <Portal container={portalAddRef.current}>
           <AddCommentForm productId={productId} />
@@ -55,4 +54,4 @@ const Product: React.FC = () => {
   )
 }
 
-export default Product
+export default ProductContainer

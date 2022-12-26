@@ -49,7 +49,16 @@ const FindMenu: React.FC<PropsType> = ({ onSubmit }) => {
                     <div className={styles.error}>
                       <ErrorMessage name='name' />
                     </div>
-                    <Field type='text' name='name' placeholder='Enter name' />
+                    <Field
+                      type='text'
+                      name='name'
+                      placeholder='Enter name'
+                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                        if (e.key === 'Enter') {
+                          formik.submitForm()
+                        }
+                      }}
+                    />
                   </div>
                 </div>
                 <div className={styles.id}>
@@ -58,7 +67,16 @@ const FindMenu: React.FC<PropsType> = ({ onSubmit }) => {
                     <div className={styles.error}>
                       <ErrorMessage name='id' />
                     </div>
-                    <Field type='text' name='id' placeholder='Enter id' />
+                    <Field
+                      type='text'
+                      name='id'
+                      placeholder='Enter id'
+                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                        if (e.key === 'Enter') {
+                          formik.submitForm()
+                        }
+                      }}
+                    />
                   </div>
                 </div>
                 <button className={styles.find} type={'submit'} disabled={!formik.isValid || formik.isSubmitting}>

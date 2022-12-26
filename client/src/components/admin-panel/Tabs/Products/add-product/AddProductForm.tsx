@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
 import { FormikType } from '../../../../../models/Formik.model'
 import { FormikCharacteristics } from '../../../../../models/ICharacteristics'
 import { addProduct } from '../../../../../store/slices/product/ActionCreators.product'
-import FormControl from '../../../../Common/Form-control/FormControl'
+import FormControl from '../../../../Common/form-control/FormControl'
 
 const AddProductForm = () => {
   const dispatch = useAppDispatch()

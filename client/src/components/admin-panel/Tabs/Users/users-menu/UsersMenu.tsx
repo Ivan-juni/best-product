@@ -2,7 +2,7 @@ import React from 'react'
 import { useAppDispatch } from '../../../../../hoooks/redux'
 import styles from './UsersMenu.module.scss'
 import { FormikType } from '../../../../../models/Formik.model'
-import FindMenu from '../../../../Common/Find-menu/FindMenu'
+import FindMenu from '../../../../Common/find-menu/FindMenu'
 import { fetchUsers } from '../../../../../store/slices/users/ActionCreators.users'
 
 const UsersMenu: React.FC = () => {

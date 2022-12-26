@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import ProductsPage from './pages/Products/ProductsPage'
 import Favorites from './pages/Favorites/Favorites'
 import Home from './pages/Home/Home'
-import Product from './pages/Product/Product'
+import Product from './pages/Product/ProductContainer'
 import Profile from './pages/Profile/Profile'
 
 const AppRouter = () => {
