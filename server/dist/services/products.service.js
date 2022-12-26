@@ -145,7 +145,6 @@ class ProductService {
                 };
                 // введенная категория и её дочерние
                 const categoryChilds = yield (0, get_category_childs_1.getCategoryChilds)(searchCriteria);
-                //!todo дублирование кода
                 const priceMin = yield product_model_1.default.query()
                     .min('products.price as price')
                     .where((qb) => {

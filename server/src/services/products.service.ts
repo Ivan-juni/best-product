@@ -1,8 +1,6 @@
 import ProductCharacteristics from '../db/models/product-characteristics.model'
 import Product from '../db/models/product.model'
 import { DeleteType, IProduct, IProductsQuery, resultType, StatisticsType } from './types/products.type'
-import Category from '../db/models/category.model'
-import { getCategoryId } from '../utils/get-category-id.util'
 import { removePhoto } from '../utils/remove-photo.util'
 import { sort } from '../utils/sort-by.util'
 import Favorite from '../db/models/favorite.model'
@@ -10,7 +8,7 @@ import ProductHistory from '../db/models/product-history.model'
 import { findProducts } from '../utils/find-products.util'
 import { replaceSpaces } from '../utils/replace-spaces.util'
 import Image from '../db/models/image.module'
-import { getCategoryChilds } from '../utils/get-category-childs'
+import { getCategoryChilds } from '../utils/get-category-childs-ids'
 import { getCategoryParents } from '../utils/get-category-parents'
 
 export default class ProductService {
@@ -141,7 +139,6 @@ export default class ProductService {
       // введенная категория и её дочерние
       const categoryChilds = await getCategoryChilds(searchCriteria)
 
-      //!todo дублирование кода
       const priceMin = await Product.query()
         .min('products.price as price')
         .where((qb) => {

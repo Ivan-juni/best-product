@@ -17,24 +17,22 @@ const category_model_1 = __importDefault(require("../db/models/category.model"))
 const get_category_id_util_1 = require("./get-category-id.util");
 const getCategoryParents = (searchCriteria) => __awaiter(void 0, void 0, void 0, function* () {
     if (searchCriteria.category) {
-        // родители введенной категории
-        let categoryParents = [];
         // находим id написанной категории
         const categoryId = yield (0, get_category_id_util_1.getCategoryId)(searchCriteria.category);
         // получаем список категорий родителей
         const knex = category_model_1.default.knex();
-        const parentResult = yield knex.raw(`SELECT t2.id,
-                t2.parent,
-                t2.name
-                from (
-                  select @r as _id,
-                    (select @r := parent from categories where id = _id) AS parent,
-                    @l := @l + 1 AS lvl from (select @r := ${categoryId}, @l := 0) vars, categories c
-                    where @r <> 0) t1
-                    join categories t2
-                    on  t1._id = t2.id
-                    order by t1.lvl desc`);
-        categoryParents = parentResult[0];
+        const parentResult = yield knex.raw(`WITH RECURSIVE cte(id, parent, name) as 
+                        (
+                        SELECT id, parent, name FROM categories WHERE id = ${categoryId}
+                        UNION ALL
+                        
+                        SELECT c.id, c.parent, c.name
+                        FROM categories c
+                        INNER JOIN cte on c.id = cte.parent
+                        )
+                        SELECT * FROM cte ORDER BY id ASC`);
+        console.log(parentResult[0]);
+        const categoryParents = parentResult[0];
         return categoryParents;
     }
     else {

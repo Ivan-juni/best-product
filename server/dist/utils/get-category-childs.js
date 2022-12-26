@@ -17,27 +17,20 @@ const category_model_1 = __importDefault(require("../db/models/category.model"))
 const get_category_id_util_1 = require("./get-category-id.util");
 const getCategoryChilds = (searchCriteria) => __awaiter(void 0, void 0, void 0, function* () {
     if (searchCriteria.category) {
-        let categoryChilds = { categoryIds: '' };
         // находим id написанной категории
         const categoryId = yield (0, get_category_id_util_1.getCategoryId)(searchCriteria.category);
         // находим id дочерних категорий
         const category = category_model_1.default.knex();
-        const childResult = yield category.raw(`SELECT GROUP_CONCAT( lv SEPARATOR "," ) AS categoryIds FROM (
-                   SELECT @pv:=(
-                       SELECT GROUP_CONCAT( id SEPARATOR "," ) FROM categories WHERE FIND_IN_SET( parent, @pv )
-                       ) AS lv FROM categories
-                       JOIN
-                       (SELECT @pv:=${categoryId}) tmp
-                   ) a
-                   WHERE lv IS NOT NULL;`);
-        categoryChilds = childResult[0][0];
-        // для корректного поиска также добавляем айди введенной категории
-        if (categoryChilds.categoryIds === '' || categoryChilds.categoryIds == null) {
-            categoryChilds.categoryIds = `${categoryId}`;
-        }
-        else {
-            categoryChilds.categoryIds.concat(`, ${categoryId}`);
-        }
+        const childResult = yield category.raw(`WITH RECURSIVE cte(id, parent, name) as 
+                        (
+                        SELECT id, parent, name FROM categories WHERE id = ${categoryId}
+                        UNION ALL
+                        SELECT c.id, c.parent, c.name
+                        FROM categories c
+                        INNER JOIN cte on c.parent = cte.id
+                        )
+                        SELECT GROUP_CONCAT( cte.id SEPARATOR "," ) AS categoryIds FROM cte`);
+        const categoryChilds = childResult[0][0];
         return categoryChilds;
     }
     else {
