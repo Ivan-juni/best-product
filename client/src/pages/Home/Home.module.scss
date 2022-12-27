@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .wrapper {
     max-width: 1179px;
     margin: 0 auto;
@@ -23,6 +25,101 @@
         .second__floor, .third__floor{
             display: flex;
             justify-content: space-between;
+        }
+    }
+
+    @media (max-width: $laptop) {
+        max-width: 900px;
+
+        .banners {
+            column-gap: 20px;
+
+            .laptops__banner{
+                width: 575px;
+
+                .thumb {
+                    width: 100%;
+                }
+            }
+
+            .phones__banner{
+                width: 283px;
+                .thumb {
+                    width: 100%;
+                }
+            }
+
+            .third__floor{
+                max-width: 900px;
+
+                div {
+                    max-width: 250px;
+                }
+            }
+        }
+    }
+    @media (max-width: $tablet2) {
+        max-width: 600px;
+
+        .banners {
+
+            .laptops__banner{
+                width: 100%;
+                .thumb {
+                    width: 100%;
+                }
+            }
+            .main__banner{
+                .thumb {
+                    height: 150px;
+                }
+            }
+            .phones__banner {
+               display: none;
+            }
+
+            .third__floor{
+                max-width: 600px;
+                    
+                .books__banner{
+                    display: none;
+                }
+
+                div {
+                    max-width: 260px;
+                }
+            }
+        }
+    }
+    @media (max-width: $tablet) {
+        max-width: 322px;
+
+        .banners {
+            gap: 20px;
+            .laptops__banner{
+                display: none;
+            }
+            .main__banner{
+                display: none;
+            }
+            .phones__banner {
+               display: block;
+               width: 100%;
+            }
+
+            .third__floor{
+                flex-direction: column;
+                gap: 20px;
+                max-width: 100%;
+                    
+                .books__banner{
+                    display: block;
+                }
+
+                div {
+                    max-width: 100%;
+                }
+            }
         }
     }
 }

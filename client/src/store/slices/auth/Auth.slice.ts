@@ -1,10 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { IError } from '../../../models/IError.model'
 import { IUser } from '../../../models/IUser.model'
 import { checkAuth, login, logout, registration } from './ActionCreators.auth'
 
-interface AuthState {
+export interface AuthState {
   user: IUser
+  likes: number[]
+  dislikes: number[]
+  favorites: number[]
+  isNavbarOpen: boolean
+  isLogModalOpen: boolean
+  isRegModalOpen: boolean
   isAuth: boolean
   isLoading: boolean
   error: string
@@ -18,21 +23,25 @@ const initialState: AuthState = {
     firstName: '',
     lastName: '',
     photo: null,
-    // password: '',
     role: 'USER',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: '',
+    updatedAt: '',
   },
+  likes: [],
+  dislikes: [],
+  favorites: [],
+  isNavbarOpen: false,
+  isLogModalOpen: false,
+  isRegModalOpen: false,
   isAuth: false,
   isLoading: false,
   error: '',
 }
 
 // status handlers for thunks
-const fulfilledReducer = (state: AuthState, action: PayloadAction<IUser>) => {
+const fulfilledReducer = (state: AuthState) => {
   state.isLoading = false
   state.error = ''
-  // state.user = action.payload
 }
 
 const pendingReducer = (state: AuthState) => {
@@ -54,6 +63,15 @@ export const authSlice = createSlice({
     },
     setUser: (state: AuthState, action: PayloadAction<IUser>) => {
       return (state = { ...state, user: action.payload })
+    },
+    setNavbarOpen: (state: AuthState, action: PayloadAction<boolean>) => {
+      return (state = { ...state, isNavbarOpen: action.payload })
+    },
+    setLogModalOpen: (state: AuthState, action: PayloadAction<boolean>) => {
+      return (state = { ...state, isLogModalOpen: action.payload })
+    },
+    setRegModalOpen: (state: AuthState, action: PayloadAction<boolean>) => {
+      return (state = { ...state, isRegModalOpen: action.payload })
     },
   },
   extraReducers: {

@@ -25,6 +25,11 @@ main{
     height: 100%;
     grid-template-areas: "n c";
     grid-template-columns: 85px 1fr;
+
+    @media (max-width: 600px) {
+        grid-template-areas: "c";
+        grid-template-columns: 1fr;
+    }
 }
 
 footer{
@@ -34,6 +39,10 @@ footer{
 
 .navbar{
     grid-area: 'n';
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 }
 
 .content{

@@ -1,6 +1,3 @@
-$fill: #766ED3;
-$path_fill: #fff;
-
 @mixin link-bg($image) {
     background-image: url('../../assets/icons/#{$image}-icon.svg');
     background-size: cover;

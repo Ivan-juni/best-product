@@ -1,5 +1,5 @@
 import Objection from 'objection'
-import Product from '../../db/models/product/product.model'
+import Product from '../../db/models/product.model'
 
 export interface IProductsQuery {
   id?: string
@@ -13,9 +13,9 @@ export interface IProductsQuery {
   favoriteStars?: string
   connectionType?: string
   display?: string
-  microphone?: 'true'
-  sortByPrice?: 'low' | 'high'
-  sortByFavoriteStars?: 'low' | 'high'
+  microphone?: 'true' | 'built-in' | 'false' | 'none'
+  orderByPrice?: 'low' | 'high'
+  orderByFavoriteStars?: 'low' | 'high'
   page?: string
   limit?: string
 }
@@ -30,6 +30,7 @@ export interface IProductBody {
   design: string | null
   connectionType: string | null
   microphone: string | boolean | null
+  // microphone: boolean | null
   batteryLiveTime: string | number | null
   display: string | null
 }

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import Token from '../db/models/token/token.model'
+import Token from '../db/models/token.model'
 import UserDto from '../dtos/user-dto'
 
 class TokenService {
@@ -30,10 +30,7 @@ class TokenService {
   static async validateAccessToken(token: string): Promise<UserDto | null> {
     try {
       // получаем payload из токена после верефикации, который мы в него вшивали
-      const userData = jwt.verify(
-        token,
-        process.env.JWT_ACCESS_SECRET
-      ) as unknown as UserDto
+      const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET) as unknown as UserDto
       return userData
     } catch (error) {
       return null
@@ -43,10 +40,7 @@ class TokenService {
   static async validateRefreshToken(token: string): Promise<UserDto | null> {
     try {
       // получаем payload из токена после верефикации, который мы в него вшивали
-      const userData = jwt.verify(
-        token,
-        process.env.JWT_REFRESH_SECRET
-      ) as unknown as UserDto
+      const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET) as unknown as UserDto
       return userData
     } catch (error) {
       return null
@@ -76,9 +70,7 @@ class TokenService {
   // удаляем refreshToken токен
   static async removeToken(refreshToken: string): Promise<number | null> {
     try {
-      const tokenData = await Token.query()
-        .delete()
-        .where('refreshToken', refreshToken)
+      const tokenData = await Token.query().delete().where('refreshToken', refreshToken)
       return tokenData
     } catch (error) {
       console.log(error)

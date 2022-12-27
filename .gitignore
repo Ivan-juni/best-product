@@ -8,4 +8,4 @@
 /server/src/db/.env
 /server/dist/db/.env
 
-sql queries.rtf
+.vscode

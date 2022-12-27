@@ -18,13 +18,17 @@ class CommentsController {
     // comments
     static getProductComments(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { productId } = req.params;
+            const { productId } = req.query;
             const page = +req.query.page || 0;
-            const limit = +req.query.page || 5;
+            const limit = +req.query.limit || 5;
+            const orderByDate = req.query.orderByDate ? req.query.orderByDate.toString() : 'high';
             if (!productId) {
                 return next(ApiError_1.default.internal('Type the product id'));
             }
-            const comments = yield comments_service_1.default.getProductComments(+productId, page, limit);
+            if (orderByDate !== 'low' && orderByDate !== 'high') {
+                return next(ApiError_1.default.internal('Type the correct sort param (low or high)'));
+            }
+            const comments = yield comments_service_1.default.getProductComments(+productId, { orderByDate, page, limit });
             if (!comments) {
                 return next(ApiError_1.default.badRequest(`Fetching comments error`));
             }
@@ -47,7 +51,7 @@ class CommentsController {
     static addComment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;
-            const { productId } = req.params;
+            const { productId } = req.query;
             const commentText = req.body.text;
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
@@ -68,7 +72,7 @@ class CommentsController {
     static deleteComment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id, role } = req.user;
-            const { commentId } = req.params;
+            const { commentId } = req.query;
             if (!commentId) {
                 return next(ApiError_1.default.internal('Type comment id'));
             }
@@ -85,6 +89,27 @@ class CommentsController {
             else {
                 return res.json(result);
             }
+        });
+    }
+    static updateComment(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            const { commentId } = req.query;
+            const commentText = req.body.text;
+            if (!commentId) {
+                return next(ApiError_1.default.internal('Please, type the comment id'));
+            }
+            if (!commentText) {
+                return next(ApiError_1.default.internal('Please, type the comment text'));
+            }
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const comment = yield comments_service_1.default.updateComment(+id, +commentId, commentText);
+            if (!comment) {
+                return next(ApiError_1.default.badRequest(`Updating comment error`));
+            }
+            return res.json(comment);
         });
     }
 }

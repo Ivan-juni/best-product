@@ -1,5 +1,6 @@
 export interface IUsersQuery {
   id?: string
+  firstName?: string
   page?: string
   limit?: string
 }

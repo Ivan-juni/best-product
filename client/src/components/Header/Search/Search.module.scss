@@ -1,0 +1,65 @@
+@import '../../../styles/variables.scss';
+
+form {
+    width: 100%;
+}
+
+.search{
+    width: 100%;
+    background: #EAEAEA;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+
+    .search__icon {
+        margin-left: 12px;
+    }
+
+    .search__field {
+        width: calc(100% - 70px);
+        
+
+        .search__input{
+            width: 100%;
+            float: right;
+            border: none;
+            padding: 17px;
+            background: #FBF8F8;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 24px;
+            color: #435C6B;
+            &::placeholder {
+                opacity: 0.8;
+            }
+            &:focus {           
+                outline: 1px solid $purple;
+            }
+        }  
+        
+        .error, .status {
+            position: absolute;
+            width: calc(562px - 70px);
+            color: $purple;
+            margin-top: 77px;
+            text-align: center;
+
+            @media (max-width: $tablet2) {
+                width: calc(400px - 70px);
+            }
+            @media (max-width: $tablet) {
+                width: calc(300px);
+                margin-left: -70px;
+            }
+            @media (max-width: $burger) {
+                width: 100%;
+                margin-left: -70px;
+            }
+        }
+    }
+
+}

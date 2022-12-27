@@ -1,9 +1,7 @@
 import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.raw(
-    'CREATE TABLE IF NOT EXISTS `products_history` LIKE `products`'
-  )
+  await knex.raw('CREATE TABLE IF NOT EXISTS `products_history` LIKE `products`')
 
   await knex.raw(`ALTER TABLE \`products_history\` MODIFY COLUMN \`id\` int(11) NOT NULL, 
       DROP PRIMARY KEY, ENGINE = MyISAM, ADD \`action\` VARCHAR(8) DEFAULT "insert" FIRST, 
@@ -29,12 +27,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema
-    .dropTableIfExists('products_history')
-    .dropTableIfExists('favorites')
-    .dropTableIfExists('comments')
-    .dropTableIfExists('products')
-    .dropTableIfExists('product_characteristics')
-    .dropTableIfExists('categories')
-    .dropTableIfExists('users')
+  return knex.schema.dropTableIfExists('products_history')
 }

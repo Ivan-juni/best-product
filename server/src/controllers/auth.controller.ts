@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import * as yup from 'yup'
 import ApiError from '../errors/ApiError'
 import bcrypt from 'bcrypt'
-import User from '../db/models/user/user.model'
+import User from '../db/models/user.model'
 import userService from '../services/auth.service'
 import { ReturnType } from './types/return.type'
 
@@ -15,14 +15,8 @@ const registrationSchema = yup.object({
     .max(30, 'Password should be shorter than 30 symbols')
     .matches(/^[a-zA-Z0-9-]+$/, 'Only English letters and numbers')
     .required(),
-  firstName: yup
-    .string()
-    .max(255, 'Firstname should be shorter than 255 symbols')
-    .required(),
-  lastName: yup
-    .string()
-    .max(255, 'Lastname should be shorter than 255 symbols')
-    .required(),
+  firstName: yup.string().max(255, 'Firstname should be shorter than 255 symbols').required(),
+  lastName: yup.string().max(255, 'Lastname should be shorter than 255 symbols').required(),
   role: yup.string().nullable().default('USER').min(4).max(5),
   photo: yup.string().nullable().default(null),
   createdAt: yup.date(),
@@ -57,17 +51,10 @@ class AuthController {
     }
 
     // храним refreshToken в куках
-    if (req.body.remember && req.body.remember !== undefined) {
-      res.cookie('refreshToken', userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expires after 30 days
-        httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
-      })
-    } else {
-      res.cookie('refreshToken', userData.refreshToken, {
-        maxAge: 3 * 60 * 1000, // Cookie expires after 3 mins
-        httpOnly: true,
-      })
-    }
+    res.cookie('refreshToken', userData.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expires after 30 days
+      httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
+    })
 
     return res.json(userData)
   }
@@ -93,10 +80,18 @@ class AuthController {
       return next(ApiError.badRequest(`Login error`))
     }
 
-    res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    })
+    // храним refreshToken в куках
+    if (req.body.remember && req.body.remember !== undefined) {
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expires after 30 days
+        httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
+      })
+    } else {
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 3 * 60 * 1000, // Cookie expires after 3 mins
+        httpOnly: true,
+      })
+    }
 
     return res.json(userData)
   }

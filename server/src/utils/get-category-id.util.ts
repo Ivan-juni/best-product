@@ -1,4 +1,4 @@
-import Category from '../db/models/category/category.model'
+import Category from '../db/models/category.model'
 
 export const getCategoryId = async (category: string): Promise<number> => {
   // находим id написанной категории

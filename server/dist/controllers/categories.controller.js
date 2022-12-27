@@ -17,13 +17,15 @@ const categories_service_1 = __importDefault(require("../services/categories.ser
 class CategoriesController {
     static getCategories(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const categoryId = +req.params || null;
-            const page = +req.query.page || 0;
+            const categoryId = +req.query.id || null;
+            const categoryName = req.query.name || null;
             const limit = +req.query.limit || 5;
+            const page = +req.query.page || 0;
             const categories = yield categories_service_1.default.getCategories({
                 categoryId,
-                page,
+                categoryName: categoryName ? categoryName.toString() : null,
                 limit,
+                page,
             });
             if (!categories) {
                 return next(ApiError_1.default.badRequest(`Fetching categories error`));
@@ -34,11 +36,11 @@ class CategoriesController {
     static addCategory(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const categoryName = req.body.name;
-            const parent = +req.body.parent || 0;
+            const parent = req.body.parent ? +req.body.parent : 0;
             if (!categoryName) {
                 return next(ApiError_1.default.internal('Please, type the category name'));
             }
-            if (!parent) {
+            if (parent !== 0 && !parent) {
                 return next(ApiError_1.default.internal('Please, type the category parent'));
             }
             const category = yield categories_service_1.default.addCategory({
@@ -51,9 +53,26 @@ class CategoriesController {
             return res.json(category);
         });
     }
+    static updateCategory(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { categoryId } = req.query;
+            const changingValues = req.body;
+            if (!categoryId) {
+                return next(ApiError_1.default.badRequest('Please, type the category id'));
+            }
+            const category = yield categories_service_1.default.updateCategory(+categoryId, {
+                name: changingValues.name ? changingValues.name : null,
+                parent: changingValues.parent ? +changingValues.parent : null,
+            });
+            if (!category) {
+                return next(ApiError_1.default.badRequest(`Updating category error`));
+            }
+            return res.json(category);
+        });
+    }
     static deleteCategory(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { categoryId } = req.params;
+            const { categoryId } = req.query;
             if (!categoryId) {
                 return next(ApiError_1.default.internal('Please, type the category id'));
             }

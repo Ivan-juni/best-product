@@ -1,6 +1,6 @@
 import Objection from 'objection'
-import Favorite from '../db/models/favorite/favorite.model'
-import Product from '../db/models/product/product.model'
+import Favorite from '../db/models/favorite.model'
+import Product from '../db/models/product.model'
 import { IProductsQuery } from '../services/types/products.type'
 
 export const searchUtil = (
@@ -44,7 +44,7 @@ export const findProducts = (
   }
 
   if (searchCriteria.name) {
-    qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`)
+    qb.orWhere('products.name', 'like', `%${searchCriteria.name}%`)
   }
 
   if (searchCriteria.purpose) {
@@ -59,9 +59,14 @@ export const findProducts = (
     searchUtil(qb, searchCriteria, 'connectionType')
   }
 
-  if (searchCriteria.microphone && searchCriteria.microphone === 'true') {
-    const microphone = true
-    qb.andWhere('product_characteristics.microphone', '=', microphone)
+  if (searchCriteria.microphone) {
+    if (searchCriteria.microphone === 'true' || searchCriteria.microphone === 'built-in') {
+      const microphone = true
+      qb.andWhere('product_characteristics.microphone', '=', microphone)
+    } else if (searchCriteria.microphone === 'false' || searchCriteria.microphone === 'none') {
+      const microphone = false
+      qb.andWhere('product_characteristics.microphone', '=', microphone)
+    }
   }
 
   if (searchCriteria.price) {

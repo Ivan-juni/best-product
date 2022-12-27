@@ -28,6 +28,19 @@ class FavoritesController {
             return res.json(favorites);
         });
     }
+    static getUserFavoritesIds(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.user;
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
+            const ids = yield favorites_service_1.default.getIds(+id);
+            if (!ids) {
+                return next(ApiError_1.default.badRequest(`Fetching favorites ids error`));
+            }
+            return res.json(ids);
+        });
+    }
     static addToFavorite(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;
@@ -66,6 +79,97 @@ class FavoritesController {
             }
             else {
                 return res.json(result);
+            }
+        });
+    }
+    // likes / dislikes / views
+    static addLike(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            const likes = yield favorites_service_1.default.addLike(+productId);
+            if (!likes) {
+                return next(ApiError_1.default.badRequest(`Adding like error`));
+            }
+            if (likes === 1) {
+                return res.json({ message: 'Like successfully added' });
+            }
+            else {
+                return res.json({ message: 'Like has not added' });
+            }
+        });
+    }
+    static deleteLike(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            const likes = yield favorites_service_1.default.deleteLike(+productId);
+            if (!likes) {
+                return next(ApiError_1.default.badRequest(`Deletion like error`));
+            }
+            if (likes === 1) {
+                return res.json({ message: 'Like successfully deleted' });
+            }
+            else {
+                return res.json({ message: 'Like has not deleted' });
+            }
+        });
+    }
+    static addDislike(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            const dislikes = yield favorites_service_1.default.addDislike(+productId);
+            if (!dislikes) {
+                return next(ApiError_1.default.badRequest(`Adding dislike error`));
+            }
+            if (dislikes === 1) {
+                return res.json({ message: 'Dislike successfully added' });
+            }
+            else {
+                return res.json({ message: 'Dislike has not added' });
+            }
+        });
+    }
+    static deleteDislike(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            const dislikes = yield favorites_service_1.default.deleteDislike(+productId);
+            if (!dislikes) {
+                return next(ApiError_1.default.badRequest(`Deletion dislike error`));
+            }
+            if (dislikes === 1) {
+                return res.json({ message: 'Dislike successfully deleted' });
+            }
+            else {
+                return res.json({ message: 'Dislike has not deleted' });
+            }
+        });
+    }
+    static addView(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Type product id'));
+            }
+            const views = yield favorites_service_1.default.addView(+productId);
+            if (!views) {
+                return next(ApiError_1.default.badRequest(`Adding view error`));
+            }
+            if (views === 1) {
+                return res.json({ message: 'View successfully added' });
+            }
+            else {
+                return res.json({ message: 'View has not added' });
             }
         });
     }

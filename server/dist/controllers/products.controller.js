@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const products_service_1 = __importDefault(require("../services/products.service"));
+const product_model_1 = __importDefault(require("../db/models/product.model"));
+const replace_spaces_util_1 = require("../utils/replace-spaces.util");
 class ProductsController {
     static getProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,8 +59,17 @@ class ProductsController {
             return res.json(characteristics);
         });
     }
+    static getDropdownMenuInfo(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const info = yield products_service_1.default.getMenuInfo(req.query);
+            if (!info) {
+                return next(ApiError_1.default.badRequest(`Fetching info error`));
+            }
+            return res.json(info);
+        });
+    }
     // products admin panel
-    static deleteProducts(req, res, next) {
+    static deleteProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { productId } = req.query;
             if (!productId) {
@@ -69,11 +80,49 @@ class ProductsController {
                 return next(ApiError_1.default.badRequest(`Deletion products error`));
             }
             if (typeof result == 'number') {
-                return res.json({ message: `Successfully deleted ${result} products` });
+                return res.json({ message: `Successfully deleted product (id=${productId})` });
             }
             else {
                 return res.json(result);
             }
+        });
+    }
+    static deleteImage(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId, imageId } = req.query;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Please, type the product id'));
+            }
+            if (!imageId) {
+                return next(ApiError_1.default.internal('Please, type the image id'));
+            }
+            const result = yield products_service_1.default.deleteImage(+productId, +imageId);
+            if (!result) {
+                return next(ApiError_1.default.badRequest(`Deletion images error`));
+            }
+            if (typeof result == 'number') {
+                return res.json({ message: `Successfully deleted image (id=${imageId})` });
+            }
+            else {
+                return res.json(result);
+            }
+        });
+    }
+    static addImage(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            const files = req.files !== undefined ? req.files : null;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Please, type product id'));
+            }
+            if (!files || files == undefined) {
+                return next(ApiError_1.default.internal('Please, add image'));
+            }
+            const insertedImages = yield products_service_1.default.addImage(+productId, files);
+            if (!insertedImages) {
+                return next(ApiError_1.default.badRequest(`Adding image error`));
+            }
+            return res.json(insertedImages);
         });
     }
     static addProduct(req, res, next) {
@@ -96,7 +145,7 @@ class ProductsController {
                 return next(ApiError_1.default.internal('Please, add image'));
             }
             else {
-                productInfo.image = `http://localhost:${process.env.PORT}/static/products/${image}`;
+                productInfo.image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(productInfo.name)}/${image}`;
             }
             if (!productInfo.price) {
                 return next(ApiError_1.default.internal('Please, add price'));
@@ -148,7 +197,8 @@ class ProductsController {
                     }
                 }
                 if (image) {
-                    changingValues.image = `http://localhost:${process.env.PORT}/static/products/${image}`;
+                    const product = yield product_model_1.default.query().select('products.name').from('products').where('products.id', '=', `${productId}`);
+                    changingValues.image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(product[0].name)}/${image}`;
                 }
                 const product = yield products_service_1.default.updateProduct(+productId, {
                     price: +changingValues.price || null,
@@ -170,7 +220,7 @@ class ProductsController {
             }
             catch (error) {
                 console.log(error);
-                return res.json({ Error: error.message });
+                return next(ApiError_1.default.badRequest(`${error.message}`));
             }
         });
     }

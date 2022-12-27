@@ -1,39 +1,82 @@
-$purple: #766ED3;
-
+@import '../../../styles/variables.scss';
 
 .card__short{
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    width: 273px;
+    width: 266px;
     padding-bottom: 10px;
     max-height: 469px;
     background: #FFFFFF;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 
+    @media (max-width: $tablet2) {
+        
+    }
+
     .main {
         display: flex;
         flex-direction: column;
         height: 100%;
         width: 100%;
-        gap: 10px;
         align-items: center;
+
+        &:hover {
+            .image,
+            .info,
+            .stats {
+                transition: 0.3s;
+                opacity: 0.6;
+            }
+        }
 
         .favorite__section {
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 16px;
     
             background-color: $purple;
             min-height: 50px;
             width: 100%;
+            transition: 0.3s;
+
+            
+        }
+        .filled{
+            svg {
+                &:hover {
+                    transition: 0.3s;
+                    opacity: 0.6;
+                    // path {
+                    //     stroke:white;
+                    //     stroke-width: 2px;
+                    //     fill: $purple;
+                    // }
+                }
+            }
+        }
+        .empty {
+            svg {
+                &:hover {
+                    transition: 0.3s;
+                        opacity: 0.6;
+                    // path {
+                    //     stroke: none;
+                    // }
+                    // fill: #F8DC25;
+                }
+            }
         }
 
         .image {
+            img {
+                max-height: 160px;
+            }
             max-width: 163px;
-            max-height: 196px;
+            max-height: 163px;
             object-fit: contain; 
         }
 
@@ -50,17 +93,21 @@ $purple: #766ED3;
             color: #171313;
 
             .title {
+                text-align: center;
                 font-style: normal;
                 font-weight: 500;
                 font-size: 28px;
                 line-height: 34px;
                 color: #171313;
+                margin-bottom: 10px;
+                max-width: 230px;
             }
 
             .price{
                 display: flex;
                 align-items: center;
                 gap: 18px;
+                margin-bottom: 15px;
 
                 span {
                 font-weight: 400;
@@ -75,12 +122,16 @@ $purple: #766ED3;
         .stats{
             display: flex;
             flex-direction: row;
-            flex-wrap: wrap;
-            align-items: center;
-            column-gap: 24px;
-            row-gap: 10px;
-            max-width: 230px;
-            margin: 0 auto;
+            justify-content: space-between;
+            width: 220px;
+            margin: auto auto 10px;
+
+            .left, .right{
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
 
             .item{
                 display: flex;

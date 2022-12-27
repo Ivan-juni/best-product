@@ -1,19 +1,13 @@
 import Objection from 'objection'
-import Comment from '../db/models/comment/comment.model'
+import Comment from '../db/models/comment.model'
+import { sort } from '../utils/sort-by.util'
 import { DeleteType } from './types/products.type'
 
 export default class CommentService {
   static async getComments(userId: number): Promise<Comment[] | null> {
     try {
       const comments = await Comment.query()
-        .select(
-          'comments.id',
-          'comments.productId',
-          'products.name as productName',
-          'comments.text',
-          'comments.createdAt',
-          'comments.updatedAt'
-        )
+        .select('comments.id', 'comments.productId', 'products.name as productName', 'comments.text', 'comments.createdAt', 'comments.updatedAt')
         .where({ userId })
         .leftJoin('products', function () {
           this.on('products.id', '=', 'comments.productId')
@@ -26,11 +20,7 @@ export default class CommentService {
     }
   }
 
-  static async addComment(
-    userId: number,
-    productId: number,
-    text: string
-  ): Promise<Comment | null> {
+  static async addComment(userId: number, productId: number, text: string): Promise<Comment | null> {
     try {
       const comment = await Comment.query().insertAndFetch({
         userId,
@@ -45,11 +35,26 @@ export default class CommentService {
     }
   }
 
-  static async deleteComment(
-    userId: number,
-    commentId: number,
-    role: string
-  ): DeleteType {
+  static async updateComment(userId: number, commentId: number, text: string): Promise<Comment | null> {
+    try {
+      const oldComment = await Comment.query().findOne({ userId, id: commentId })
+
+      if (!oldComment) {
+        throw new Error("Can't find this comment")
+      }
+
+      const comment = await oldComment.$query().patchAndFetch({
+        text,
+      })
+
+      return comment
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async deleteComment(userId: number, commentId: number, role: string): DeleteType {
     try {
       if (role === 'ADMIN') {
         const comment = await Comment.query().findOne({ id: commentId })
@@ -72,10 +77,12 @@ export default class CommentService {
 
   static async getProductComments(
     productId: number,
-    page = 0,
-    limit = 5
+    searchCriteria: { orderByDate: string; page: number; limit: number }
   ): Promise<Objection.Page<Comment> | null> {
     try {
+      // параметры для сортировки
+      const sortParams = sort(searchCriteria, ['date'])
+
       const comments = await Comment.query()
         .select(
           'comments.id',
@@ -92,7 +99,8 @@ export default class CommentService {
         .leftJoin('users', function () {
           this.on('users.id', '=', 'comments.userId')
         })
-        .page(page, limit)
+        .orderBy(`comments.createdAt`, sortParams.order)
+        .page(searchCriteria.page, searchCriteria.limit)
 
       return comments
     } catch (error) {

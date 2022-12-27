@@ -1,16 +1,11 @@
-import Category from '../db/models/category/category.model'
+import Objection from 'objection'
+import Category from '../db/models/category.model'
+import { ICategoryBody, ICategorySearchCriteria } from './types/categories.type'
 import { DeleteType } from './types/products.type'
 
 export default class CategoriesService {
-  static async getCategories(searchCriteria: {
-    categoryId?: number | null
-    page?: number
-    limit?: number
-  }) {
+  static async getCategories(searchCriteria: ICategorySearchCriteria): Promise<Objection.Page<Category> | null> {
     try {
-      const limit = +searchCriteria.limit || 5
-      const page = +searchCriteria.page || 0
-
       const categories = await Category.query()
         .select()
         .from('categories')
@@ -18,8 +13,11 @@ export default class CategoriesService {
           if (searchCriteria.categoryId) {
             qb.where('categories.id', '=', +searchCriteria.categoryId)
           }
+          if (searchCriteria.categoryName) {
+            qb.orWhere('categories.name', 'like', `%${searchCriteria.categoryName}%`)
+          }
         })
-        .page(page, limit)
+        .page(searchCriteria.page, searchCriteria.limit)
 
       return categories
     } catch (error) {
@@ -28,10 +26,7 @@ export default class CategoriesService {
     }
   }
 
-  static async addCategory(categoryValues: {
-    name: string
-    parent: number
-  }): Promise<Category | null> {
+  static async addCategory(categoryValues: { name: string; parent: number }): Promise<Category | null> {
     try {
       const productCategory = await Category.query().findOne({
         name: categoryValues.name,
@@ -64,6 +59,30 @@ export default class CategoriesService {
       const deletedCategories = await Category.query().deleteById(categoryId)
 
       return deletedCategories
+    } catch (error) {
+      console.log('Error: ', error)
+      return null
+    }
+  }
+
+  static async updateCategory(categoryId: number, changingValues: ICategoryBody): Promise<Category | null> {
+    try {
+      const oldCategory = await Category.query().select().findById(categoryId)
+
+      if (!oldCategory) {
+        throw new Error("Can't find this category")
+      }
+
+      // filtering null values
+      Object.keys(changingValues).forEach((key) => {
+        if (changingValues[key] === null) {
+          delete changingValues[key]
+        }
+      })
+
+      const category = await Category.query().patchAndFetchById(categoryId, changingValues)
+
+      return category
     } catch (error) {
       console.log('Error: ', error)
       return null

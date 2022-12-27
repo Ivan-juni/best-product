@@ -1,20 +1,11 @@
-import User from '../db/models/user/user.model'
+import User from '../db/models/user.model'
 import tokenService from './token.service'
 import UserDto from '../dtos/user-dto'
 import bcrypt from 'bcrypt'
 import { IRegistrationQuery } from './types/auth.type'
 
 class AuthService {
-  static async registration({
-    email,
-    password,
-    firstName,
-    lastName,
-    createdAt,
-    updatedAt,
-    phone,
-    photo,
-  }: IRegistrationQuery): Promise<{
+  static async registration({ email, password, firstName, lastName, createdAt, updatedAt, phone, photo }: IRegistrationQuery): Promise<{
     user: UserDto
     accessToken: string
     refreshToken: string

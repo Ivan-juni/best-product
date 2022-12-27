@@ -1,56 +1,12 @@
 import AuthService from '../../../http/auth-service/auth.service'
-// import { AppDispatchType } from '../../store'
 import { IUser } from '../../../models/IUser.model'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { IError } from '../../../models/IError.model'
 import { authAction } from './Auth.slice'
 import { AuthResponse } from '../../../http/auth-service/auth.model'
 import axios from 'axios'
-
-// export const login =
-//   (email: string, password: string, remember = false) =>
-//   async (dispatch: AppDispatchType) => {
-//     try {
-//       const response = await AuthService.login(email, password, remember)
-//       // сохраняем токен доступа в localStorage
-//       localStorage.setItem('token', response.data.accessToken)
-//       setAuth(true)
-//       setUser(response.data.user)
-//     } catch (error: any) {
-//       console.log(error.response?.data?.message)
-//     }
-//   }
-
-// export const registration =
-//   (email: string, password: string, firstName: string, lastName: string) =>
-//   async (dispatch: AppDispatchType) => {
-//     try {
-//       const response = await AuthService.registration(
-//         email,
-//         password,
-//         firstName,
-//         lastName
-//       )
-//       // сохраняем токен доступа в localStorage
-//       localStorage.setItem('token', response.data.accessToken)
-//       setAuth(true)
-//       setUser(response.data.user)
-//     } catch (error: any) {
-//       console.log(error.response?.data?.message)
-//     }
-//   }
-
-// export const logout = () => async (dispatch: AppDispatchType) => {
-//   try {
-//     const response = await AuthService.logout()
-//     // удаляем токен доступа из localStorage
-//     localStorage.removeItem('token')
-//     setAuth(false)
-//     setUser({} as IUser)
-//   } catch (error: any) {
-//     console.log(error.response?.data?.message)
-//   }
-// }
+import { FormikType } from '../../../models/Formik.model'
+import { errorLogic } from '../../utils/errorLogic'
+import { ErrorType } from '../../../models/IError.model'
 
 export const login = createAsyncThunk<
   void,
@@ -58,18 +14,23 @@ export const login = createAsyncThunk<
     email: string
     password: string
     remember: boolean
-  },
+  } & FormikType,
   { rejectValue: string }
->('auth/login', async ({ email, password, remember = false }, thunkApi) => {
+>('auth/login', async ({ email, password, remember = false, setStatus, setSubmitting }, thunkApi) => {
   try {
     const response = await AuthService.login(email, password, remember)
     // сохраняем токен доступа в localStorage
     localStorage.setItem('token', response.data.accessToken)
     thunkApi.dispatch(authAction.setAuth(true))
     thunkApi.dispatch(authAction.setUser(response.data.user))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+
+    if (setSubmitting) {
+      setSubmitting(false)
+    }
+    thunkApi.dispatch(authAction.setLogModalOpen(false))
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError, { setStatus, setSubmitting }))
   }
 })
 
@@ -80,18 +41,23 @@ export const registration = createAsyncThunk<
     password: string
     firstName: string
     lastName: string
-  },
+  } & FormikType,
   { rejectValue: string }
->('auth/login', async ({ email, password, firstName, lastName }, thunkApi) => {
+>('auth/login', async ({ email, password, firstName, lastName, setStatus, setSubmitting }, thunkApi) => {
   try {
     const response = await AuthService.registration(email, password, firstName, lastName)
     // сохраняем токен доступа в localStorage
     localStorage.setItem('token', response.data.accessToken)
     thunkApi.dispatch(authAction.setAuth(true))
     thunkApi.dispatch(authAction.setUser(response.data.user))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+
+    if (setSubmitting) {
+      setSubmitting(false)
+    }
+    thunkApi.dispatch(authAction.setRegModalOpen(false))
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError, { setStatus, setSubmitting }))
   }
 })
 
@@ -102,9 +68,9 @@ export const logout = createAsyncThunk<void, void, { rejectValue: string }>('aut
     localStorage.removeItem('token')
     thunkApi.dispatch(authAction.setAuth(false))
     thunkApi.dispatch(authAction.setUser({} as IUser))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })
 
@@ -115,8 +81,8 @@ export const checkAuth = createAsyncThunk<void, void, { rejectValue: string }>('
     localStorage.setItem('token', response.data.accessToken)
     thunkApi.dispatch(authAction.setAuth(true))
     thunkApi.dispatch(authAction.setUser(response.data.user))
-  } catch (error: any) {
-    console.log(error.response?.data?.message)
-    return thunkApi.rejectWithValue(error.response?.data?.message)
+  } catch (error) {
+    const typedError = error as ErrorType
+    return thunkApi.rejectWithValue(errorLogic(typedError))
   }
 })

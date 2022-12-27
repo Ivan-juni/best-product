@@ -1,0 +1,71 @@
+@use "../../../../../styles/form.scss";
+@import "../../../../../styles/variables.scss";
+
+.wrapper {
+    max-width: 1077px;
+    width: 100%;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 51px;
+
+    .menu {
+        width: 100%;
+
+        .sort {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding-top: 11px;
+            padding-bottom: 11px;
+            min-width: 142px;
+            height: 46px;
+            max-height: 46px;
+            border: none;
+            background-color: $purple;
+            border-radius: 10px;
+        
+            &:hover {
+                transition: 0.3s;
+                opacity: 0.8;
+            }
+        
+            span {
+                font-style: normal;
+                font-weight: 300;
+                font-size: 22px;
+                line-height: 27px;
+                color: #FFFFFF;
+            }
+    
+            .text {
+                display: flex;
+                align-items: center;
+
+                .arrowUp {
+                    transition: 0.3s;
+                    transform: rotate(180deg);
+                }
+                .arrowDown {
+                    transition: 0.3s;
+                    transform: rotate(0deg);
+                }
+            }
+        }
+    }
+
+    .comments {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 41px;
+
+    }
+    .pagination {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

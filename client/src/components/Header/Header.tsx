@@ -1,55 +1,104 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './Header.module.scss'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as LogoIcon } from '../../assets/icons/logo-main.svg'
-import { ReactComponent as SearchIcon } from '../../assets/icons/other/search-icon.svg'
 import userAvatar from '../../assets/images/unknown-user.png'
+import withoutPhotoUserAvatar from '../../assets/images/without-photo-user.png'
 import Auth from './Auth/Auth'
 import LoginModal from '../Modals/login-modal/LoginModal'
 import RegistrationModal from '../Modals/registration-modal/RegistrationModal'
-import { useAppSelector } from '../../hoooks/redux'
+import { useActions, useAppSelector } from '../../hoooks/redux'
+import Preloader from '../Common/Preloader/Preloader'
+import Search from './Search/Search'
+import SearchModal from './Search/Modal/SearchModal'
 
-const Header: React.FC = () => {
-  const [authOpen, setAuthOpen] = useState(false)
-  const { user, isAuth } = useAppSelector((state) => state.authReducer)
+type PropsType = {
+  authOpen: boolean
+  setAuthOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-  const [loginModalActive, setLoginModalActive] = useState(false)
-  const [registrationModalActive, setRegistrationModalActive] = useState(false)
+const Header: React.FC<PropsType> = ({ authOpen, setAuthOpen }) => {
+  const { user, isAuth, isLoading, isNavbarOpen, isLogModalOpen, isRegModalOpen } = useAppSelector((state) => state.authReducer)
+  const [isModalOpen, setModalOpen] = useState(false)
+
+  // burger menu
+  const { setNavbarOpen } = useActions()
+  const handleClick = () => {
+    setNavbarOpen(!isNavbarOpen)
+  }
+
+  const closeModalHandler = () => {
+    setModalOpen(false)
+  }
+
+  useEffect(() => {
+    if (isNavbarOpen) {
+      document.body.style.overflow = 'hidden'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isNavbarOpen])
 
   return (
     <>
-      <div className={styles.wrapper}>
+      <div className={styles.wrapper} onClick={closeModalHandler}>
         <div className={styles.logo}>
+          <div className={isNavbarOpen ? `${styles.burger__button} ${styles._active}` : `${styles.burger__button}`} onClick={handleClick}>
+            <span></span>
+          </div>
           <NavLink className={styles.link} to='/home'>
             <LogoIcon className={styles.logo__thumb} />
             <span className={styles.text}>BEST PRODUCTS</span>
           </NavLink>
         </div>
         <div className={styles.search}>
-          <SearchIcon className={styles.search__icon} />
-          <input type='text' className={styles.search__input} placeholder='Search' />
+          <Search setModalOpen={setModalOpen} isModalOpen={isModalOpen} />
         </div>
-        <div className={styles.auth}>
-          <img
-            src={isAuth ? (user.photo ? user.photo : userAvatar) : userAvatar}
-            alt='avatar'
-            className={authOpen ? styles.auth__avatar + ' ' + styles.active : styles.auth__avatar}
-            onClick={() => setAuthOpen((prev) => !prev)}
-          />
-          {authOpen && <Auth setModalActive={setLoginModalActive} setAuthOpen={setAuthOpen} isAuth={isAuth} user={user} />}
+        <div className={styles.auth} onClick={(e) => e.stopPropagation()}>
+          {isLoading ? (
+            <Preloader />
+          ) : (
+            <img
+              src={isAuth ? (user.photo ? user.photo : withoutPhotoUserAvatar) : userAvatar}
+              alt='avatar'
+              className={authOpen ? styles.auth__avatar + ' ' + styles.active : styles.auth__avatar}
+              onClick={() => setAuthOpen((prev) => !prev)}
+            />
+          )}
+          {authOpen && <Auth setAuthOpen={setAuthOpen} isAuth={isAuth} user={user} />}
+        </div>
+        <div className={isNavbarOpen ? `${styles.navbar} ${styles._active}` : `${styles.navbar}`}>
+          <NavLink
+            className={(NavData) => (NavData.isActive ? `${styles.page} ${styles.home} ${styles.home__active}` : `${styles.page} ${styles.home}`)}
+            to='/home'
+          >
+            <span>Home</span>
+          </NavLink>
+          <NavLink
+            className={(NavData) =>
+              NavData.isActive ? `${styles.page} ${styles.favorites} ${styles.favorites__active}` : `${styles.page} ${styles.favorites}`
+            }
+            to='/favorites'
+          >
+            <span>Favorites</span>
+          </NavLink>
+          <NavLink
+            className={(NavData) =>
+              NavData.isActive ? `${styles.page} ${styles.categories} ${styles.categories__active}` : `${styles.page} ${styles.categories}`
+            }
+            to='/products'
+          >
+            <span>Products</span>
+          </NavLink>
+          <div className={styles.search}>
+            <Search setModalOpen={setModalOpen} isModalOpen={isModalOpen} />
+          </div>
         </div>
       </div>
-      {loginModalActive && (
-        <LoginModal
-          setLoginActive={setLoginModalActive}
-          loginActive={loginModalActive}
-          setRegistrationActive={setRegistrationModalActive}
-          registrationActive={registrationModalActive}
-        />
-      )}
-      {registrationModalActive && (
-        <RegistrationModal setRegistrationActive={setRegistrationModalActive} registrationActive={registrationModalActive} />
-      )}
+      {isLogModalOpen && <LoginModal />}
+      {isRegModalOpen && <RegistrationModal />}
+      {isModalOpen && <SearchModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />}
     </>
   )
 }

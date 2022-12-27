@@ -1,7 +1,14 @@
-$purple: #766ED3;
+@import '../../styles/variables.scss';
 
 .wrapper {
-    max-width: 953px;
+    max-width: 973px;
     margin: 0 auto;
     padding-top: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    .preloader {
+        max-width: 60px;
+        margin: 0 auto;
+    }
 }

@@ -1,4 +1,4 @@
-import User from '../db/models/user/user.model'
+import User from '../db/models/user.model'
 
 class UserDto {
   email: string

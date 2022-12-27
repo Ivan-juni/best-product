@@ -24,7 +24,6 @@ $api.interceptors.response.use(
     if (error.response.status === 401 && error.config && !error.config._isRetry) {
       originalRequest._isRetry = true
       try {
-        // !todo запрос на refresh
         const response = await axios.get<AuthResponse>(`${process.env.REACT_APP_API_URL}/auth/refresh`, { withCredentials: true })
         localStorage.setItem('token', response.data.accessToken)
         return $api.request(originalRequest)

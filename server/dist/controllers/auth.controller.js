@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const yup = __importStar(require("yup"));
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const user_model_1 = __importDefault(require("../db/models/user/user.model"));
+const user_model_1 = __importDefault(require("../db/models/user.model"));
 const auth_service_1 = __importDefault(require("../services/auth.service"));
 const registrationSchema = yup.object({
     email: yup.string().email().required(),
@@ -49,14 +49,8 @@ const registrationSchema = yup.object({
         .max(30, 'Password should be shorter than 30 symbols')
         .matches(/^[a-zA-Z0-9-]+$/, 'Only English letters and numbers')
         .required(),
-    firstName: yup
-        .string()
-        .max(255, 'Firstname should be shorter than 255 symbols')
-        .required(),
-    lastName: yup
-        .string()
-        .max(255, 'Lastname should be shorter than 255 symbols')
-        .required(),
+    firstName: yup.string().max(255, 'Firstname should be shorter than 255 symbols').required(),
+    lastName: yup.string().max(255, 'Lastname should be shorter than 255 symbols').required(),
     role: yup.string().nullable().default('USER').min(4).max(5),
     photo: yup.string().nullable().default(null),
     createdAt: yup.date(),
@@ -84,18 +78,10 @@ class AuthController {
                 return next(ApiError_1.default.badRequest(`Registration error`));
             }
             // храним refreshToken в куках
-            if (req.body.remember && req.body.remember !== undefined) {
-                res.cookie('refreshToken', userData.refreshToken, {
-                    maxAge: 30 * 24 * 60 * 60 * 1000,
-                    httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
-                });
-            }
-            else {
-                res.cookie('refreshToken', userData.refreshToken, {
-                    maxAge: 3 * 60 * 1000,
-                    httpOnly: true,
-                });
-            }
+            res.cookie('refreshToken', userData.refreshToken, {
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
+            });
             return res.json(userData);
         });
     }
@@ -115,10 +101,19 @@ class AuthController {
             if (!userData) {
                 return next(ApiError_1.default.badRequest(`Login error`));
             }
-            res.cookie('refreshToken', userData.refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-                httpOnly: true,
-            });
+            // храним refreshToken в куках
+            if (req.body.remember && req.body.remember !== undefined) {
+                res.cookie('refreshToken', userData.refreshToken, {
+                    maxAge: 30 * 24 * 60 * 60 * 1000,
+                    httpOnly: true, // чтобы нельзя было получить/изменить внутри браузера
+                });
+            }
+            else {
+                res.cookie('refreshToken', userData.refreshToken, {
+                    maxAge: 3 * 60 * 1000,
+                    httpOnly: true,
+                });
+            }
             return res.json(userData);
         });
     }

@@ -1,5 +1,4 @@
-$purple: #766ED3;
-
+@import '../../../styles/variables.scss';
 
 .card__tall{
     display: flex;
@@ -15,8 +14,16 @@ $purple: #766ED3;
     .main {
         display: flex;
         height: 100%;
-        gap: 55px;
+        width: 100%;
+        justify-content: space-between;
         align-items: center;
+
+        &:hover {
+            .image, .info, .stats{
+                transition: 0.3s;
+                opacity: 0.6;
+            }
+        }
 
         .favorite__section {
             display: flex;
@@ -28,18 +35,63 @@ $purple: #766ED3;
             width: 50px;
         }
 
+        .filled {
+            svg {
+                &:hover {
+                    transition: 0.3s;
+                    opacity: 0.6;
+                    // path {
+                    //     stroke: white;
+                    //     stroke-width: 2px;
+                    //     fill: $purple;
+                    // }
+                }
+            }
+        }
+
+        .empty {
+            svg {
+                &:hover {
+                    transition: 0.3s;
+                    opacity: 0.6;
+                    // path {
+                    //     stroke: none;
+                    // }
+                    // fill: #F8DC25;
+                }
+            }
+        }
+
         .image {
-            max-width: 217px;
-            max-height: 217px;
+            @media (max-width: $tablet) {
+                width: 150px;
+            }
+            display: flex;
+            align-items: center;
+            img {
+                max-height: 217px;
+            }
+            width: 217px;
+            height: 100%;
             object-fit: contain;
         }
 
         .info{
+            @media (max-width: $tablet2) {
+                max-width: 200px;
+            }
+
+            @media (max-width: 450px) {
+                max-width: 150px;
+                font-size: 20px;
+            }
+
             display: flex;
             flex-direction: column;
             justify-content: space-between;
 
             max-width: 360px;
+            width: 360px;
             min-height: 211px;
 
             font-style: normal;
@@ -86,8 +138,20 @@ $purple: #766ED3;
             min-height: 209px;
             min-width: 110px;
             gap: 27px;
+            margin-right: 55px;
 
-            margin-left: 14px;
+            
+            @media (max-width: $tablet2) {
+                margin-right: 15px;
+            }
+
+            @media (max-width: $tablet) {
+                min-width: 70px;
+            }
+
+            @media (max-width: $burger) {
+                display: none;
+            }
 
             .item{
                 display: flex;

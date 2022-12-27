@@ -27,7 +27,7 @@ const findProducts = (qb, searchCriteria) => {
         qb.andWhere('products.id', '=', +searchCriteria.id);
     }
     if (searchCriteria.name) {
-        qb.andWhere('products.name', 'like', `%${searchCriteria.name}%`);
+        qb.orWhere('products.name', 'like', `%${searchCriteria.name}%`);
     }
     if (searchCriteria.purpose) {
         (0, exports.searchUtil)(qb, searchCriteria, 'purpose');
@@ -38,9 +38,15 @@ const findProducts = (qb, searchCriteria) => {
     if (searchCriteria.connectionType) {
         (0, exports.searchUtil)(qb, searchCriteria, 'connectionType');
     }
-    if (searchCriteria.microphone && searchCriteria.microphone === 'true') {
-        const microphone = true;
-        qb.andWhere('product_characteristics.microphone', '=', microphone);
+    if (searchCriteria.microphone) {
+        if (searchCriteria.microphone === 'true' || searchCriteria.microphone === 'built-in') {
+            const microphone = true;
+            qb.andWhere('product_characteristics.microphone', '=', microphone);
+        }
+        else if (searchCriteria.microphone === 'false' || searchCriteria.microphone === 'none') {
+            const microphone = false;
+            qb.andWhere('product_characteristics.microphone', '=', microphone);
+        }
     }
     if (searchCriteria.price) {
         (0, exports.findInRange)(qb, 'price', searchCriteria);

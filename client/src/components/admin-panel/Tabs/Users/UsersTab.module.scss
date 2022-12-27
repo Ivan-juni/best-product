@@ -1,0 +1,38 @@
+@import "../../../../styles/variables.scss";
+
+.wrapper {
+    margin-left: -8px;
+
+    .users {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 50px;
+
+        @media (max-width: $laptop) {
+            justify-content: center;
+            gap: 20px;
+        }
+    }
+
+    .loading, .noUsers {
+        height: 280px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 50px;
+    }
+
+    .noUsers{
+        width: 100%;
+        margin-bottom: 0px;
+    }
+
+    .pagination{
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

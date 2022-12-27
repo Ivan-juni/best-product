@@ -1,13 +1,39 @@
-$purple: #766ED3;
+@import '../../styles/variables.scss';
 
+.cards {
+  width: 100%;
+  min-height: 481px;
+  margin-top: 15px;
 
- .cards {
-    width: 100%;
-    margin-top: 27px;
+  display: flex;
+  flex-wrap: wrap;
 
-    display: flex;
-    flex-wrap: wrap;
+  justify-content: space-between;
+  row-gap: 64px;
 
-    column-gap: 56px;
-    row-gap: 64px;
- }
+  @media (max-width: $tablet2) {
+    justify-content: center;
+    column-gap: 25px;
+  }
+}
+
+.pagination {
+  margin-top: 50px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading,
+.noItems {
+  height: 481px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  h1 {
+    color: #766ED3;
+  }
+}

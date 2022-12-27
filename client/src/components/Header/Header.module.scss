@@ -1,4 +1,9 @@
-$purple: #766ED3;
+@import '../../styles/variables.scss';
+@mixin link-bg($image) {
+    background-image: url('../../assets/icons/#{$image}-icon.svg');
+    background-size: cover;
+    background-repeat: none;
+}
 
 .wrapper {
     position: fixed;
@@ -10,7 +15,81 @@ $purple: #766ED3;
     height: 85px;
     background: #FFFFFF;
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.1));
-    z-index: 999;
+    z-index: 10;
+
+    .navbar {
+        position: fixed;
+        left: -120%;
+        top: 85px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        // overflow: auto;
+        transition: left 0.3s ease 0s;
+        gap: 28px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        font-size: 24px;
+        background-color: #fff;
+
+        a {
+            margin-left: -100px;
+            color: $purple;
+            font-weight: 400;
+            text-decoration: none;
+
+            span {
+                color: #000;
+                position: absolute;
+                margin-left: 75px;
+                margin-top: 15px;
+            }
+        }
+
+        .home {
+            @include link-bg("home/home-unactive");
+        }
+    
+        .home__active {
+            @include link-bg("home/home-active");
+            span {
+                color: $purple;
+            }
+        }
+    
+        .favorites {
+            @include link-bg("favorites/fav-unactive");
+        }
+    
+        .favorites__active {
+            @include link-bg("favorites/fav-active");
+            span {
+                color: $purple;
+            }
+        }
+    
+        .categories {
+            @include link-bg("categories/categ-unactive");
+        }
+    
+        .categories__active {
+            @include link-bg("categories/categ-active");
+            span {
+                color: $purple;
+            }
+        }
+    
+        .page {
+            width: 65px;
+            height: 61.84px;
+    
+            &:hover {
+                transition: 0.3s;
+                opacity: 0.8;
+            }
+        }
+    }
 
     .link {
         display: flex;
@@ -29,12 +108,15 @@ $purple: #766ED3;
         }
 
         .text{
-            // font-family: 'Inter';
             font-style: normal;
             font-weight: 800;
             font-size: 20px;
             line-height: 24px;
             color: #435C6B;
+        }
+
+        .burger__button {
+            display: none;
         }
     }
 
@@ -46,7 +128,6 @@ $purple: #766ED3;
         display: flex;
         justify-content: space-between;
         align-items: center;
-
 
         .search__icon {
             margin-left: 12px;
@@ -74,7 +155,7 @@ $purple: #766ED3;
     }
 
     .auth {
-        margin-right: 32px;
+        margin-right: 10px;
 
         .active {
             opacity: 0.8;
@@ -82,18 +163,111 @@ $purple: #766ED3;
 
         .auth__avatar{
             transition: 0.3s;
-            max-width: 60px;
-            max-height: 60px;
+            max-width: 62px;
+            max-height: 62px;
             border-radius: 50%;
+            object-fit: contain;
 
             &:hover {
                 opacity: 0.8;
             }
         }
-        image {
-            border-radius: 50%;
-            max-width: 62px;
-            max-height: 62px;
+    }
+
+    @media (max-width: $tablet2) {
+        .logo{
+            max-width: 200px;
+        }
+        .search {
+            width: 400px;
+    
+            .search__input {
+               width: calc(100% - 70px);
+            }
+        }
+    }
+    @media (max-width: $tablet) {
+        .logo{
+            .text{
+                display: none;
+            }
+        }
+        .search {
+            width: 300px;
+        }
+    }
+
+    @media (max-width: $burger) {
+        .logo{
+            width: 85px;
+            align-items: center;
+            justify-content: center;
+            .link{
+                display: none;
+            }
+            .burger__button {
+                z-index: 5;
+                display: block;
+                position: relative;
+                width: 40px;
+                height: 28px;
+                cursor: pointer;
+
+                span {
+                    top: 50%;
+                    transform: scale(1) translate(0px, -50%);
+                    color: $purple;
+                }
+
+                &::before, &::after, span {
+                    left: 0;
+                    position: absolute;
+                    height: 2px;
+                    width: 100%;
+                    transition: all 0.3s ease 0s;
+                    background-color: $purple;
+                }
+
+                &::before,
+                &::after {
+                    content: ''
+                }
+
+                &::before {
+                    top: 0;
+                }
+                &::after {
+                    bottom: 0;
+                }
+
+                &._active::before {
+                    top: 50%;
+                    -webkit-transform: rotate(-45deg);
+                    background-color: $purple;
+                }
+                &._active::after {
+                    top: 50%;
+                    -webkit-transform: rotate(45deg);
+                    background-color: $purple;
+                }
+                &._active {
+                    span {
+                        transform: scale(0) translate(0px, -50%);
+                        color: $purple;
+                    }
+                }
+            }
+        }
+        .search {
+            display: none;
+        }
+        .navbar._active {
+            left: 0%;
+
+            .search {
+                display: block;
+                width: calc(100% - 20px);
+            }
         }
     }
 }

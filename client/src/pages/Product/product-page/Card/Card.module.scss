@@ -1,0 +1,315 @@
+@use "../../../../styles/form.scss";
+@import "../../../../styles/variables.scss";
+
+.wrapper {
+    width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 495px;
+    border-radius: 10px;
+    padding: 27px 31px 19px 31px;
+
+    @media (max-width: $burger) {
+        flex-direction: column;
+    }
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .slider {
+        max-width: 531px;
+    }
+
+    .info{
+        min-height: 460px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        @media (max-width: $burger) {
+            min-height: 250px;
+            text-align: center;
+        }
+
+        .up {
+            @media (max-width: $tablet) {
+                max-width: 180px;
+            }
+            @media (max-width: $burger) {
+                max-width: 270px;
+            }
+            .stats {
+                @media (max-width: $tablet2) {
+                    flex-wrap: wrap;
+                    max-width: 220px;
+                }
+                @media (max-width: $burger) {
+                    margin-top: 20px;
+                    max-width: 270px;
+                    justify-content: space-between;
+                }
+
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 31px;
+    
+                .item{
+                    @media (max-width: $laptop) {
+                        width: 100px;
+                    }
+                    @media (max-width: $tablet) {
+                        width: 70px;
+                    }
+                    @media (max-width: $burger) {
+                        justify-content: space-between;
+                        width: 100px;
+                    }
+
+                    width: 150px;
+                    height: 43px;
+                    display: flex;
+                    align-items: center;
+                    gap: 13px;
+
+                    .disabled {
+                        transition: 0.3s;
+                        opacity: 0.6;
+                    }
+
+                    button {
+                        border: none;
+                        background-color: transparent;
+                        width: 32px;
+                        height: 32px;
+                        padding: 0;
+
+                        &:disabled, &:hover {
+                            transition: 0.3s;
+                            opacity: 0.6;
+                        }
+                    }
+
+                    span {
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 24px;
+                        line-height: 29px;
+                        color: #000000;
+                    }
+                }
+            }
+            .text {
+                .title {
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 32px;
+                    line-height: 39px;
+                    color: #171313;
+                    margin-bottom: 38px;
+                    @media (max-width: $burger) {
+                        margin-bottom: 0px;
+                    }
+                }
+                .additional {
+                    @media (max-width: $burger) {
+                        display: none;
+                    }
+                    display: flex;
+                    flex-direction: column;
+                    gap: 13px;
+                    p {
+                        font-style: normal;
+                        font-weight: 300;
+                        font-size: 20px;
+                        line-height: 24px;
+                        color: #171313;
+
+                        span {
+                            font-weight: 500;
+                            line-height: 25px;
+                        }
+                    }
+                }
+            }
+        }
+        .down {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 27px;
+
+            @media (max-width: $laptop) {
+               margin-top: 20px;
+                justify-content: initial;
+                gap: 20px;
+            }
+            @media (max-width: $tablet) {
+                width: 180px;
+            }
+            @media (max-width: $tablet2) {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            @media (max-width: $burger) {
+                width: 270px;
+                align-items: center;
+                justify-content: center;
+            }
+            
+
+            .submit {
+                @media (max-width: $laptop) {
+                    max-width: 150px;
+                    flex-direction: column;
+                    gap: 10px;
+                    max-height: 110px;
+                }
+                @media (max-width: $tablet2) {
+                    flex-direction: row;
+                    max-width: 100%;
+                }
+                @media (max-width: $tablet) {
+                    flex-direction: column;
+                }
+                @media (max-width: $burger) {
+                    flex-direction: row;
+                }
+
+                align-self: flex-end;
+                max-width: 500px;
+                display: flex;
+                align-items: center;
+        
+                .changeInfo,
+                .cancel {
+                    width: 100%;
+                    height: 50px;
+                    background: $purple;
+                    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+                    border-radius: 7px;
+                    border: none;
+                    padding: 20px;
+        
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+        
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 22px;
+                    line-height: 27px;
+                    color: #fff;
+        
+                    &:disabled {
+                        opacity: 0.6;
+                    }
+        
+                    &:hover {
+                        transition: 0.3s;
+                        opacity: 0.8;
+                    }
+                }
+        
+                .changeInfo {
+                    min-width: 150px;
+                    max-width: 200px;
+                }
+        
+                .cancel {
+                    background-color: #fa2626be;
+                    width: 150px;
+                    margin-left: 20px;
+                    @media (max-width: $laptop) {
+                        margin-left: 0px;
+                    }
+                }
+            }
+
+            .price{
+                display: flex;
+                align-items: center;
+                gap: 30px;
+
+                @media (max-width: $laptop) {
+                    gap: 20px;
+                }
+
+                input {
+                    width: 150px;
+                    font-weight: 400;
+                    font-size: 24px;
+                    @media (max-width: $laptop) {
+                        width: 100px;
+                    }
+                    @media (max-width: $burger) {
+                        width: 100%;
+                    }
+                }
+
+                span {
+                    @media (max-width: $tablet) {
+                        font-size: 28px;
+                    }
+
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 40px;
+                    line-height: 48px;
+                    color: #000000;              
+                    transform: matrix(1, 0, 0, 1, 0, 0);
+                }
+
+                svg {
+                    height: 52px;
+                    width: 52px;
+
+                    @media (max-width: $tablet) {
+                        height: 42px;
+                        width: 42px;
+                    }
+                }
+            }
+        } 
+
+        .formControl {
+            display: flex;
+            flex-direction: column;
+
+            input, select {
+                border: 2px solid rgba(118, 110, 211, 0.75);
+                border-radius: 7px;
+                width: 400px;
+                padding: 11px 0px 11px 23px;
+                @media (max-width: $laptop) {
+                    width: 280px;
+                }
+                @media (max-width: $tablet) {
+                    width: 180px;
+                }
+                @media (max-width: $burger) {
+                    width: 100%;
+                }
+            }
+
+            .categorySelect {
+                select {
+                    width: 200px;
+                    font-size: 20px;
+                }
+
+                span {
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 20px;
+                    line-height: 24px;
+                    color: #000000;
+                }
+            }
+        }
+
+    }
+}

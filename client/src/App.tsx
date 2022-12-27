@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.scss'
 import AppRouter from './AppRouter'
 import Footer from './components/Footer/Footer'
 import Header from './components/Header/Header'
 import Navbar from './components/Navbar/Navbar'
-import { useAppDispatch } from './hoooks/redux'
+import { useActions, useAppDispatch } from './hoooks/redux'
 import { checkAuth } from './store/slices/auth/ActionCreators.auth'
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
+  const [authOpen, setAuthOpen] = useState(false)
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -17,9 +18,9 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <div className='wrapper'>
+    <div className='wrapper' onClick={() => setAuthOpen(false)}>
       <header>
-        <Header />
+        <Header authOpen={authOpen} setAuthOpen={setAuthOpen} />
       </header>
       <main>
         <div className='navbar'>

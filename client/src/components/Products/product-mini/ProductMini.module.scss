@@ -1,0 +1,57 @@
+@import '../../../styles/variables.scss';
+
+.card__mini{
+    display: flex;
+    align-items: center;
+
+    max-width: 410px;
+    width: 100%;
+    height: 52px;
+    background: transparent;
+
+
+
+    &:hover {
+        transition: 0.3s;
+        opacity: 0.8;
+    }
+
+    .main {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        gap: 15px;
+        align-items: center;
+        // justify-content: center;
+
+        .image {
+            width: 52px;
+            img {
+                max-width: 52px;
+                max-height: 52px;
+                object-fit: contain;
+            }
+        }
+
+        .info{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            max-width: 379px;
+
+            .title {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 20px;
+                line-height: 24px;
+                color: #435C6B;
+
+                @media (max-width: 420px) {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}

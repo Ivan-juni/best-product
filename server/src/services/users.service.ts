@@ -1,33 +1,26 @@
-import User from '../db/models/user/user.model'
+import User from '../db/models/user.model'
 import { changingValues, IUsersQuery } from './types/users.type'
 import { removePhoto } from '../utils/remove-photo.util'
 import { DeleteType } from './types/products.type'
-import Comment from '../db/models/comment/comment.model'
-import Favorite from '../db/models/favorite/favorite.model'
+import Comment from '../db/models/comment.model'
+import Favorite from '../db/models/favorite.model'
 import Objection from 'objection'
 
 class UserService {
-  static async getUsers(
-    searchCriteria: IUsersQuery
-  ): Promise<Objection.Page<User> | null> {
+  static async getUsers(searchCriteria: IUsersQuery): Promise<Objection.Page<User> | null> {
     const limit = +searchCriteria.limit || 5
     const page = +searchCriteria.page || 0
 
     try {
       const users = await User.query()
-        .select(
-          'id',
-          'email',
-          'phone',
-          'firstName',
-          'lastName',
-          'role',
-          'createdAt',
-          'updatedAt'
-        )
+        .select('id', 'email', 'phone', 'photo', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
         .where((qb) => {
           if (searchCriteria.id) {
             qb.where('users.id', '=', +searchCriteria.id)
+          }
+
+          if (searchCriteria.firstName) {
+            qb.orWhere('users.firstName', 'like', `%${searchCriteria.firstName}%`)
           }
         })
         .page(page, limit)
@@ -68,16 +61,18 @@ class UserService {
     }
   }
 
-  static async editProfile(id: number, changingValues: changingValues): Promise<User | { message: string } | null> {
+  static async editProfile(id: number, changingValues: changingValues): Promise<User | null> {
     try {
       const oldUser = await User.query().select().findById(id)
 
       if (!oldUser) {
-        return { message: "Can't find this user" }
+        throw new Error("Can't find this user")
       }
 
-      // Remove old photo
-      removePhoto(oldUser.photo, 'users')
+      if (changingValues.photo) {
+        // Remove old photo
+        removePhoto(oldUser.photo, 'users')
+      }
 
       // filtering null values
       Object.keys(changingValues).forEach((key) => {
