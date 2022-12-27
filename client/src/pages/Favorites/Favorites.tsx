@@ -5,6 +5,7 @@ import ProductsComponent from '../../components/Products/ProductsComponent'
 import { withAuthRedirect } from '../../hoc/withAuthRedirect.hoc'
 import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
 import { fetchFavorites, fetchFavoritesIds } from '../../store/slices/favorites/ActionCreators.favorites'
+import { fetchMenuInfo } from '../../store/slices/product/ActionCreators.product'
 import styles from './Favorites.module.scss'
 
 const Favorites: React.FC = () => {
@@ -20,9 +21,18 @@ const Favorites: React.FC = () => {
   const { setFavoritesCardType, setFavoritesPage } = useActions()
 
   useEffect(() => {
-    dispatch(fetchFavorites({ page: `${page}`, limit: `${limit}` }))
+    searchParams.set('page', `${page}`)
+    searchParams.set('limit', `${9}`)
+    setSearchParams(searchParams)
+
+    searchParams.forEach((key, value) => {
+      params[value] = key
+    })
+
+    dispatch(fetchFavorites(params))
+    dispatch(fetchMenuInfo(params))
     dispatch(fetchFavoritesIds())
-  }, [page])
+  }, [page, searchParams])
 
   return (
     <div className={styles.wrapper}>
@@ -35,6 +45,7 @@ const Favorites: React.FC = () => {
           products={favorites}
           page={page}
           total={total}
+          limit={limit}
           isLoading={isLoading}
           cardType={cardType}
           setPage={setFavoritesPage}

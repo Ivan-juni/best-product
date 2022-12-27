@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './PriceDynamics.module.scss'
 import { IPriceDynamics } from '../../../../../models/IStats.model'
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 
 type PropsType = {
@@ -31,13 +31,15 @@ const PriceDynamics: React.FC<PropsType> = ({ priceDynamics }) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.graph}>
-        <LineChart width={1150} height={520} data={data}>
-          <Line type='monotone' dataKey='price' strokeWidth='4' stroke='#766ED3' dot={{ stroke: '#766ED3', strokeWidth: 2, fill: '#766ED3' }} />
-          <CartesianGrid stroke='#ccc' />
-          <XAxis dataKey='datetime' />
-          <YAxis />
-          <Tooltip />
-        </LineChart>
+        <ResponsiveContainer width='100%' height='100%'>
+          <LineChart data={data}>
+            <Line type='monotone' dataKey='price' strokeWidth='4' stroke='#766ED3' dot={{ stroke: '#766ED3', strokeWidth: 2, fill: '#766ED3' }} />
+            <CartesianGrid stroke='#ccc' />
+            <XAxis dataKey='datetime' />
+            <YAxis />
+            <Tooltip />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   )

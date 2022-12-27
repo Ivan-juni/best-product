@@ -6,6 +6,12 @@
         gap: 48px;
         margin-bottom: 50px;
 
+        @media (max-width: $tablet) {
+            flex-direction: column;
+            margin-bottom: 0px;
+            gap: 20px;
+        }
+
         input {
             border: 2px solid rgba(118, 110, 211, 0.75);
             border-radius: 7px;
@@ -28,12 +34,18 @@
     .id {
         input {
             width: 125px;
+            @media (max-width: $tablet) {
+                width: 100%;
+            }
         }
     }
 
     .name {
         input {
             width: 280px;
+            @media (max-width: $tablet) {
+                width: 100%;
+            }
         }
     }
 
@@ -45,6 +57,19 @@
         height: 56px;
         width: 110px;
         align-self: flex-end;
+
+        @media (max-width: $tablet2) {
+            min-width: 90px;
+            margin-left: 0px;
+        }
+        @media (max-width: $tablet) {
+            align-self: center;
+            min-width: 125px;
+        }
+        @media (max-width: $burger) {
+            align-self: center;
+            min-width: 100%;
+        }
 
         color: #fff;
         font-family: 'Inter';
@@ -65,6 +90,10 @@
         margin-top: 100px;
         color: $purple;
         font-size: 14px;
+
+        @media (max-width: $tablet) {
+            margin-top: 95px;
+        }
     }
 
     .status {

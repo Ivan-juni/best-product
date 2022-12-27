@@ -1,17 +1,20 @@
-$purple: #766ED3;
-
+@import '../../../styles/variables.scss';
 
 .card__short{
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    width: 273px;
+    width: 266px;
     padding-bottom: 10px;
     max-height: 469px;
     background: #FFFFFF;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+
+    @media (max-width: $tablet2) {
+        
+    }
 
     .main {
         display: flex;

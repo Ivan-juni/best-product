@@ -2,6 +2,9 @@
 
 .stats {
     margin-left: -8px;
+    @media (max-width: $burger) {
+        margin-left: 0px;
+    }
 
     h2, h3 {
         font-style: normal;

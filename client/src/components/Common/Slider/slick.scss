@@ -36,6 +36,12 @@
     height: 98px;
     width: 378px;
     margin: 0 auto;
+    @media (max-width: 980px) {
+        width: 220px;
+    }
+    @media (max-width: 768px) {
+        width: 150px;
+    }
 }
 
 .slick-list:focus {

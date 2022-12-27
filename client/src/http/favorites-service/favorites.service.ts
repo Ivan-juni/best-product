@@ -7,10 +7,10 @@ import { FavoritesResponse } from './favorites.model'
 export default class FavoriteService {
   static async getFavorites(searchCriteria: IProductQuery): Promise<AxiosResponse<FavoritesResponse>> {
     if (!searchCriteria.limit) {
-      searchCriteria.limit = '9'
+      searchCriteria.limit = 9
     }
     if (!searchCriteria.page) {
-      searchCriteria.page = '0'
+      searchCriteria.page = 0
     }
 
     return $api.get<FavoritesResponse>(`/favorites`, {

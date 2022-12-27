@@ -7,4 +7,17 @@
 
   margin: 0 auto;
   margin-top: 20px;
+
+  @media (max-width: $laptop) {
+    max-width: 840px;
+  }
+  @media (max-width: $tablet2) {
+    max-width: 700px;
+  }
+  @media (max-width: $tablet) {
+    max-width: 500px;
+  }
+  @media (max-width: $burger) {
+    max-width: 320px;
+  }
 }

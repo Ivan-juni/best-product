@@ -2,6 +2,9 @@
 
 .categories {
     margin-left: -8px;
+    @media (max-width: $burger) {
+        margin-left: 0px;
+    }
 
     h2 {
         font-style: normal;
@@ -17,8 +20,19 @@
     .items {
         display: flex;
         justify-content: space-between;
+        row-gap: 20px;
         flex-wrap: wrap;
         margin-bottom: 50px;
+
+        @media (max-width: $laptop) {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        @media (max-width: $burger) {
+            max-width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
     }
 
     .loading,

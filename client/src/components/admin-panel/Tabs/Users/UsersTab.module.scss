@@ -8,6 +8,11 @@
         justify-content: space-between;
         flex-wrap: wrap;
         margin-bottom: 50px;
+
+        @media (max-width: $laptop) {
+            justify-content: center;
+            gap: 20px;
+        }
     }
 
     .loading, .noUsers {

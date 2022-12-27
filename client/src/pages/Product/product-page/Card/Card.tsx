@@ -82,11 +82,11 @@ const Card: React.FC<PropsType> = ({ product, isEditMode, changeMainImage, addIm
   }, [])
 
   useEffect(() => {
-    dispatch(fetchProducts({ id: `${product.id}` }))
+    dispatch(fetchProducts({ id: product.id }))
   }, [views, likes, dislikes])
 
   useEffect(() => {
-    dispatch(fetchProducts({ id: `${product.id}` }))
+    dispatch(fetchProducts({ id: product.id }))
     dispatch(fetchFavoritesIds())
   }, [isFavorite])
 

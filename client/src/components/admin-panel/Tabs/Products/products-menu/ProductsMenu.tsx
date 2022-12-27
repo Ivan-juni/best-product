@@ -14,7 +14,9 @@ const ProductsMenu: React.FC = () => {
   }
 
   const onSubmit = (values: InitialValuesType, { setSubmitting, setStatus }: FormikType) => {
-    dispatch(fetchProducts({ ...values, setSubmitting, setStatus }))
+    const { id, ...rest } = values
+
+    dispatch(fetchProducts({ id: values.id ? +values.id : null, setSubmitting, setStatus, ...rest }))
   }
 
   return (

@@ -5,7 +5,7 @@ export const errorLogic = (error: ErrorType, { setSubmitting, setStatus }: Formi
   if (error.response?.data) {
     console.log(error.response.data.message)
     if (setSubmitting && setStatus) {
-      setStatus(error.message)
+      setStatus(error.response.data.message)
       setSubmitting(false)
     }
     return error.response.data.message

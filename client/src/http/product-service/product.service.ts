@@ -9,10 +9,10 @@ import { IPriceDynamics, IStats } from '../../models/IStats.model'
 export default class ProductService {
   static async getProducts(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductResponse>> {
     if (!searchCriteria.limit) {
-      searchCriteria.limit = '6'
+      searchCriteria.limit = 6
     }
     if (!searchCriteria.page) {
-      searchCriteria.page = '0'
+      searchCriteria.page = 0
     }
 
     return $api.get<ProductResponse>(`/products`, {
@@ -24,10 +24,10 @@ export default class ProductService {
 
   static async getMenuInfo(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductMenuInfo>> {
     if (!searchCriteria.limit) {
-      searchCriteria.limit = '6'
+      searchCriteria.limit = 6
     }
     if (!searchCriteria.page) {
-      searchCriteria.page = '0'
+      searchCriteria.page = 0
     }
 
     return $api.get<ProductMenuInfo>(`/products/menuInfo`, {

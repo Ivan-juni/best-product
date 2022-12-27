@@ -34,6 +34,7 @@ const replace_spaces_util_1 = require("../utils/replace-spaces.util");
 const image_module_1 = __importDefault(require("../db/models/image.module"));
 const get_category_childs_ids_1 = require("../utils/get-category-childs-ids");
 const get_category_parents_1 = require("../utils/get-category-parents");
+const ApiError_1 = __importDefault(require("../errors/ApiError"));
 class ProductService {
     static getProducts(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -280,6 +281,10 @@ class ProductService {
     static addProduct(product) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const candidate = yield product_model_1.default.query().select('name').where({ name: product.name });
+                if (candidate) {
+                    throw ApiError_1.default.badRequest(`Name should be unique, (${candidate[0].name} already exists)`);
+                }
                 const characteristics = yield product_characteristics_model_1.default.query().insert({
                     purpose: product.purpose,
                     description: product.description,

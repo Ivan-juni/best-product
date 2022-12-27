@@ -8,4 +8,8 @@
     min-height: 495px;
     border-radius: 10px;
     padding: 19px 42px;
+
+    @media (max-width: $burger) {
+        padding: 19px 5px 0px 5px;
+    }
 }

@@ -20,8 +20,8 @@ export const fetchProducts = createAsyncThunk<void, FetchProductsType, { rejectV
       const response = await ProductService.getProducts(rest)
 
       thunkApi.dispatch(productAction.setProducts(response.data))
-      if (searchCriteria.limit) {
-        thunkApi.dispatch(productAction.setLimit(+searchCriteria.limit))
+      if (searchCriteria.limit || searchCriteria.limit === 0) {
+        thunkApi.dispatch(productAction.setLimit(searchCriteria.limit))
       }
 
       if (searchCriteria.setSubmitting) {
@@ -130,7 +130,7 @@ export const addImage = createAsyncThunk<void, { id: number; images: File[] }, {
     try {
       await ProductService.addImage(id, images)
 
-      await thunkApi.dispatch(fetchProducts({ id: `${id}` }))
+      await thunkApi.dispatch(fetchProducts({ id }))
     } catch (error) {
       const typedError = error as ErrorType
       return thunkApi.rejectWithValue(errorLogic(typedError))
@@ -144,7 +144,7 @@ export const deleteImage = createAsyncThunk<void, { productId: number; imageId: 
     try {
       await ProductService.deleteImage(productId, imageId)
 
-      await thunkApi.dispatch(fetchProducts({ id: `${productId}` }))
+      await thunkApi.dispatch(fetchProducts({ id: productId }))
     } catch (error) {
       const typedError = error as ErrorType
       return thunkApi.rejectWithValue(errorLogic(typedError))

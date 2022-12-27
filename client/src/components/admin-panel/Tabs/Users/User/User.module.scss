@@ -55,6 +55,11 @@
             max-height: 62px;
             border-radius: 50%;
             object-fit: contain;
+
+            @media (max-width: 420px) {
+                max-width: 42px;
+                max-height: 42px;
+            }
         }
     }
 
@@ -67,6 +72,10 @@
             display: flex;
             flex-direction: row;
             gap: 40px;
+            @media (max-width: 420px) {
+                gap: 15px;
+                word-wrap: break-word;
+            }
         }
 
         .email {

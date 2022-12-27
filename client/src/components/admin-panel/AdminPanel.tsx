@@ -47,6 +47,7 @@ const AdminPanel: React.FC = () => {
     <div className={styles.wrapper}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
+          variant='scrollable'
           value={value}
           onChange={handleChange}
           TabIndicatorProps={{ sx: { backgroundColor: '#766ED3' } }}

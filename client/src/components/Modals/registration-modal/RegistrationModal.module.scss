@@ -39,4 +39,14 @@ $purple: #766ED3;
             margin: 0 auto;
         }
     }
+
+    @media (max-width: 600px) {
+        .modal__content {
+            min-width: 350px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        z-index: 11;
+    }
 }

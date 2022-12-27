@@ -83,7 +83,7 @@ export const productSlice = createSlice({
       return (state = {
         ...state,
         searchProducts: action.payload.results,
-        total: action.payload.total,
+        // total: action.payload.total,
       })
     },
     setMenuInfo: (state: ProductState, action: PayloadAction<ProductMenuInfo>) => {

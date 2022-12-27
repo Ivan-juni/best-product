@@ -36,7 +36,7 @@ const SearchModal: React.FC<PropsType> = ({ isModalOpen, setModalOpen }) => {
 
   const showProductHandler = (id: number) => {
     setProductId(id)
-    dispatch(fetchProducts({ id: `${id}` }))
+    dispatch(fetchProducts({ id }))
     setModalOpen(false)
     navigate(`/product?productId=${id}`)
   }

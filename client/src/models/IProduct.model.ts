@@ -17,7 +17,7 @@ export interface IProduct {
 }
 
 export interface IProductQuery {
-  id?: string | null
+  id?: number | null
   name?: string | null
   category?: string | null
   price?: string | null
@@ -31,6 +31,6 @@ export interface IProductQuery {
   microphone?: 'true' | null
   orderByPrice?: 'low' | 'high' | null
   orderByFavoriteStars?: 'low' | 'high' | null
-  page?: string | null
-  limit?: string | null
+  page?: number | null
+  limit?: number | null
 }

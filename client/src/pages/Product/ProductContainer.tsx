@@ -28,7 +28,7 @@ const ProductContainer: React.FC = () => {
     if (!productId || productId === 0) {
       const id = searchParams.get('productId')
       if (id) {
-        dispatch(fetchProducts({ id: `${id}` }))
+        dispatch(fetchProducts({ id: +id }))
         setProductId(+id)
       }
     }

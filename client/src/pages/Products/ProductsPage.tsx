@@ -18,12 +18,12 @@ const ProductsPage: React.FC = () => {
     [index: string]: string
   } = {}
 
-  const { products, parentCategories, isLoading, cardType, page, limit, total } = useAppSelector((state) => state.productReducer)
+  const { products, parentCategories, isLoading, cardType, page: productsPage, limit, total } = useAppSelector((state) => state.productReducer)
 
   const { setProductsCardType, setProductsPage } = useActions()
 
   useEffect(() => {
-    searchParams.set('page', `${page}`)
+    searchParams.set('page', `${productsPage}`)
     searchParams.set('limit', `${9}`)
     setSearchParams(searchParams)
 
@@ -31,10 +31,12 @@ const ProductsPage: React.FC = () => {
       params[value] = key
     })
 
-    dispatch(fetchProducts(params))
-    dispatch(fetchMenuInfo(params))
+    const { limit, page, ...rest } = params
+
+    dispatch(fetchProducts({ limit: +limit, page: +page, ...rest }))
+    dispatch(fetchMenuInfo({ limit: +limit, page: +page, ...rest }))
     dispatch(fetchFavoritesIds())
-  }, [page, searchParams])
+  }, [productsPage, searchParams])
 
   function handleBreadcrumbClick(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
     e.preventDefault()
@@ -77,7 +79,7 @@ const ProductsPage: React.FC = () => {
       <ProductsComponent
         products={products}
         setPage={setProductsPage}
-        page={page}
+        page={productsPage}
         total={total}
         limit={limit}
         isLoading={isLoading}

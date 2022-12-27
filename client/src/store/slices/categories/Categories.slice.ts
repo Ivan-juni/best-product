@@ -49,7 +49,11 @@ export const categoriesSlice = createSlice({
       return (state = { ...state, categories: action.payload.results, total: action.payload.total })
     },
     setSearchCategories: (state: CategoriesState, action: PayloadAction<ObjectionPage<ICategory[]>>) => {
-      return (state = { ...state, searchCategories: action.payload.results, total: action.payload.total })
+      return (state = {
+        ...state,
+        searchCategories: action.payload.results,
+        // total: action.payload.total
+      })
     },
     setAllCategories: (state: CategoriesState, action: PayloadAction<ObjectionPage<ICategory[]>>) => {
       return (state = { ...state, allCategories: action.payload.results })

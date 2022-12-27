@@ -7,6 +7,7 @@ export interface AuthState {
   likes: number[]
   dislikes: number[]
   favorites: number[]
+  isNavbarOpen: boolean
   isLogModalOpen: boolean
   isRegModalOpen: boolean
   isAuth: boolean
@@ -29,6 +30,7 @@ const initialState: AuthState = {
   likes: [],
   dislikes: [],
   favorites: [],
+  isNavbarOpen: false,
   isLogModalOpen: false,
   isRegModalOpen: false,
   isAuth: false,
@@ -61,6 +63,9 @@ export const authSlice = createSlice({
     },
     setUser: (state: AuthState, action: PayloadAction<IUser>) => {
       return (state = { ...state, user: action.payload })
+    },
+    setNavbarOpen: (state: AuthState, action: PayloadAction<boolean>) => {
+      return (state = { ...state, isNavbarOpen: action.payload })
     },
     setLogModalOpen: (state: AuthState, action: PayloadAction<boolean>) => {
       return (state = { ...state, isLogModalOpen: action.payload })

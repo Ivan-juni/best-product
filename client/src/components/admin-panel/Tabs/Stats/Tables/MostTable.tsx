@@ -126,7 +126,7 @@ const MostTable: React.FC<PropsType> = ({ stats, options }) => {
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 500 }} aria-label='custom pagination table'>
+      <Table sx={{ minWidth: 300 }} aria-label='custom pagination table'>
         <TableHead>
           <TableRow>
             <StyledTableCell align='center'>id</StyledTableCell>
@@ -137,13 +137,13 @@ const MostTable: React.FC<PropsType> = ({ stats, options }) => {
         <TableBody>
           {(rowsPerPage > 0 ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : rows).map((row) => (
             <StyledTableRow key={row.name}>
-              <TableCell style={{ width: 50 }} component='th' scope='row' align='center'>
+              <TableCell style={{ width: '14%' }} component='th' scope='row' align='center'>
                 {row.id}
               </TableCell>
-              <TableCell style={{ width: 160 }} align='right'>
+              <TableCell style={{ width: '43%' }} align='right'>
                 {row.name}
               </TableCell>
-              <TableCell style={{ width: 160 }} align='right'>
+              <TableCell style={{ width: '43%' }} align='right'>
                 {row[options.statProperty]}
               </TableCell>
             </StyledTableRow>

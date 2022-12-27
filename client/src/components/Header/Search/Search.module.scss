@@ -1,7 +1,11 @@
 @import '../../../styles/variables.scss';
 
+form {
+    width: 100%;
+}
+
 .search{
-    width: 560px;
+    width: 100%;
     background: #EAEAEA;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
@@ -39,10 +43,22 @@
         
         .error, .status {
             position: absolute;
-            width: 490px;
+            width: calc(562px - 70px);
             color: $purple;
             margin-top: 77px;
             text-align: center;
+
+            @media (max-width: $tablet2) {
+                width: calc(400px - 70px);
+            }
+            @media (max-width: $tablet) {
+                width: calc(300px);
+                margin-left: -70px;
+            }
+            @media (max-width: $burger) {
+                width: 100%;
+                margin-left: -70px;
+            }
         }
     }
 

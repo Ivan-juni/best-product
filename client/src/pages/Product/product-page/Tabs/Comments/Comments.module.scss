@@ -42,10 +42,14 @@
             .text {
                 display: flex;
                 align-items: center;
-    
-                .arrowDown {
+
+                .arrowUp {
                     transition: 0.3s;
                     transform: rotate(180deg);
+                }
+                .arrowDown {
+                    transition: 0.3s;
+                    transform: rotate(0deg);
                 }
             }
         }

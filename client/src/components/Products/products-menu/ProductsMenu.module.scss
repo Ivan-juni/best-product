@@ -1,4 +1,4 @@
-$purple: #766ED3;
+@import '../../../styles/variables.scss';
 
 .wrapper {
     width: 100%;
@@ -148,6 +148,11 @@ $purple: #766ED3;
             flex-direction: column;
             align-items: flex-end;
 
+            @media (max-width: $burger) {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
             button {
                 width: 100px;
                 border: 1px solid $purple;
@@ -162,6 +167,15 @@ $purple: #766ED3;
                 &:hover, &:disabled {
                     transition: 0.3s;
                     opacity: 0.8;
+                }
+            }
+            .closeButton{
+                display: none;
+                background-color: red;
+                border: 1px solid red;
+
+                @media (max-width: $burger) {
+                    display: block;
                 }
             }
         }

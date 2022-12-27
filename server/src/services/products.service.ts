@@ -298,6 +298,12 @@ export default class ProductService {
 
   static async addProduct(product: IProduct): Promise<Product | null> {
     try {
+      const candidate = await Product.query().select('name').where({ name: product.name })
+
+      if (candidate) {
+        throw new Error(`Name should be unique, (${candidate[0].name} already exists)`)
+      }
+
       const characteristics = await ProductCharacteristics.query().insert({
         purpose: product.purpose,
         description: product.description,

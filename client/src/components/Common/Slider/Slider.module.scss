@@ -3,6 +3,19 @@
 $transition: all 0.3s linear;
 
 .wrapper {
+    @media (max-width: $laptop) {
+        width: 380px;
+    }
+    @media (max-width: $tablet2) {
+        width: 320px;
+    }
+    @media (max-width: $tablet) {
+        width: 250px;
+    }
+    @media (max-width: $burger) {
+        width: 260px;
+    }
+
     width: 531px;
     height: 455px;
     display: flex;
@@ -18,7 +31,14 @@ $transition: all 0.3s linear;
         max-width: 310px;
         overflow: hidden;
 
+        @media (max-width: $laptop) {
+            max-width: 210px;
+        }
+
         .main__image{
+            @media (max-width: $laptop) {
+                max-width: 210px;
+            }
             max-width: 310px;
             object-fit: contain;
         }

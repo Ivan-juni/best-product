@@ -22,14 +22,13 @@ const ProductsTab: React.FC = () => {
   const { setProductsPage, setEditMode, setProductId } = useActions()
 
   useEffect(() => {
-    dispatch(fetchProducts({ page: `${page}`, limit: `${6}` }))
+    dispatch(fetchProducts({ page: page, limit: 6 }))
     dispatch(fetchCategories({}))
-  }, [page, total])
+  }, [page])
 
-  const editProductHandler = (e: React.MouseEvent<SVGSVGElement, MouseEvent>, id: number) => {
-    // e.stopPropagation()
+  const editProductHandler = (id: number) => {
     setEditMode(true)
-    dispatch(fetchProducts({ id: `${id}` }))
+    dispatch(fetchProducts({ id }))
   }
 
   const deleteProductHandler = (e: React.MouseEvent<SVGSVGElement, MouseEvent>, id: number) => {
@@ -52,7 +51,7 @@ const ProductsTab: React.FC = () => {
                   <ProductMini product={product} />
                   <div className={styles.menu}>
                     <NavLink to={`/product?productId=${product.id}`}>
-                      <EditIcon onClick={(e) => editProductHandler(e, product.id)} />
+                      <EditIcon onClick={() => editProductHandler(product.id)} />
                     </NavLink>
                     <DeleteIcon className={styles.deleteIcon} onClick={(e) => deleteProductHandler(e, product.id)} />
                   </div>

@@ -24,7 +24,7 @@ const Comments: React.FC<PropsType> = ({ productId }) => {
 
   const sortByDate = () => {
     setSort((prev) => !prev)
-    isSort ? dispatch(fetchComments({ productId, orderByDate: 'low' })) : dispatch(fetchComments({ productId, orderByDate: 'high' }))
+    isSort ? dispatch(fetchComments({ productId, orderByDate: 'high' })) : dispatch(fetchComments({ productId, orderByDate: 'low' }))
   }
 
   return (

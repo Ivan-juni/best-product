@@ -11,7 +11,6 @@ import Comments from './Comments/Comments'
 import { useAppSelector } from '../../../../hoooks/redux'
 import PriceDynamics from './Price-Dynamics/PriceDynamics'
 import { IPriceDynamics } from '../../../../models/IStats.model'
-import { FormikProps } from 'formik'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -57,9 +56,15 @@ const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, i
 
   return (
     <div className={styles.wrapper}>
-      <Box sx={{ borderBottom: 0 }}>
+      <Box
+        sx={{
+          borderBottom: 0,
+          overflow: 'auto',
+        }}
+      >
         <Tabs
           value={value}
+          variant='scrollable'
           onChange={handleChange}
           TabIndicatorProps={{ sx: { backgroundColor: '#766ED3' } }}
           sx={{

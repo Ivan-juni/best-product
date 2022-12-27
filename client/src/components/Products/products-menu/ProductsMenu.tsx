@@ -59,6 +59,9 @@ const ProductsMenu: React.FC<PropsType> = ({ cardType, setCardType }) => {
     setSearchParams({ page: '0', limit: '9' })
     setReset(true)
   }
+  const handleCloseClick = () => {
+    setSidebarOpen((prev) => !prev)
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -133,6 +136,9 @@ const ProductsMenu: React.FC<PropsType> = ({ cardType, setCardType }) => {
           <div className={styles.reset}>
             <button onClick={handleResetClick} disabled={Object.keys(params).length <= 2}>
               Reset
+            </button>
+            <button onClick={handleCloseClick} className={styles.closeButton}>
+              Close
             </button>
           </div>
         </div>
