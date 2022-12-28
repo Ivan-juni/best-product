@@ -59,7 +59,7 @@ const Dropdown: React.FC<PropsType> = ({ title, items, type, isReset, setReset }
         setSearchParam('microphone')
         break
       case 'Display':
-        setSearchParam('microphone')
+        setSearchParam('display')
         break
       default:
         break
@@ -93,7 +93,7 @@ const Dropdown: React.FC<PropsType> = ({ title, items, type, isReset, setReset }
       case 'Microphone':
         return setDefaultValue('microphone')
       case 'Display':
-        return setDefaultValue('microphone')
+        return setDefaultValue('display')
       default:
         return ''
     }

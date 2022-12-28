@@ -191,19 +191,19 @@ export default class ProductService {
       info.purpose = _purpose[0][0].purpose
         .split(',')
         .map((s: string) => format(s))
-        .filter((s: string) => s !== 'null')
+        .filter((s: string) => s !== 'null' && s !== 'Null')
       info.connectionType = _connectionType[0][0].connectionType
         .split(',')
         .map((s: string) => format(s))
-        .filter((s: string) => s !== 'null')
+        .filter((s: string) => s !== 'null' && s !== 'Null')
       info.display = _display[0][0].display
         .split(',')
         .map((s: string) => format(s))
-        .filter((s: string) => s !== 'null')
+        .filter((s: string) => s !== 'null' && s !== 'Null')
       info.design = _design[0][0].design
         .split(',')
         .map((s: string) => format(s))
-        .filter((s: string) => s !== 'null')
+        .filter((s: string) => s !== 'null' && s !== 'Null')
 
       return info
     } catch (error) {
