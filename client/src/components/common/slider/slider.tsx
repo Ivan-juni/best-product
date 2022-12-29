@@ -3,13 +3,13 @@ import './slick.scss'
 import './slick-theme.scss'
 import Slider from 'react-slick'
 import styles from './slider.module.scss'
-import { ReactComponent as SliderLeftArrow } from '../../../assets/icons/other/arrows/purple-arrow-left.svg'
-import { ReactComponent as SliderRightArrow } from '../../../assets/icons/other/arrows/purple-arrow-right.svg'
-import { ReactComponent as EditIcon } from '../../../assets/icons/other/edit-icon.svg'
-import { ReactComponent as DeleteIcon } from '../../../assets/icons/other/delete-icon.svg'
-import { ReactComponent as AddIcon } from '../../../assets/icons/other/add-icon.svg'
-import { IProduct } from '../../../models/IProduct.model'
-import { IImages } from '../../../models/IImages.model'
+import { ReactComponent as SliderLeftArrow } from 'assets/icons/other/arrows/purple-arrow-left.svg'
+import { ReactComponent as SliderRightArrow } from 'assets/icons/other/arrows/purple-arrow-right.svg'
+import { ReactComponent as EditIcon } from 'assets/icons/other/edit-icon.svg'
+import { ReactComponent as DeleteIcon } from 'assets/icons/other/delete-icon.svg'
+import { ReactComponent as AddIcon } from 'assets/icons/other/add-icon.svg'
+import { IProduct } from 'models/product.model'
+import { IImages } from 'models/images.model'
 
 type PropsType = {
   product: IProduct
@@ -26,7 +26,7 @@ const ImagesSlider: React.FC<PropsType> = ({ product, isEditMode, changeMainImag
 
   useEffect(() => {
     setImages([{ id: 0, src: product.image }])
-    product.images.map((obj) => {
+    product.images.forEach((obj) => {
       setImages((prev) => [...prev, obj])
     })
   }, [product.images.length, product.image])

@@ -1,9 +1,9 @@
 import $api from '../index'
 import { AxiosResponse } from 'axios'
-import { DeleteResponse } from '../models/DeleteResponse'
-import { ICategory, ICategoryQuery } from '../../models/ICategory'
+import { DeleteResponse } from '../models/delete-response'
+import { ICategory, ICategoryQuery } from 'models/category.model'
 import { CategoryAddingValues, CategoryChangingValues } from './categories.model'
-import { ObjectionPage } from '../../models/ObjectionPage.model'
+import { ObjectionPage } from 'models/objection-page.model'
 
 export default class CategoriesService {
   static async getCategoryById(id: number): Promise<AxiosResponse<ICategory>> {

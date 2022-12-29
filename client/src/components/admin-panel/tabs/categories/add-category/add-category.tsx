@@ -1,15 +1,17 @@
 import styles from './add-category.module.scss'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
-import { FormikType } from '../../../../../models/Formik.model'
-import { addCategory } from '../../../../../store/slices/categories/ActionCreators.categories'
-import FormControl from '../../../../common/form-control/form-control'
+import { useAppDispatch, useAppSelector } from 'hooks/redux'
+import { FormikType } from 'models/formik.model'
+import { addCategory } from 'store/slices/categories/categories.action-creators'
+import FormControl from 'components/common/form-control/form-control'
+import { getAllCategories } from 'store/slices/categories/categories.selectors'
+import { ICategory } from 'models/category.model'
 
 const AddCategoryForm = () => {
   const dispatch = useAppDispatch()
 
-  const { allCategories: categories } = useAppSelector((state) => state.categoriesReducer)
+  const categories: ICategory[] = useAppSelector(getAllCategories)
 
   const initialValues = {
     name: '',

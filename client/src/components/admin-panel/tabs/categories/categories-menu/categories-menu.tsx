@@ -1,9 +1,8 @@
-import React from 'react'
-import { useAppDispatch } from '../../../../../hoooks/redux'
 import styles from './categories-menu.module.scss'
-import { FormikType } from '../../../../../models/Formik.model'
-import FindMenu from '../../../../common/find-menu/find-menu'
-import { fetchCategories } from '../../../../../store/slices/categories/ActionCreators.categories'
+import { useAppDispatch } from 'hooks/redux'
+import { FormikType } from 'models/formik.model'
+import FindMenu from 'components/common/find-menu/find-menu'
+import { fetchCategories } from 'store/slices/categories/categories.action-creators'
 
 const CategoriesMenu: React.FC = () => {
   const dispatch = useAppDispatch()

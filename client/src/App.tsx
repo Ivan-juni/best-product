@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import './App.scss'
-import AppRouter from './AppRouter'
-import Footer from './components/footer/Footer'
-import Header from './components/Header/Header'
-import Navbar from './components/Navbar/Navbar'
-import { useAppDispatch } from './hoooks/redux'
-import { checkAuth } from './store/slices/auth/ActionCreators.auth'
+import AppRouter from './routes/app-router'
+import Footer from './components/footer/footer'
+import Header from './components/header/header'
+import Navbar from './components/navbar/navbar'
+import { useAppDispatch } from './hooks/redux'
+import { checkAuth } from './store/slices/auth/auth.action-creators'
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()

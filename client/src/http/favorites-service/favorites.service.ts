@@ -1,7 +1,7 @@
 import $api from '../index'
 import { AxiosResponse } from 'axios'
-import { DeleteResponse } from '../models/DeleteResponse'
-import { IProduct, IProductQuery } from '../../models/IProduct.model'
+import { DeleteResponse } from '../models/delete-response'
+import { IProduct, IProductQuery } from 'models/product.model'
 import { FavoritesResponse } from './favorites.model'
 
 export default class FavoriteService {

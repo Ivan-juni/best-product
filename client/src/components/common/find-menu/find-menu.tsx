@@ -1,7 +1,7 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import React from 'react'
 import styles from './find-menu.module.scss'
-import { FormikType } from '../../../models/Formik.model'
+import { FormikType } from 'models/formik.model'
 import * as Yup from 'yup'
 
 type InitialValuesType = {

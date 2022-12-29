@@ -24,9 +24,9 @@ router.patch('/editProfile', upload.single('image'), asyncHandler(usersControlle
 // ! Admin panel
 router.use(checkRole('ADMIN'))
 
-router.get('/:id', asyncHandler(usersController.getUserById))
-
 router.get('/', asyncHandler(usersController.getUsers))
+
+router.get('/:id', asyncHandler(usersController.getUserById))
 
 router.delete('/', asyncHandler(usersController.deleteUsers))
 

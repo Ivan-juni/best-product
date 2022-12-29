@@ -1,9 +1,9 @@
 import $api from '../index'
 import { AxiosResponse } from 'axios'
-import { DeleteResponse } from '../models/DeleteResponse'
+import { DeleteResponse } from '../models/delete-response'
 import { CommentAddingValues, CommentChangingValues } from './comments.model'
-import { ObjectionPage } from '../../models/ObjectionPage.model'
-import { IComment, ICommentsQuery } from '../../models/IComment'
+import { ObjectionPage } from 'models/objection-page.model'
+import { IComment, ICommentsQuery } from 'models/comment.model'
 
 export default class CommentsService {
   static async getComments(searchCriteria: ICommentsQuery): Promise<AxiosResponse<ObjectionPage<IComment[]>>> {

@@ -1,10 +1,10 @@
 import $api from '../index'
 import { AxiosResponse } from 'axios'
-import { DeleteResponse } from '../models/DeleteResponse'
-import { IProduct, IProductQuery } from '../../models/IProduct.model'
+import { DeleteResponse } from '../models/delete-response'
+import { IProduct, IProductQuery } from 'models/product.model'
 import { ProductAddingValues, ProductChangingValues, ProductMenuInfo, ProductResponse } from './product.model'
-import { IImages } from '../../models/IImages.model'
-import { IPriceDynamics, IStats } from '../../models/IStats.model'
+import { IImages } from 'models/images.model'
+import { IPriceDynamics, IStats } from 'models/stats.model'
 
 export default class ProductService {
   static async getProductById(id: number): Promise<AxiosResponse<IProduct>> {

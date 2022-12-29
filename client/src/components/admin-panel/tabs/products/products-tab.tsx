@@ -1,23 +1,24 @@
-import React, { useEffect } from 'react'
-import ProductMini from '../../../Products/product-mini/ProductMini'
-import ProductsMenu from './products-menu/products-menu'
-import { ReactComponent as EditIcon } from '../../../../assets/icons/other/edit-icon.svg'
-import { ReactComponent as DeleteIcon } from '../../../../assets/icons/other/delete-icon.svg'
+import { useEffect } from 'react'
 import styles from './products-tab.module.scss'
-import { useActions, useAppDispatch, useAppSelector } from '../../../../hoooks/redux'
-import { deleteProduct, fetchProducts } from '../../../../store/slices/product/ActionCreators.product'
-import Preloader from '../../../common/preloader/preloader'
-import { IProduct } from '../../../../models/IProduct.model'
-import Paginator from '../../../common/paginator/paginator'
+import ProductMini from 'components/products/product-mini/product-mini'
+import ProductsMenu from './products-menu/products-menu'
+import { ReactComponent as EditIcon } from 'assets/icons/other/edit-icon.svg'
+import { ReactComponent as DeleteIcon } from 'assets/icons/other/delete-icon.svg'
+import { useActions, useAppDispatch, useAppSelector } from 'hooks/redux'
+import { deleteProduct, fetchProducts } from 'store/slices/product/product.action-creators'
+import Preloader from 'components/common/preloader/preloader'
+import { IProduct } from 'models/product.model'
+import Paginator from 'components/common/paginator/paginator'
 import { NavLink, useNavigate } from 'react-router-dom'
 import AddProductForm from './add-product/add-product-form'
-import { fetchCategories } from '../../../../store/slices/categories/ActionCreators.categories'
-import { showProductHandler } from '../../../../utils/show-product-handler'
+import { fetchCategories } from 'store/slices/categories/categories.action-creators'
+import { showProductHandler } from 'utils/show-product-handler'
+import { getProductState } from 'store/slices/product/product.selectors'
 
 const ProductsTab: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { products, isLoading, total, page, limit } = useAppSelector((state) => state.productReducer)
+  const { products, isLoading, total, page, limit } = useAppSelector(getProductState)
 
   const { setProductsPage, setEditMode, setProductId } = useActions()
 

@@ -15,21 +15,30 @@ type PropsType = {
   limit: number
 }
 
+const extraStyles = {
+  pagination: {
+    '& button': { backgroundColor: '#766ED3', color: '#fff' },
+    '& button:hover': { color: 'black' },
+    '& button.MuiPaginationItem-page': { backgroundColor: 'rgba(99, 139, 136, 0.068)', color: 'black' },
+  },
+}
+
 const Paginator: React.FC<PropsType> = ({ page, total, limit, setPage }) => {
-  const totalPages = Math.ceil(total / limit)
+  const totalPages: number = Math.ceil(total / limit)
+  const nextPage: number = page + 1
+
+  const onChangeHadler = (page: number) => {
+    setPage(page - 1)
+  }
 
   return (
     <Stack spacing={2}>
       <Pagination
         count={totalPages}
-        page={page + 1}
+        page={nextPage}
         defaultPage={0}
-        onChange={(e, page: number) => setPage(page - 1)}
-        sx={{
-          '& button': { backgroundColor: '#766ED3', color: '#fff' },
-          '& button:hover': { color: 'black' },
-          '& button.MuiPaginationItem-page': { backgroundColor: 'rgba(99, 139, 136, 0.068)', color: 'black' },
-        }}
+        onChange={(_, page: number) => onChangeHadler(page)}
+        sx={extraStyles.pagination}
       />
     </Stack>
   )

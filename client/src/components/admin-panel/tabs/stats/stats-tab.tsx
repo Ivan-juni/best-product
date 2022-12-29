@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react'
-import Preloader from '../../../common/preloader/preloader'
-import { useAppDispatch, useAppSelector } from '../../../../hoooks/redux'
-import { fetchStats } from '../../../../store/slices/product/ActionCreators.product'
+import Preloader from 'components/common/preloader/preloader'
+import { useAppDispatch, useAppSelector } from 'hooks/redux'
+import { fetchStats } from 'store/slices/product/product.action-creators'
 import styles from './stats-tab.module.scss'
 import MostTable from './tables/most-table'
+import { getProductStats } from 'store/slices/product/product.selectors'
 
 const StatsTab: React.FC = () => {
   const dispatch = useAppDispatch()
-  const { stats } = useAppSelector((state) => state.productReducer)
+  const stats = useAppSelector(getProductStats)
 
   useEffect(() => {
     dispatch(fetchStats({ quantity: 15 }))

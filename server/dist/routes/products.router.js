@@ -45,14 +45,14 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const upload = (0, multer_1.default)({ storage });
-router.get('/:id', (0, async_handler_middleware_1.default)(products_controller_1.default.getProductById));
 router.get('/', (0, async_handler_middleware_1.default)(products_controller_1.default.getProducts));
 router.get('/statistics/price-dynamics', (0, async_handler_middleware_1.default)(products_controller_1.default.getPriceDynamics));
 router.get('/characteristics', (0, async_handler_middleware_1.default)(products_controller_1.default.getCharacteristics));
 router.get('/menuInfo', (0, async_handler_middleware_1.default)(products_controller_1.default.getDropdownMenuInfo));
+router.get('/statistics', (0, check_role_middleware_1.default)('ADMIN'), (0, async_handler_middleware_1.default)(products_controller_1.default.getStatistics));
+router.get('/:id', (0, async_handler_middleware_1.default)(products_controller_1.default.getProductById));
 // ! Admin panel
 router.use((0, check_role_middleware_1.default)('ADMIN'));
-router.get('/statistics', (0, async_handler_middleware_1.default)(products_controller_1.default.getStatistics));
 router.post('/', upload.single('image'), (0, async_handler_middleware_1.default)(products_controller_1.default.addProduct));
 // Add a product images
 router.post('/images', upload.array('image', 5), (0, async_handler_middleware_1.default)(products_controller_1.default.addImage));

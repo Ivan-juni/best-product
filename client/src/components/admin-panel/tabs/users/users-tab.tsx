@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react'
-import Preloader from '../../../common/preloader/preloader'
-import { useActions, useAppDispatch, useAppSelector } from '../../../../hoooks/redux'
-import { fetchUsers } from '../../../../store/slices/users/ActionCreators.users'
-import User from './user/user'
+import { useEffect } from 'react'
 import styles from './users-tab.module.scss'
-import Paginator from '../../../common/paginator/paginator'
+import Preloader from 'components/common/preloader/preloader'
+import { useActions, useAppDispatch, useAppSelector } from 'hooks/redux'
+import { fetchUsers } from 'store/slices/users/users.action-creators'
+import User from './user/user'
+import Paginator from 'components/common/paginator/paginator'
 import UsersMenu from './users-menu/users-menu'
-import { IUser } from '../../../../http/users-service/user.model'
+import { IUser } from 'http/users-service/user.model'
+import { getUsersState } from 'store/slices/users/users.selectors'
 
 const UsersTab: React.FC = () => {
   const dispatch = useAppDispatch()
-  const { isLoading, total, page, users } = useAppSelector((state) => state.usersReducer)
+  const { isLoading, total, page, users } = useAppSelector(getUsersState)
 
   // pagination
   const { setUsersPage } = useActions()

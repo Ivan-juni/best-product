@@ -14,10 +14,6 @@ export default class ProductsController {
   static async getProductById(req: Request, res: Response, next: NextFunction): ReturnType<Product> {
     const { id } = req.params
 
-    // if (!id) {
-    //   return next(ApiError.internal('Please, type the product id'))
-    // }
-
     const products = await productsService.getProductById(+id)
 
     if (!products) {
@@ -40,13 +36,13 @@ export default class ProductsController {
   static async getStatistics(req: Request, res: Response, next: NextFunction): ReturnType<StatisticsType> {
     const quantity = +req.query.quantity || 5
 
-    const products = await productsService.getStatistics(quantity)
+    const stats = await productsService.getStatistics(quantity)
 
-    if (!products) {
-      return next(ApiError.badRequest(`Fetching products error`))
+    if (!stats) {
+      return next(ApiError.badRequest(`Fetching statistics error`))
     }
 
-    return res.json(products)
+    return res.json(stats)
   }
 
   static async getPriceDynamics(req: Request, res: Response, next: NextFunction): ReturnType<ProductHistory[]> {

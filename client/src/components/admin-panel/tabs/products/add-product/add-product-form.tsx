@@ -1,18 +1,20 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styles from './add-product-form.module.scss'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import { useAppDispatch, useAppSelector } from '../../../../../hoooks/redux'
-import { FormikType } from '../../../../../models/Formik.model'
-import { FormikCharacteristics } from '../../../../../models/ICharacteristics'
-import { addProduct } from '../../../../../store/slices/product/ActionCreators.product'
-import FormControl from '../../../../common/form-control/form-control'
+import { useAppDispatch, useAppSelector } from 'hooks/redux'
+import { FormikType } from 'models/formik.model'
+import { FormikCharacteristics } from 'models/characteristics.model'
+import { addProduct } from 'store/slices/product/product.action-creators'
+import FormControl from 'components/common/form-control/form-control'
+import { ICategory } from 'models/category.model'
+import { getAllCategories } from 'store/slices/categories/categories.selectors'
 
 const AddProductForm = () => {
   const dispatch = useAppDispatch()
   const [fileName, setFileName] = useState<string>('')
 
-  const { allCategories: categories } = useAppSelector((state) => state.categoriesReducer)
+  const categories: ICategory[] = useAppSelector(getAllCategories)
 
   const initialValues = {
     name: '',
@@ -78,11 +80,6 @@ const AddProductForm = () => {
         return value === '' || value === 'null' ? null : value
       })
       .nullable(true),
-    // microphone: Yup.string()
-    //   .transform((_, value: string) => {
-    //     return value === '' || value === 'null' || value === '0' || value === 'false' || value === 'none' ? 'false' : 'true'
-    //   })
-    //   .nullable(true),
     batteryLiveTime: Yup.string()
       .transform((_, value: string) => {
         return value === '' || value === 'null' ? null : value

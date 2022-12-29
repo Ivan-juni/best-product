@@ -8,8 +8,8 @@ const check_role_middleware_1 = __importDefault(require("../middlewares/check-ro
 const async_handler_middleware_1 = __importDefault(require("../middlewares/async-handler.middleware"));
 const categories_controller_1 = __importDefault(require("../controllers/categories.controller"));
 const router = express_1.default.Router();
-router.get('/:id', (0, async_handler_middleware_1.default)(categories_controller_1.default.getCategoryById));
 router.get('/', (0, async_handler_middleware_1.default)(categories_controller_1.default.getCategories));
+router.get('/:id', (0, async_handler_middleware_1.default)(categories_controller_1.default.getCategoryById));
 // ! Admin panel
 router.use((0, check_role_middleware_1.default)('ADMIN'));
 router.post('/', (0, async_handler_middleware_1.default)(categories_controller_1.default.addCategory));

@@ -15,13 +15,26 @@ interface TabPanelProps {
   value: number
 }
 
+const extraStyles = {
+  tabPanelBox: { p: 3 },
+  mainBox: { borderBottom: 1, borderColor: 'divider' },
+  tabs: {
+    '& button': { color: '#435C6B', fontFamily: 'Inter', fontSize: '18px' },
+    '& button:hover': { transition: '0.3s', opacity: 0.8 },
+    '& button:active': { color: '#766ED3' },
+    '& button:focus': { color: '#766ED3' },
+    '& button.Mui-selected': { borderColor: '#766ED3', color: '#766ED3' },
+  },
+  tabIndicator: { backgroundColor: '#766ED3' },
+}
+
 const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props
 
   return (
     <div role='tabpanel' hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={extraStyles.tabPanelBox}>
           <Typography component={'div'}>{children}</Typography>
         </Box>
       )}
@@ -45,20 +58,8 @@ const AdminPanel: React.FC = () => {
 
   return (
     <div className={styles.wrapper}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          variant='scrollable'
-          value={value}
-          onChange={handleChange}
-          TabIndicatorProps={{ sx: { backgroundColor: '#766ED3' } }}
-          sx={{
-            '& button': { color: '#435C6B', fontFamily: 'Inter', fontSize: '18px' },
-            '& button:hover': { transition: '0.3s', opacity: 0.8 },
-            '& button:active': { color: '#766ED3' },
-            '& button:focus': { color: '#766ED3' },
-            '& button.Mui-selected': { borderColor: '#766ED3', color: '#766ED3' },
-          }}
-        >
+      <Box sx={extraStyles.mainBox}>
+        <Tabs variant='scrollable' value={value} onChange={handleChange} TabIndicatorProps={{ sx: extraStyles.tabIndicator }} sx={extraStyles.tabs}>
           <Tab label='Users' {...a11yProps(0)} />
           <Tab label='Products' {...a11yProps(1)} />
           <Tab label='Categories' {...a11yProps(2)} />

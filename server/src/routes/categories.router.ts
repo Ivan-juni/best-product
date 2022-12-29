@@ -5,9 +5,9 @@ import categoriesController from '../controllers/categories.controller'
 
 const router = express.Router()
 
-router.get('/:id', asyncHandler(categoriesController.getCategoryById))
-
 router.get('/', asyncHandler(categoriesController.getCategories))
+
+router.get('/:id', asyncHandler(categoriesController.getCategoryById))
 
 // ! Admin panel
 router.use(checkRole('ADMIN'))

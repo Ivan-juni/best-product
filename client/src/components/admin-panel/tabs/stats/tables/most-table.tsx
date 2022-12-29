@@ -11,11 +11,11 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import IconButton from '@mui/material/IconButton'
-import { ReactComponent as FirstPageIcon } from '../../../../../assets/icons/other/arrows/purple-arrow-last-left.svg'
-import { ReactComponent as LastPageIcon } from '../../../../../assets/icons/other/arrows/purple-arrow-last-right.svg'
-import { ReactComponent as KeyboardArrowLeft } from '../../../../../assets/icons/other/arrows/purple-arrow-left.svg'
-import { ReactComponent as KeyboardArrowRight } from '../../../../../assets/icons/other/arrows/purple-arrow-right.svg'
-import { IStats, StatsType } from '../../../../../models/IStats.model'
+import { ReactComponent as FirstPageIcon } from 'assets/icons/other/arrows/purple-arrow-last-left.svg'
+import { ReactComponent as LastPageIcon } from 'assets/icons/other/arrows/purple-arrow-last-right.svg'
+import { ReactComponent as KeyboardArrowLeft } from 'assets/icons/other/arrows/purple-arrow-left.svg'
+import { ReactComponent as KeyboardArrowRight } from 'assets/icons/other/arrows/purple-arrow-right.svg'
+import { IStats, StatsType } from 'models/stats.model'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -41,6 +41,11 @@ interface TablePaginationActionsProps {
   onPageChange: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void
 }
 
+const extraStyles = {
+  box: { flexShrink: 0, ml: 2.5 },
+  table: { minWidth: 300 },
+}
+
 function TablePaginationActions(props: TablePaginationActionsProps) {
   const theme = useTheme()
   const { count, page, rowsPerPage, onPageChange } = props
@@ -61,18 +66,20 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
     onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1))
   }
 
+  const isDisable: boolean = page >= Math.ceil(count / rowsPerPage) - 1
+
   return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+    <Box sx={extraStyles.box}>
       <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label='first page'>
         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
       <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label='previous page'>
         {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
       </IconButton>
-      <IconButton onClick={handleNextButtonClick} disabled={page >= Math.ceil(count / rowsPerPage) - 1} aria-label='next page'>
+      <IconButton onClick={handleNextButtonClick} disabled={isDisable} aria-label='next page'>
         {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
       </IconButton>
-      <IconButton onClick={handleLastPageButtonClick} disabled={page >= Math.ceil(count / rowsPerPage) - 1} aria-label='last page'>
+      <IconButton onClick={handleLastPageButtonClick} disabled={isDisable} aria-label='last page'>
         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
       </IconButton>
     </Box>
@@ -98,7 +105,7 @@ const MostTable: React.FC<PropsType> = ({ stats, options }) => {
       })
 
       data.sort((a, b) => {
-        if (a[options.statProperty] != undefined && b[options.statProperty]) {
+        if (a[options.statProperty] !== undefined && b[options.statProperty]) {
           //@ts-ignore
           return a[options.statProperty] < b[options.statProperty] ? 1 : -1
         }
@@ -114,6 +121,7 @@ const MostTable: React.FC<PropsType> = ({ stats, options }) => {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+  const styledTableRowStyles = { height: 53 * emptyRows }
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage)
@@ -126,7 +134,7 @@ const MostTable: React.FC<PropsType> = ({ stats, options }) => {
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 300 }} aria-label='custom pagination table'>
+      <Table sx={extraStyles.table} aria-label='custom pagination table'>
         <TableHead>
           <TableRow>
             <StyledTableCell align='center'>id</StyledTableCell>
@@ -149,7 +157,7 @@ const MostTable: React.FC<PropsType> = ({ stats, options }) => {
             </StyledTableRow>
           ))}
           {emptyRows > 0 && (
-            <StyledTableRow style={{ height: 53 * emptyRows }}>
+            <StyledTableRow style={styledTableRowStyles}>
               <TableCell colSpan={6} />
             </StyledTableRow>
           )}

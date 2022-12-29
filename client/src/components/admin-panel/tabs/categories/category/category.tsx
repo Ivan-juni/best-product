@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import styles from './category.module.scss'
-import { useAppDispatch } from '../../../../../hoooks/redux'
-import { ReactComponent as DeleteIcon } from '../../../../../assets/icons/other/delete-icon.svg'
-import { ICategory } from '../../../../../models/ICategory'
-import { deleteCategory, updateCategory } from '../../../../../store/slices/categories/ActionCreators.categories'
+import { useAppDispatch } from 'hooks/redux'
+import { ReactComponent as DeleteIcon } from 'assets/icons/other/delete-icon.svg'
+import { ICategory } from 'models/category.model'
+import { deleteCategory, updateCategory } from 'store/slices/categories/categories.action-creators'
 
 type PropsType = {
   category: ICategory

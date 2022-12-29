@@ -1,9 +1,8 @@
-import React from 'react'
-import { useAppDispatch } from '../../../../../hoooks/redux'
 import styles from './users-menu.module.scss'
-import { FormikType } from '../../../../../models/Formik.model'
-import FindMenu from '../../../../common/find-menu/find-menu'
-import { fetchUsers } from '../../../../../store/slices/users/ActionCreators.users'
+import { useAppDispatch } from 'hooks/redux'
+import { FormikType } from 'models/formik.model'
+import FindMenu from 'components/common/find-menu/find-menu'
+import { fetchUsers } from 'store/slices/users/users.action-creators'
 
 const UsersMenu: React.FC = () => {
   const dispatch = useAppDispatch()

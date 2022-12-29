@@ -39,8 +39,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-router.get('/:id', asyncHandler(productController.getProductById))
-
 router.get('/', asyncHandler(productController.getProducts))
 
 router.get('/statistics/price-dynamics', asyncHandler(productController.getPriceDynamics))
@@ -49,10 +47,12 @@ router.get('/characteristics', asyncHandler(productController.getCharacteristics
 
 router.get('/menuInfo', asyncHandler(productController.getDropdownMenuInfo))
 
+router.get('/statistics', checkRole('ADMIN'), asyncHandler(productController.getStatistics))
+
+router.get('/:id', asyncHandler(productController.getProductById))
+
 // ! Admin panel
 router.use(checkRole('ADMIN'))
-
-router.get('/statistics', asyncHandler(productController.getStatistics))
 
 router.post('/', upload.single('image'), asyncHandler(productController.addProduct))
 // Add a product images

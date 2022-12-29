@@ -22,9 +22,6 @@ class ProductsController {
     static getProductById(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            // if (!id) {
-            //   return next(ApiError.internal('Please, type the product id'))
-            // }
             const products = yield products_service_1.default.getProductById(+id);
             if (!products) {
                 return next(ApiError_1.default.badRequest(`Fetching product error`));
@@ -44,11 +41,11 @@ class ProductsController {
     static getStatistics(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const quantity = +req.query.quantity || 5;
-            const products = yield products_service_1.default.getStatistics(quantity);
-            if (!products) {
-                return next(ApiError_1.default.badRequest(`Fetching products error`));
+            const stats = yield products_service_1.default.getStatistics(quantity);
+            if (!stats) {
+                return next(ApiError_1.default.badRequest(`Fetching statistics error`));
             }
-            return res.json(products);
+            return res.json(stats);
         });
     }
     static getPriceDynamics(req, res, next) {
