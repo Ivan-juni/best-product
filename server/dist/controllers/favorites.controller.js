@@ -14,13 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const favorites_service_1 = __importDefault(require("../services/favorites.service"));
+const favorite_model_1 = __importDefault(require("../db/models/favorite.model"));
+const product_model_1 = __importDefault(require("../db/models/product.model"));
 class FavoritesController {
     static getUserFavorites(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
             const favorites = yield favorites_service_1.default.getFavorites(+id, req.query);
             if (!favorites) {
                 return next(ApiError_1.default.badRequest(`Fetching favorites error`));
@@ -31,9 +30,6 @@ class FavoritesController {
     static getUserFavoritesIds(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.user;
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
-            }
             const ids = yield favorites_service_1.default.getIds(+id);
             if (!ids) {
                 return next(ApiError_1.default.badRequest(`Fetching favorites ids error`));
@@ -48,8 +44,9 @@ class FavoritesController {
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
             }
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
+            const favorite = yield favorite_model_1.default.query().findOne({ userId: id, productId: +productId });
+            if (favorite) {
+                return next(ApiError_1.default.internal('This product already in on your favorites'));
             }
             const favorites = yield favorites_service_1.default.addToFavorite(+id, +productId);
             if (!favorites) {
@@ -65,20 +62,18 @@ class FavoritesController {
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
             }
-            if (!id) {
-                return next(ApiError_1.default.unAuthorizedError());
+            const favorite = yield favorite_model_1.default.query().findOne({ userId: id, productId: +productId });
+            if (!favorite) {
+                return next(ApiError_1.default.internal("This product isn't on your favorites"));
             }
             const result = yield favorites_service_1.default.deleteFromFavorite(+id, +productId);
             if (!result) {
                 return next(ApiError_1.default.badRequest(`Adding to favorites error`));
             }
-            if (typeof result == 'number') {
+            else {
                 return res.json({
                     message: `Successfully deleted ${result} queries`,
                 });
-            }
-            else {
-                return res.json(result);
             }
         });
     }
@@ -88,6 +83,12 @@ class FavoritesController {
             const { productId } = req.query;
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
+            }
+            else {
+                const product = yield product_model_1.default.query().findOne({ id: +productId });
+                if (!product) {
+                    return next(ApiError_1.default.internal("Can't find this product"));
+                }
             }
             const likes = yield favorites_service_1.default.addLike(+productId);
             if (!likes) {
@@ -107,6 +108,15 @@ class FavoritesController {
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
             }
+            else {
+                const product = yield product_model_1.default.query().findOne({ id: +productId });
+                if (!product) {
+                    return next(ApiError_1.default.internal("Can't find this product"));
+                }
+                if (product.likes === 0) {
+                    return next(ApiError_1.default.internal("Can't decrement like, because it's 0 likes"));
+                }
+            }
             const likes = yield favorites_service_1.default.deleteLike(+productId);
             if (!likes) {
                 return next(ApiError_1.default.badRequest(`Deletion like error`));
@@ -125,6 +135,15 @@ class FavoritesController {
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
             }
+            else {
+                const product = yield product_model_1.default.query().findOne({ id: +productId });
+                if (!product) {
+                    return next(ApiError_1.default.internal("Can't find this product"));
+                }
+                if (product.dislikes === 0) {
+                    return next(ApiError_1.default.internal("Can't decrement dislike, because it's = 0"));
+                }
+            }
             const dislikes = yield favorites_service_1.default.addDislike(+productId);
             if (!dislikes) {
                 return next(ApiError_1.default.badRequest(`Adding dislike error`));
@@ -141,7 +160,13 @@ class FavoritesController {
         return __awaiter(this, void 0, void 0, function* () {
             const { productId } = req.query;
             if (!productId) {
-                return next(ApiError_1.default.internal('Type product id'));
+                return next(ApiError_1.default.internal('Please, type product id'));
+            }
+            else {
+                const product = yield product_model_1.default.query().findOne({ id: +productId });
+                if (!product) {
+                    return next(ApiError_1.default.internal("Can't find this product"));
+                }
             }
             const dislikes = yield favorites_service_1.default.deleteDislike(+productId);
             if (!dislikes) {
@@ -160,6 +185,12 @@ class FavoritesController {
             const { productId } = req.query;
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
+            }
+            else {
+                const product = yield product_model_1.default.query().findOne({ id: +productId });
+                if (!product) {
+                    return next(ApiError_1.default.internal("Can't find this product"));
+                }
             }
             const views = yield favorites_service_1.default.addView(+productId);
             if (!views) {

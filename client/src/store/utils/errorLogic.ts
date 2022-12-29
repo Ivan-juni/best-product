@@ -1,5 +1,5 @@
-import { FormikType } from '../../models/Formik.model'
-import { ErrorType } from '../../models/IError.model'
+import { FormikType } from 'models/formik.model'
+import { ErrorType } from 'models/error.model'
 
 export const errorLogic = (error: ErrorType, { setSubmitting, setStatus }: FormikType = {}): string => {
   if (error.response?.data) {

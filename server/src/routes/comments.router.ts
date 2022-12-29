@@ -1,27 +1,24 @@
 import express from 'express'
 import authMiddleware from '../middlewares/auth.middleware'
+import asyncHandler from '../middlewares/async-handler.middleware'
 import commentsController from '../controllers/comments.controller'
 
 const router = express.Router()
 
-// @route get /api/comments/user
-// @des Get user's comments
-router.get('/user', authMiddleware, commentsController.getUserComments)
+// ?productId=
+router.get('/', asyncHandler(commentsController.getProductComments))
 
-// @route GET /api/comments?productId=
-// @des Get product comments
-router.get('/', commentsController.getProductComments)
+router.use(authMiddleware)
 
-// @route POST /api/comments?productId=
-// @des Add comment to product
-router.post('/', authMiddleware, commentsController.addComment)
+router.get('/user', asyncHandler(commentsController.getUserComments))
 
-// @route PUT /api/comments?commentId=
-// @des Update comment
-router.put('/', authMiddleware, commentsController.updateComment)
+// ?productId=
+router.post('/', asyncHandler(commentsController.addComment))
 
-// @route DELETE /api/comments?commentId=
-// @des Delete comment
-router.delete('/', authMiddleware, commentsController.deleteComment)
+// ?commentId=
+router.patch('/', asyncHandler(commentsController.updateComment))
+
+// ?commentId=
+router.delete('/', asyncHandler(commentsController.deleteComment))
 
 export default router

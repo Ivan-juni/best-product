@@ -2,11 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import ApiError from '../errors/ApiError'
 import tokenService from '../services/token.service'
 
-export default async function (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export default async function (req: Request, res: Response, next: NextFunction) {
   try {
     const authorizationHeader = req.headers.authorization
     if (!authorizationHeader) {
@@ -22,6 +18,13 @@ export default async function (
     if (!userData) {
       return next(ApiError.unAuthorizedError())
     }
+
+    const { id } = userData
+
+    if (!id) {
+      return next(ApiError.unAuthorizedError())
+    }
+
     req.user = userData
     next()
   } catch (error) {

@@ -1,3 +1,5 @@
+import { ROLES } from 'models/user.model'
+
 export interface IUser {
   id: number
   email: string
@@ -5,7 +7,7 @@ export interface IUser {
   firstName: string
   lastName: string
   photo: string | null
-  role: 'USER' | 'ADMIN'
+  role: ROLES.USER | ROLES.ADMIN
   createdAt: string
   updatedAt: string
 }

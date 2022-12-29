@@ -16,7 +16,19 @@ const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const products_service_1 = __importDefault(require("../services/products.service"));
 const product_model_1 = __importDefault(require("../db/models/product.model"));
 const replace_spaces_util_1 = require("../utils/replace-spaces.util");
+const image_module_1 = __importDefault(require("../db/models/image.module"));
+const schemas_1 = require("./types/schemas");
 class ProductsController {
+    static getProductById(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const products = yield products_service_1.default.getProductById(+id);
+            if (!products) {
+                return next(ApiError_1.default.badRequest(`Fetching product error`));
+            }
+            return res.json(products);
+        });
+    }
     static getProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const products = yield products_service_1.default.getProducts(req.query);
@@ -29,11 +41,11 @@ class ProductsController {
     static getStatistics(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const quantity = +req.query.quantity || 5;
-            const products = yield products_service_1.default.getStatistics(quantity);
-            if (!products) {
-                return next(ApiError_1.default.badRequest(`Fetching products error`));
+            const stats = yield products_service_1.default.getStatistics(quantity);
+            if (!stats) {
+                return next(ApiError_1.default.badRequest(`Fetching statistics error`));
             }
-            return res.json(products);
+            return res.json(stats);
         });
     }
     static getPriceDynamics(req, res, next) {
@@ -75,15 +87,16 @@ class ProductsController {
             if (!productId) {
                 return next(ApiError_1.default.internal('Type product id'));
             }
-            const result = yield products_service_1.default.deleteProduct(+productId);
+            const product = yield product_model_1.default.query().findById(+productId);
+            if (!product) {
+                return next(ApiError_1.default.internal("Can't find this product"));
+            }
+            const result = yield products_service_1.default.deleteProduct(product.name, +productId, product.characteristicsId);
             if (!result) {
                 return next(ApiError_1.default.badRequest(`Deletion products error`));
             }
-            if (typeof result == 'number') {
-                return res.json({ message: `Successfully deleted product (id=${productId})` });
-            }
             else {
-                return res.json(result);
+                return res.json({ message: `Successfully deleted product (id=${productId})` });
             }
         });
     }
@@ -93,43 +106,36 @@ class ProductsController {
             if (!productId) {
                 return next(ApiError_1.default.internal('Please, type the product id'));
             }
+            const product = yield product_model_1.default.query().findById(+productId);
+            if (!product) {
+                return next(ApiError_1.default.internal("Can't find this product"));
+            }
             if (!imageId) {
                 return next(ApiError_1.default.internal('Please, type the image id'));
             }
-            const result = yield products_service_1.default.deleteImage(+productId, +imageId);
+            const image = yield image_module_1.default.query().findById(+imageId);
+            if (!image) {
+                return next(ApiError_1.default.internal("Can't find this image"));
+            }
+            const result = yield products_service_1.default.deleteImage(product.name, image.src, +imageId);
             if (!result) {
                 return next(ApiError_1.default.badRequest(`Deletion images error`));
             }
-            if (typeof result == 'number') {
+            else {
                 return res.json({ message: `Successfully deleted image (id=${imageId})` });
             }
-            else {
-                return res.json(result);
-            }
-        });
-    }
-    static addImage(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { productId } = req.query;
-            const files = req.files !== undefined ? req.files : null;
-            if (!productId) {
-                return next(ApiError_1.default.internal('Please, type product id'));
-            }
-            if (!files || files == undefined) {
-                return next(ApiError_1.default.internal('Please, add image'));
-            }
-            const insertedImages = yield products_service_1.default.addImage(+productId, files);
-            if (!insertedImages) {
-                return next(ApiError_1.default.badRequest(`Adding image error`));
-            }
-            return res.json(insertedImages);
         });
     }
     static addProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const productInfo = req.body;
             const image = req.file !== undefined ? req.file.filename : null;
-            let microphone = null;
+            let microphone = false;
+            yield schemas_1.addProductSchema.validate(Object.assign(Object.assign({}, productInfo), { image }));
+            const candidate = yield product_model_1.default.query().select('name').where({ name: productInfo.name }).first();
+            if (candidate) {
+                next(ApiError_1.default.internal(`Name should be unique, (${candidate.name} already exists)`));
+            }
             if (productInfo.microphone) {
                 if (productInfo.microphone === 'true') {
                     microphone = true;
@@ -138,30 +144,10 @@ class ProductsController {
                     microphone = false;
                 }
             }
-            if (!productInfo.name) {
-                return next(ApiError_1.default.internal('Please, add name'));
-            }
-            if (!image || image == undefined) {
-                return next(ApiError_1.default.internal('Please, add image'));
-            }
-            else {
-                productInfo.image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(productInfo.name)}/${image}`;
-            }
-            if (!productInfo.price) {
-                return next(ApiError_1.default.internal('Please, add price'));
-            }
-            if (!productInfo.categoryId) {
-                return next(ApiError_1.default.internal('Please, add category id'));
-            }
-            if (!productInfo.purpose) {
-                return next(ApiError_1.default.internal('Please, add purpose'));
-            }
-            if (!productInfo.description) {
-                return next(ApiError_1.default.internal('Please, add description'));
-            }
+            productInfo.image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(productInfo.name)}/${image}`;
             const product = yield products_service_1.default.addProduct({
-                price: +productInfo.price || null,
-                categoryId: +productInfo.categoryId || null,
+                price: +productInfo.price,
+                categoryId: +productInfo.categoryId,
                 name: productInfo.name,
                 image: productInfo.image,
                 purpose: productInfo.purpose,
@@ -180,48 +166,70 @@ class ProductsController {
     }
     static updateProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { productId } = req.query;
-                const changingValues = req.body;
-                const image = req.file !== undefined ? req.file.filename : null;
-                let microphone = null;
-                if (!productId) {
-                    return next(ApiError_1.default.badRequest('Please, type the product id'));
+            const { productId } = req.query;
+            const changingValues = req.body;
+            const image = req.file !== undefined ? req.file.filename : null;
+            let microphone = null;
+            if (changingValues.name) {
+                const candidate = yield product_model_1.default.query().select('name').where({ name: changingValues.name }).first();
+                if (candidate) {
+                    next(ApiError_1.default.internal(`Name should be unique, (${candidate.name} already exists)`));
                 }
-                if (changingValues.microphone) {
-                    if (changingValues.microphone === 'true') {
-                        microphone = true;
-                    }
-                    else {
-                        microphone = false;
-                    }
-                }
-                if (image) {
-                    const product = yield product_model_1.default.query().select('products.name').from('products').where('products.id', '=', `${productId}`);
-                    changingValues.image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(product[0].name)}/${image}`;
-                }
-                const product = yield products_service_1.default.updateProduct(+productId, {
-                    price: +changingValues.price || null,
-                    categoryId: +changingValues.categoryId || null,
-                    name: changingValues.name,
-                    image: changingValues.image,
-                    purpose: changingValues.purpose,
-                    description: changingValues.description,
-                    design: changingValues.design,
-                    connectionType: changingValues.connectionType,
-                    microphone: microphone,
-                    batteryLiveTime: +changingValues.batteryLiveTime || null,
-                    display: changingValues.display,
-                });
-                if (!product) {
-                    return next(ApiError_1.default.badRequest(`Updating product error`));
-                }
-                return res.json(product);
             }
-            catch (error) {
-                console.log(error);
-                return next(ApiError_1.default.badRequest(`${error.message}`));
+            yield schemas_1.updateProductSchema.validate(Object.assign(Object.assign({}, changingValues), { image }));
+            if (!productId) {
+                return next(ApiError_1.default.badRequest('Please, type the product id'));
             }
+            const oldProduct = yield product_model_1.default.query().select().findById(+productId);
+            if (!oldProduct) {
+                throw new Error("Can't find this product");
+            }
+            if (changingValues.microphone) {
+                if (changingValues.microphone === 'true') {
+                    microphone = true;
+                }
+                else {
+                    microphone = false;
+                }
+            }
+            if (image) {
+                const product = yield product_model_1.default.query().select('products.name').from('products').where('products.id', '=', `${productId}`).first();
+                changingValues.image = `http://localhost:${process.env.PORT}/static/products/${(0, replace_spaces_util_1.replaceSpaces)(product.name)}/${image}`;
+            }
+            const product = yield products_service_1.default.updateProduct(oldProduct.name, oldProduct.image, +productId, {
+                price: +changingValues.price || null,
+                categoryId: +changingValues.categoryId || null,
+                name: changingValues.name,
+                image: changingValues.image,
+                purpose: changingValues.purpose,
+                description: changingValues.description,
+                design: changingValues.design,
+                connectionType: changingValues.connectionType,
+                microphone: microphone,
+                batteryLiveTime: +changingValues.batteryLiveTime || null,
+                display: changingValues.display,
+            });
+            if (!product) {
+                return next(ApiError_1.default.badRequest(`Updating product error`));
+            }
+            return res.json(product);
+        });
+    }
+    static addImage(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.query;
+            const files = req.files !== undefined ? req.files : null;
+            if (!productId) {
+                return next(ApiError_1.default.internal('Please, type product id'));
+            }
+            if (!files || files == undefined) {
+                return next(ApiError_1.default.internal('Please, add image'));
+            }
+            const insertedImages = yield products_service_1.default.addImage(+productId, files);
+            if (!insertedImages) {
+                return next(ApiError_1.default.badRequest(`Adding image error`));
+            }
+            return res.json(insertedImages);
         });
     }
 }

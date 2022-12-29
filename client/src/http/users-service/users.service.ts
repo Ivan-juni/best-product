@@ -2,10 +2,15 @@ import $api from '../index'
 import { AxiosResponse } from 'axios'
 import { ChangingValues } from './user.model'
 import { IUser } from './user.model'
-import { DeleteResponse } from '../models/DeleteResponse'
-import { ObjectionPage } from '../../models/ObjectionPage.model'
+import { DeleteResponse } from '../models/delete-response'
+import { ObjectionPage } from 'models/objection-page.model'
+import { ROLES } from 'models/user.model'
 
 export default class UsersService {
+  static async getUserById(id: number): Promise<AxiosResponse<IUser>> {
+    return $api.get<IUser>(`/users/${id}`)
+  }
+
   static async getUsers(
     id: string | null = null,
     firstName: string | null = null,
@@ -27,18 +32,18 @@ export default class UsersService {
     if (changingValues.photo) {
       formData.append('image', changingValues.photo)
 
-      return $api.put<IUser & { password: string }>(`/users/editProfile`, formData, {
+      return $api.patch<IUser & { password: string }>(`/users/editProfile`, formData, {
         headers: { 'Content-type': 'multipart/form-data' },
       })
     } else {
-      return $api.put<IUser & { password: string }>(`/users/editProfile`, changingValues, {
+      return $api.patch<IUser & { password: string }>(`/users/editProfile`, changingValues, {
         headers: { 'Content-type': 'multipart/form-data' },
       })
     }
   }
 
-  static async changeRole(id: number, role: 'ADMIN' | 'USER'): Promise<AxiosResponse<IUser>> {
-    return $api.put<IUser>(`/users/changeRole?id=${id}&role=${role}`)
+  static async changeRole(id: number, role: ROLES.ADMIN | ROLES.USER): Promise<AxiosResponse<IUser>> {
+    return $api.patch<IUser>(`/users/changeRole?id=${id}&role=${role}`)
   }
 
   static async deleteUser(id: number): Promise<AxiosResponse<DeleteResponse>> {

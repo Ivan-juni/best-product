@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const users_controller_1 = __importDefault(require("../controllers/users.controller"));
 const auth_middleware_1 = __importDefault(require("../middlewares/auth.middleware"));
+const async_handler_middleware_1 = __importDefault(require("../middlewares/async-handler.middleware"));
 const check_role_middleware_1 = __importDefault(require("../middlewares/check-role.middleware"));
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
@@ -14,25 +15,18 @@ const router = (0, express_1.default)();
 const storage = multer_1.default.diskStorage({
     destination: './assets/users/',
     filename: (req, file, callback) => {
-        callback(null, path_1.default.parse(file.originalname).name +
-            '-' +
-            Date.now() +
-            path_1.default.extname(file.originalname));
+        callback(null, path_1.default.parse(file.originalname).name + '-' + Date.now() + path_1.default.extname(file.originalname));
     },
 });
 const upload = (0, multer_1.default)({ storage });
-// @route put /api/users/changePassword
-// @des Change user role
-router.put('/editProfile', auth_middleware_1.default, upload.single('image'), users_controller_1.default.editProfile);
+router.use(auth_middleware_1.default);
+router.patch('/editProfile', upload.single('image'), (0, async_handler_middleware_1.default)(users_controller_1.default.editProfile));
 // ! Admin panel
-// @route get /api/users || /api/users?id=
-// @des Get users
-router.get('/', (0, check_role_middleware_1.default)('ADMIN'), users_controller_1.default.getUsers);
-// @route delete /api/users?id=
-// @des Delete user by id
-router.delete('/', (0, check_role_middleware_1.default)('ADMIN'), users_controller_1.default.deleteUsers);
-// @route put /api/users/changeRole?id=3&role=ADMIN
-// @des Change user role
-router.put('/changeRole', (0, check_role_middleware_1.default)('ADMIN'), users_controller_1.default.changeRole);
+router.use((0, check_role_middleware_1.default)('ADMIN'));
+router.get('/', (0, async_handler_middleware_1.default)(users_controller_1.default.getUsers));
+router.get('/:id', (0, async_handler_middleware_1.default)(users_controller_1.default.getUserById));
+router.delete('/', (0, async_handler_middleware_1.default)(users_controller_1.default.deleteUsers));
+// ?id=3&role=ADMIN
+router.patch('/changeRole', (0, async_handler_middleware_1.default)(users_controller_1.default.changeRole));
 exports.default = router;
 //# sourceMappingURL=users.router.js.map

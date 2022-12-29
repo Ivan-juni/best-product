@@ -74,7 +74,7 @@ export default class Product extends Model {
 
       properties: {
         id: { type: 'integer' },
-        name: { type: 'string', maxLength: 20 },
+        name: { type: 'string', maxLength: 40 },
         price: { type: 'integer' },
         image: { type: 'string' },
         categoryId: { type: 'integer' },

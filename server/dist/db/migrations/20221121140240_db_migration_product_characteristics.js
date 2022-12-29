@@ -18,7 +18,7 @@ function up(knex) {
             table.string('description', 500).notNullable();
             table.string('design').nullable();
             table.string('connectionType').nullable();
-            table.boolean('microphone').nullable();
+            table.boolean('microphone').defaultTo(false);
             table.integer('batteryLiveTime').nullable();
             table.string('display').nullable();
             table.timestamps(true, true, true);

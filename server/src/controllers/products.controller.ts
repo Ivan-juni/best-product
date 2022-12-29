@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import * as yup from 'yup'
 import ApiError from '../errors/ApiError'
 import productsService from '../services/products.service'
 import { IProductBody, resultType, StatisticsType } from '../services/types/products.type'
@@ -7,8 +8,21 @@ import Product from '../db/models/product.model'
 import ProductHistory from '../db/models/product-history.model'
 import { replaceSpaces } from '../utils/replace-spaces.util'
 import Image from '../db/models/image.module'
+import { addProductSchema, updateProductSchema } from './types/schemas'
 
 export default class ProductsController {
+  static async getProductById(req: Request, res: Response, next: NextFunction): ReturnType<Product> {
+    const { id } = req.params
+
+    const products = await productsService.getProductById(+id)
+
+    if (!products) {
+      return next(ApiError.badRequest(`Fetching product error`))
+    }
+
+    return res.json(products)
+  }
+
   static async getProducts(req: Request, res: Response, next: NextFunction): ReturnType<resultType> {
     const products = await productsService.getProducts(req.query)
 
@@ -22,13 +36,13 @@ export default class ProductsController {
   static async getStatistics(req: Request, res: Response, next: NextFunction): ReturnType<StatisticsType> {
     const quantity = +req.query.quantity || 5
 
-    const products = await productsService.getStatistics(quantity)
+    const stats = await productsService.getStatistics(quantity)
 
-    if (!products) {
-      return next(ApiError.badRequest(`Fetching products error`))
+    if (!stats) {
+      return next(ApiError.badRequest(`Fetching statistics error`))
     }
 
-    return res.json(products)
+    return res.json(stats)
   }
 
   static async getPriceDynamics(req: Request, res: Response, next: NextFunction): ReturnType<ProductHistory[]> {
@@ -88,16 +102,18 @@ export default class ProductsController {
       return next(ApiError.internal('Type product id'))
     }
 
-    const result = await productsService.deleteProduct(+productId)
+    const product = await Product.query().findById(+productId)
+
+    if (!product) {
+      return next(ApiError.internal("Can't find this product"))
+    }
+
+    const result = await productsService.deleteProduct(product.name, +productId, product.characteristicsId)
 
     if (!result) {
       return next(ApiError.badRequest(`Deletion products error`))
-    }
-
-    if (typeof result == 'number') {
-      return res.json({ message: `Successfully deleted product (id=${productId})` })
     } else {
-      return res.json(result)
+      return res.json({ message: `Successfully deleted product (id=${productId})` })
     }
   }
 
@@ -108,21 +124,135 @@ export default class ProductsController {
       return next(ApiError.internal('Please, type the product id'))
     }
 
+    const product = await Product.query().findById(+productId)
+
+    if (!product) {
+      return next(ApiError.internal("Can't find this product"))
+    }
+
     if (!imageId) {
       return next(ApiError.internal('Please, type the image id'))
     }
 
-    const result = await productsService.deleteImage(+productId, +imageId)
+    const image = await Image.query().findById(+imageId)
+
+    if (!image) {
+      return next(ApiError.internal("Can't find this image"))
+    }
+
+    const result = await productsService.deleteImage(product.name, image.src, +imageId)
 
     if (!result) {
       return next(ApiError.badRequest(`Deletion images error`))
+    } else {
+      return res.json({ message: `Successfully deleted image (id=${imageId})` })
+    }
+  }
+
+  static async addProduct(req: Request, res: Response, next: NextFunction): ReturnType<Product> {
+    const productInfo: IProductBody = req.body
+    const image = req.file !== undefined ? req.file.filename : null
+    let microphone: boolean = false
+
+    await addProductSchema.validate({ ...productInfo, image })
+
+    const candidate = await Product.query().select('name').where({ name: productInfo.name }).first()
+
+    if (candidate) {
+      next(ApiError.internal(`Name should be unique, (${candidate.name} already exists)`))
     }
 
-    if (typeof result == 'number') {
-      return res.json({ message: `Successfully deleted image (id=${imageId})` })
-    } else {
-      return res.json(result)
+    if (productInfo.microphone) {
+      if (productInfo.microphone === 'true') {
+        microphone = true
+      } else {
+        microphone = false
+      }
     }
+
+    productInfo.image = `http://localhost:${process.env.PORT}/static/products/${replaceSpaces(productInfo.name)}/${image}`
+
+    const product = await productsService.addProduct({
+      price: +productInfo.price,
+      categoryId: +productInfo.categoryId,
+      name: productInfo.name,
+      image: productInfo.image,
+      purpose: productInfo.purpose,
+      description: productInfo.description,
+      design: productInfo.design,
+      connectionType: productInfo.connectionType,
+      microphone: microphone,
+      batteryLiveTime: +productInfo.batteryLiveTime || null,
+      display: productInfo.display,
+    })
+
+    if (!product) {
+      return next(ApiError.badRequest(`Adding product error`))
+    }
+
+    return res.json(product)
+  }
+
+  static async updateProduct(req: Request, res: Response, next: NextFunction): ReturnType<Product> {
+    const { productId } = req.query
+    const changingValues: IProductBody = req.body
+    const image = req.file !== undefined ? req.file.filename : null
+
+    let microphone: boolean | null = null
+
+    if (changingValues.name) {
+      const candidate = await Product.query().select('name').where({ name: changingValues.name }).first()
+
+      if (candidate) {
+        next(ApiError.internal(`Name should be unique, (${candidate.name} already exists)`))
+      }
+    }
+
+    await updateProductSchema.validate({ ...changingValues, image })
+
+    if (!productId) {
+      return next(ApiError.badRequest('Please, type the product id'))
+    }
+
+    const oldProduct = await Product.query().select().findById(+productId)
+
+    if (!oldProduct) {
+      throw new Error("Can't find this product")
+    }
+
+    if (changingValues.microphone) {
+      if (changingValues.microphone === 'true') {
+        microphone = true
+      } else {
+        microphone = false
+      }
+    }
+
+    if (image) {
+      const product = await Product.query().select('products.name').from('products').where('products.id', '=', `${productId}`).first()
+
+      changingValues.image = `http://localhost:${process.env.PORT}/static/products/${replaceSpaces(product.name)}/${image}`
+    }
+
+    const product = await productsService.updateProduct(oldProduct.name, oldProduct.image, +productId, {
+      price: +changingValues.price || null,
+      categoryId: +changingValues.categoryId || null,
+      name: changingValues.name,
+      image: changingValues.image,
+      purpose: changingValues.purpose,
+      description: changingValues.description,
+      design: changingValues.design,
+      connectionType: changingValues.connectionType,
+      microphone: microphone,
+      batteryLiveTime: +changingValues.batteryLiveTime || null,
+      display: changingValues.display,
+    })
+
+    if (!product) {
+      return next(ApiError.badRequest(`Updating product error`))
+    }
+
+    return res.json(product)
   }
 
   static async addImage(req: Request, res: Response, next: NextFunction): ReturnType<Image[]> {
@@ -143,112 +273,5 @@ export default class ProductsController {
     }
 
     return res.json(insertedImages)
-  }
-
-  static async addProduct(req: Request, res: Response, next: NextFunction): ReturnType<Product> {
-    const productInfo: IProductBody = req.body
-    const image = req.file !== undefined ? req.file.filename : null
-
-    let microphone: boolean | null = null
-
-    if (productInfo.microphone) {
-      if (productInfo.microphone === 'true') {
-        microphone = true
-      } else {
-        microphone = false
-      }
-    }
-
-    if (!productInfo.name) {
-      return next(ApiError.internal('Please, add name'))
-    }
-    if (!image || image == undefined) {
-      return next(ApiError.internal('Please, add image'))
-    } else {
-      productInfo.image = `http://localhost:${process.env.PORT}/static/products/${replaceSpaces(productInfo.name)}/${image}`
-    }
-    if (!productInfo.price) {
-      return next(ApiError.internal('Please, add price'))
-    }
-    if (!productInfo.categoryId) {
-      return next(ApiError.internal('Please, add category id'))
-    }
-    if (!productInfo.purpose) {
-      return next(ApiError.internal('Please, add purpose'))
-    }
-    if (!productInfo.description) {
-      return next(ApiError.internal('Please, add description'))
-    }
-
-    const product = await productsService.addProduct({
-      price: +productInfo.price || null,
-      categoryId: +productInfo.categoryId || null,
-      name: productInfo.name,
-      image: productInfo.image,
-      purpose: productInfo.purpose,
-      description: productInfo.description,
-      design: productInfo.design,
-      connectionType: productInfo.connectionType,
-      microphone: microphone,
-      batteryLiveTime: +productInfo.batteryLiveTime || null,
-      display: productInfo.display,
-    })
-
-    if (!product) {
-      return next(ApiError.badRequest(`Adding product error`))
-    }
-
-    return res.json(product)
-  }
-
-  static async updateProduct(req: Request, res: Response, next: NextFunction): ReturnType<Product> {
-    try {
-      const { productId } = req.query
-      const changingValues: IProductBody = req.body
-      const image = req.file !== undefined ? req.file.filename : null
-
-      let microphone: boolean | null = null
-
-      if (!productId) {
-        return next(ApiError.badRequest('Please, type the product id'))
-      }
-
-      if (changingValues.microphone) {
-        if (changingValues.microphone === 'true') {
-          microphone = true
-        } else {
-          microphone = false
-        }
-      }
-
-      if (image) {
-        const product = await Product.query().select('products.name').from('products').where('products.id', '=', `${productId}`)
-
-        changingValues.image = `http://localhost:${process.env.PORT}/static/products/${replaceSpaces(product[0].name)}/${image}`
-      }
-
-      const product = await productsService.updateProduct(+productId, {
-        price: +changingValues.price || null,
-        categoryId: +changingValues.categoryId || null,
-        name: changingValues.name,
-        image: changingValues.image,
-        purpose: changingValues.purpose,
-        description: changingValues.description,
-        design: changingValues.design,
-        connectionType: changingValues.connectionType,
-        microphone: microphone,
-        batteryLiveTime: +changingValues.batteryLiveTime || null,
-        display: changingValues.display,
-      })
-
-      if (!product) {
-        return next(ApiError.badRequest(`Updating product error`))
-      }
-
-      return res.json(product)
-    } catch (error) {
-      console.log(error)
-      return next(ApiError.badRequest(`${error.message}`))
-    }
   }
 }

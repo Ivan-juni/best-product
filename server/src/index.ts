@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import setupDb from './db/db.setup'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -7,12 +7,12 @@ import router from './routes/router'
 import errorHandler from './middlewares/error-handling.middleware'
 import path from 'path'
 
-const app = express()
-
-app.get('/', (req: Request, res: Response) => res.status(200).json({ message: 'Server is working' }))
-
 const start = async () => {
   try {
+    const app = express()
+
+    app.get('/', (req: Request, res: Response) => res.status(200).json({ message: 'Server is working' }))
+
     setupDb()
 
     dotenv.config()

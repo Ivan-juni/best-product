@@ -29,6 +29,10 @@ function default_1(req, res, next) {
             if (!userData) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
+            const { id } = userData;
+            if (!id) {
+                return next(ApiError_1.default.unAuthorizedError());
+            }
             req.user = userData;
             next();
         }

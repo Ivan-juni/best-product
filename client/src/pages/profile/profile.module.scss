@@ -1,0 +1,110 @@
+@import "../../styles/variables.scss";
+
+.account, .admin {
+    max-width: 1250px;
+    padding-top: 45px;
+    padding-bottom: 45px;
+    margin: 72px auto;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+
+    @media (max-width: $laptop) {
+        padding-right: 20px;
+        padding-left: 20px;
+        max-width: 870px;
+    }
+    @media (max-width: $tablet2) {
+        max-width: 670px;
+    }
+    @media (max-width: $tablet) {
+        max-width: 500px;
+    }
+    @media (max-width: $burger) {
+        max-width: 400px;
+    }
+    @media (max-width: 420px) {
+        max-width: 300px;
+    }
+}
+
+.caption {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 48px;
+    text-align: center;
+    color: #435C6B;
+    text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+    margin-bottom: 35px;
+}
+
+.account {
+    .section{
+        display: flex;
+        max-width: 980px;
+        width: 100%;
+        margin: 0 auto;
+        gap: 113px;
+
+        @media (max-width: $tablet2) {
+            gap: 40px;
+        }
+        @media (max-width: $tablet) {
+            flex-direction: column;
+        }
+    }
+
+    .photo{ 
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        img {
+            object-fit: contain;
+            max-width: 380px;
+            max-height: 380px;
+            @media (max-width: $tablet2) {
+                max-width: 280px;
+                max-height: 280px
+            }
+            
+        }
+        .change{
+            width: 356px;
+            @media (max-width: $tablet2) {
+                width: 256px;
+            }
+            height: 48px;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+            border-radius: 7px;
+
+            font-style: normal;
+            font-weight: 400;
+            font-size: 22px;
+            line-height: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #766ED3;
+
+            &:hover{
+                transition: 0.3s;
+                opacity: 0.8;
+            }
+        }
+
+
+    }
+    .info {
+        max-width: 488px;
+        width: 100%;
+        
+    }
+}
+
+   
+

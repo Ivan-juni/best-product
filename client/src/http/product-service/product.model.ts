@@ -1,6 +1,6 @@
-import { ICategory } from '../../models/ICategory'
-import { IProduct } from '../../models/IProduct.model'
-import { ObjectionPage } from '../../models/ObjectionPage.model'
+import { ICategory } from 'models/category.model'
+import { IProduct } from 'models/product.model'
+import { ObjectionPage } from 'models/objection-page.model'
 
 export type ProductResponse = ObjectionPage<IProduct[]> & { categories?: ICategory[] }
 

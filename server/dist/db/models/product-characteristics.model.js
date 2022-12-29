@@ -42,7 +42,7 @@ class ProductCharacteristics extends objection_1.Model {
                 description: { type: 'string', maxLength: 500 },
                 design: { type: ['string', 'null'] },
                 connectionType: { type: ['string', 'null'] },
-                microphone: { type: ['boolean', 'null'] },
+                microphone: { type: 'boolean', default: false },
                 batteryLiveTime: { type: ['number', 'null'] },
                 display: { type: ['string', 'null'] },
                 createdAt: { type: 'string' },

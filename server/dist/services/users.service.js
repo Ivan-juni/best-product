@@ -17,84 +17,64 @@ const remove_photo_util_1 = require("../utils/remove-photo.util");
 const comment_model_1 = __importDefault(require("../db/models/comment.model"));
 const favorite_model_1 = __importDefault(require("../db/models/favorite.model"));
 class UserService {
+    static getUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return user_model_1.default.query().findById(id);
+        });
+    }
     static getUsers(searchCriteria) {
         return __awaiter(this, void 0, void 0, function* () {
             const limit = +searchCriteria.limit || 5;
             const page = +searchCriteria.page || 0;
-            try {
-                const users = yield user_model_1.default.query()
-                    .select('id', 'email', 'phone', 'photo', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
-                    .where((qb) => {
-                    if (searchCriteria.id) {
-                        qb.where('users.id', '=', +searchCriteria.id);
-                    }
-                    if (searchCriteria.firstName) {
-                        qb.orWhere('users.firstName', 'like', `%${searchCriteria.firstName}%`);
-                    }
-                })
-                    .page(page, limit);
-                return users;
-            }
-            catch (error) {
-                console.log('Error: ', error);
-                return null;
-            }
+            return user_model_1.default.query()
+                .select('id', 'email', 'phone', 'photo', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
+                .where((qb) => {
+                if (searchCriteria.id) {
+                    qb.where('users.id', '=', +searchCriteria.id);
+                }
+                if (searchCriteria.firstName) {
+                    qb.orWhere('users.firstName', 'like', `%${searchCriteria.firstName}%`);
+                }
+            })
+                .page(page, limit);
         });
     }
-    static deleteUser(id) {
+    static deleteUser(id, src) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const user = yield user_model_1.default.query().findById(id);
-                if (!user) {
-                    return { message: "Can't find this user" };
-                }
-                // Remove photo
-                (0, remove_photo_util_1.removePhoto)(user.photo, 'users');
-                yield comment_model_1.default.query().delete().where({ userId: id });
-                yield favorite_model_1.default.query().delete().where({ userId: id });
-                return user_model_1.default.query().deleteById(id);
-            }
-            catch (error) {
-                return null;
-            }
+            yield comment_model_1.default.query().delete().where({ userId: id });
+            yield favorite_model_1.default.query().delete().where({ userId: id });
+            const deletedUser = yield user_model_1.default.query().deleteById(id);
+            // Remove photo
+            (0, remove_photo_util_1.removePhoto)(src, 'users');
+            return deletedUser;
         });
     }
     static changeRole(id, role) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return user_model_1.default.query().patchAndFetchById(id, { role: role });
-            }
-            catch (error) {
-                console.log(error);
-                return null;
-            }
+            return user_model_1.default.query().patchAndFetchById(id, { role: role });
         });
     }
-    static editProfile(id, changingValues) {
+    static editProfile(id, src, changingValues) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const oldUser = yield user_model_1.default.query().select().findById(id);
-                if (!oldUser) {
-                    throw new Error("Can't find this user");
-                }
-                if (changingValues.photo) {
-                    // Remove old photo
-                    (0, remove_photo_util_1.removePhoto)(oldUser.photo, 'users');
-                }
                 // filtering null values
                 Object.keys(changingValues).forEach((key) => {
                     if (changingValues[key] === null) {
                         delete changingValues[key];
                     }
                 });
-                return user_model_1.default.query().patchAndFetchById(id, changingValues);
+                const user = yield user_model_1.default.query().patchAndFetchById(id, changingValues);
+                if (changingValues.photo) {
+                    // Remove old photo
+                    (0, remove_photo_util_1.removePhoto)(src, 'users');
+                }
+                return user;
             }
             catch (error) {
                 console.log('Error: ', error);
                 if (changingValues.photo) {
                     (0, remove_photo_util_1.removePhoto)(changingValues.photo, 'users');
                 }
-                return null;
             }
         });
     }

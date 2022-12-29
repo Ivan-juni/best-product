@@ -1,15 +1,17 @@
 import Router from 'express'
 import authController from '../controllers/auth.controller'
-import checkAuth from '../middlewares/auth.middleware'
+import authMiddleware from '../middlewares/auth.middleware'
+import asyncHandler from '../middlewares/async-handler.middleware'
 
 const router = Router()
 
-router.post('/registration', authController.registration)
+router.post('/registration', asyncHandler(authController.registration))
 
-router.post('/login', authController.login)
+router.post('/login', asyncHandler(authController.login))
 
-router.post('/logout', checkAuth, authController.logout)
+router.get('/refresh', asyncHandler(authController.refresh))
 
-router.get('/refresh', authController.refresh)
+router.use(authMiddleware)
+router.post('/logout', asyncHandler(authController.logout))
 
 export default router

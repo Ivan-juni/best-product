@@ -10,10 +10,6 @@ export default class FavoritesController {
   static async getUserFavorites(req: Request, res: Response, next: NextFunction): ReturnType<Objection.Page<Product>> {
     const { id } = req.user
 
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
-
     const favorites = await favoritesService.getFavorites(+id, req.query)
 
     if (!favorites) {
@@ -25,10 +21,6 @@ export default class FavoritesController {
 
   static async getUserFavoritesIds(req: Request, res: Response, next: NextFunction): ReturnType<Favorite[]> {
     const { id } = req.user
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
 
     const ids = await favoritesService.getIds(+id)
 
@@ -47,8 +39,10 @@ export default class FavoritesController {
       return next(ApiError.internal('Type product id'))
     }
 
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
+    const favorite = await Favorite.query().findOne({ userId: id, productId: +productId })
+
+    if (favorite) {
+      return next(ApiError.internal('This product already in on your favorites'))
     }
 
     const favorites = await favoritesService.addToFavorite(+id, +productId)
@@ -68,32 +62,36 @@ export default class FavoritesController {
       return next(ApiError.internal('Type product id'))
     }
 
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
+    const favorite = await Favorite.query().findOne({ userId: id, productId: +productId })
+
+    if (!favorite) {
+      return next(ApiError.internal("This product isn't on your favorites"))
     }
 
     const result = await favoritesService.deleteFromFavorite(+id, +productId)
 
     if (!result) {
       return next(ApiError.badRequest(`Adding to favorites error`))
-    }
-
-    if (typeof result == 'number') {
+    } else {
       return res.json({
         message: `Successfully deleted ${result} queries`,
       })
-    } else {
-      return res.json(result)
     }
   }
 
   // likes / dislikes / views
 
-  static async addLike(req: Request, res: Response, next: NextFunction): ReturnType<number> {
+  static async addLike(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { productId } = req.query
 
     if (!productId) {
       return next(ApiError.internal('Type product id'))
+    } else {
+      const product = await Product.query().findOne({ id: +productId })
+
+      if (!product) {
+        return next(ApiError.internal("Can't find this product"))
+      }
     }
 
     const likes = await favoritesService.addLike(+productId)
@@ -109,11 +107,21 @@ export default class FavoritesController {
     }
   }
 
-  static async deleteLike(req: Request, res: Response, next: NextFunction): ReturnType<number> {
+  static async deleteLike(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { productId } = req.query
 
     if (!productId) {
       return next(ApiError.internal('Type product id'))
+    } else {
+      const product = await Product.query().findOne({ id: +productId })
+
+      if (!product) {
+        return next(ApiError.internal("Can't find this product"))
+      }
+
+      if (product.likes === 0) {
+        return next(ApiError.internal("Can't decrement like, because it's 0 likes"))
+      }
     }
 
     const likes = await favoritesService.deleteLike(+productId)
@@ -129,11 +137,21 @@ export default class FavoritesController {
     }
   }
 
-  static async addDislike(req: Request, res: Response, next: NextFunction): ReturnType<number> {
+  static async addDislike(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { productId } = req.query
 
     if (!productId) {
       return next(ApiError.internal('Type product id'))
+    } else {
+      const product = await Product.query().findOne({ id: +productId })
+
+      if (!product) {
+        return next(ApiError.internal("Can't find this product"))
+      }
+
+      if (product.dislikes === 0) {
+        return next(ApiError.internal("Can't decrement dislike, because it's = 0"))
+      }
     }
 
     const dislikes = await favoritesService.addDislike(+productId)
@@ -149,11 +167,17 @@ export default class FavoritesController {
     }
   }
 
-  static async deleteDislike(req: Request, res: Response, next: NextFunction): ReturnType<number> {
+  static async deleteDislike(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { productId } = req.query
 
     if (!productId) {
-      return next(ApiError.internal('Type product id'))
+      return next(ApiError.internal('Please, type product id'))
+    } else {
+      const product = await Product.query().findOne({ id: +productId })
+
+      if (!product) {
+        return next(ApiError.internal("Can't find this product"))
+      }
     }
 
     const dislikes = await favoritesService.deleteDislike(+productId)
@@ -169,11 +193,17 @@ export default class FavoritesController {
     }
   }
 
-  static async addView(req: Request, res: Response, next: NextFunction): ReturnType<number> {
+  static async addView(req: Request, res: Response, next: NextFunction): ReturnType<{ message: string }> {
     const { productId } = req.query
 
     if (!productId) {
       return next(ApiError.internal('Type product id'))
+    } else {
+      const product = await Product.query().findOne({ id: +productId })
+
+      if (!product) {
+        return next(ApiError.internal("Can't find this product"))
+      }
     }
 
     const views = await favoritesService.addView(+productId)

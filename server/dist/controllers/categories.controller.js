@@ -14,7 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const categories_service_1 = __importDefault(require("../services/categories.service"));
+const category_model_1 = __importDefault(require("../db/models/category.model"));
+const schemas_1 = require("./types/schemas");
 class CategoriesController {
+    static getCategoryById(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const category = yield categories_service_1.default.getCategoryById(+id);
+            if (!category) {
+                return next(ApiError_1.default.badRequest(`Fetching category error`));
+            }
+            return res.json(category);
+        });
+    }
     static getCategories(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const categoryId = +req.query.id || null;
@@ -37,11 +49,12 @@ class CategoriesController {
         return __awaiter(this, void 0, void 0, function* () {
             const categoryName = req.body.name;
             const parent = req.body.parent ? +req.body.parent : 0;
-            if (!categoryName) {
-                return next(ApiError_1.default.internal('Please, type the category name'));
-            }
-            if (parent !== 0 && !parent) {
-                return next(ApiError_1.default.internal('Please, type the category parent'));
+            yield schemas_1.addCategorySchema.validate({ categoryName, parent });
+            const productCategory = yield category_model_1.default.query().findOne({
+                name: categoryName,
+            });
+            if (productCategory) {
+                return next(ApiError_1.default.internal('Category with this name already exists'));
             }
             const category = yield categories_service_1.default.addCategory({
                 name: categoryName,
@@ -60,6 +73,11 @@ class CategoriesController {
             if (!categoryId) {
                 return next(ApiError_1.default.badRequest('Please, type the category id'));
             }
+            const oldCategory = yield category_model_1.default.query().select().findById(+categoryId);
+            if (!oldCategory) {
+                return next(ApiError_1.default.internal("Can't find this category"));
+            }
+            yield schemas_1.updCategorySchema.validate(changingValues);
             const category = yield categories_service_1.default.updateCategory(+categoryId, {
                 name: changingValues.name ? changingValues.name : null,
                 parent: changingValues.parent ? +changingValues.parent : null,
@@ -76,15 +94,16 @@ class CategoriesController {
             if (!categoryId) {
                 return next(ApiError_1.default.internal('Please, type the category id'));
             }
+            const oldCategory = yield category_model_1.default.query().select().findById(+categoryId);
+            if (!oldCategory) {
+                return next(ApiError_1.default.internal("Can't find this category"));
+            }
             const result = yield categories_service_1.default.deleteCategory(+categoryId);
             if (!result) {
                 return next(ApiError_1.default.badRequest(`Deletion category error`));
             }
-            if (typeof result == 'number') {
-                return res.json({ message: `Successfully deleted ${result} categories` });
-            }
             else {
-                return res.json(result);
+                return res.json({ message: `Successfully deleted ${result} categories` });
             }
         });
     }

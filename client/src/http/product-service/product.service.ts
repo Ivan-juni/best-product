@@ -1,12 +1,16 @@
 import $api from '../index'
 import { AxiosResponse } from 'axios'
-import { DeleteResponse } from '../models/DeleteResponse'
-import { IProduct, IProductQuery } from '../../models/IProduct.model'
+import { DeleteResponse } from '../models/delete-response'
+import { IProduct, IProductQuery } from 'models/product.model'
 import { ProductAddingValues, ProductChangingValues, ProductMenuInfo, ProductResponse } from './product.model'
-import { IImages } from '../../models/IImages.model'
-import { IPriceDynamics, IStats } from '../../models/IStats.model'
+import { IImages } from 'models/images.model'
+import { IPriceDynamics, IStats } from 'models/stats.model'
 
 export default class ProductService {
+  static async getProductById(id: number): Promise<AxiosResponse<IProduct>> {
+    return $api.get<IProduct>(`/products/${id}`)
+  }
+
   static async getProducts(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductResponse>> {
     if (!searchCriteria.limit) {
       searchCriteria.limit = 6
@@ -53,11 +57,11 @@ export default class ProductService {
     const formData = new FormData()
     if (changingValues.image) {
       formData.append('image', changingValues.image)
-      return $api.put<IProduct>(`/products?productId=${id}`, formData, {
+      return $api.patch<IProduct>(`/products?productId=${id}`, formData, {
         headers: { 'Content-type': 'multipart/form-data' },
       })
     } else {
-      return $api.put<IProduct>(`/products?productId=${id}`, changingValues, {
+      return $api.patch<IProduct>(`/products?productId=${id}`, changingValues, {
         headers: { 'Content-type': 'multipart/form-data' },
       })
     }
