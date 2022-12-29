@@ -52,7 +52,7 @@ class Product extends objection_1.Model {
             required: ['name', 'price', 'image', 'categoryId', 'favoriteStars', 'characteristicsId'],
             properties: {
                 id: { type: 'integer' },
-                name: { type: 'string', maxLength: 20 },
+                name: { type: 'string', maxLength: 40 },
                 price: { type: 'integer' },
                 image: { type: 'string' },
                 categoryId: { type: 'integer' },

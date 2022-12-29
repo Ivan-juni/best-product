@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import User from '../db/models/user.model'
 import userService from '../services/auth.service'
 import { ReturnType } from './types/return.type'
+import tokenService from '../services/token.service'
 
 const registrationSchema = yup.object({
   email: yup.string().email().required(),
@@ -123,10 +124,16 @@ class AuthController {
       return next(ApiError.unAuthorizedError())
     }
 
-    // обновляем refreshToken
-    const userData = await userService.refresh(refreshToken)
+    // ищем токен в бд
+    const tokenFromDb = await tokenService.findToken(refreshToken)
 
-    if (!userData) {
+    // валидируем токен (не подделан и годен)
+    const data = await tokenService.validateRefreshToken(refreshToken)
+
+    // обновляем refreshToken
+    const userData = await userService.refresh(data)
+
+    if (!userData || !tokenFromDb || !data) {
       return next(ApiError.badRequest(`Refresh token error`))
     }
 

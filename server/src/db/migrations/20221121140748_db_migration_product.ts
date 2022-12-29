@@ -4,7 +4,7 @@ export async function up(knex: Knex): Promise<void> {
   const result = knex.schema.createTableIfNotExists('products', (table) => {
     table.increments()
 
-    table.string('name', 20).notNullable().unique()
+    table.string('name', 40).notNullable().unique()
     table.integer('price').notNullable()
     table.string('image').notNullable()
     table.integer('categoryId', 5).notNullable().unsigned().references('id').inTable('categories')

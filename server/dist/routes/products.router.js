@@ -18,6 +18,7 @@ const path_1 = __importDefault(require("path"));
 const products_controller_1 = __importDefault(require("../controllers/products.controller"));
 const product_model_1 = __importDefault(require("../db/models/product.model"));
 const check_role_middleware_1 = __importDefault(require("../middlewares/check-role.middleware"));
+const async_handler_middleware_1 = __importDefault(require("../middlewares/async-handler.middleware"));
 const fs_1 = __importDefault(require("fs"));
 const replace_spaces_util_1 = require("../utils/replace-spaces.util");
 const router = express_1.default.Router();
@@ -26,8 +27,8 @@ const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => __awaiter(void 0, void 0, void 0, function* () {
         if (!req.body.name && req.query.productId) {
             // достаю имя продукта (если его нет в теле запроса (*put)), чтобы создать с ним папку
-            const product = yield product_model_1.default.query().select('products.name').from('products').where('products.id', '=', `${req.query.productId}`);
-            const folder = product[0].name;
+            const product = yield product_model_1.default.query().select('products.name').from('products').where('products.id', '=', `${req.query.productId}`).first();
+            const folder = product.name;
             const path = `./assets/products/${(0, replace_spaces_util_1.replaceSpaces)(folder)}/`;
             fs_1.default.mkdirSync(path, { recursive: true });
             return cb(null, path);
@@ -44,36 +45,20 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const upload = (0, multer_1.default)({ storage });
-// @route POST /api/products/ || /api/products?id= || /api/products?category= || /api/products?price=800-1000 etc. || /api/products?orderByPrice=high/low || /api/products?orderByFavoriteStars=high/low
-// @des Get products
-router.get('/', products_controller_1.default.getProducts);
-// @route GET /api/products/statistics?quantity=5
-// @des Get products
-router.get('/statistics', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.getStatistics);
-// @route GET /api/products/statistics/price-dynamics
-// @des Get products
-router.get('/statistics/price-dynamics', products_controller_1.default.getPriceDynamics);
-// @route GET /api/products/characteristics?productId=5
-// @des Get product characteristics
-router.get('/characteristics', products_controller_1.default.getCharacteristics);
-// @route GET /api/products/menuInfo
-// @des Get menu info
-router.get('/menuInfo', products_controller_1.default.getDropdownMenuInfo);
+router.get('/:id', (0, async_handler_middleware_1.default)(products_controller_1.default.getProductById));
+router.get('/', (0, async_handler_middleware_1.default)(products_controller_1.default.getProducts));
+router.get('/statistics/price-dynamics', (0, async_handler_middleware_1.default)(products_controller_1.default.getPriceDynamics));
+router.get('/characteristics', (0, async_handler_middleware_1.default)(products_controller_1.default.getCharacteristics));
+router.get('/menuInfo', (0, async_handler_middleware_1.default)(products_controller_1.default.getDropdownMenuInfo));
 // ! Admin panel
-// @route POST /api/products/
-// @des Add a product
-router.post('/', (0, check_role_middleware_1.default)('ADMIN'), upload.single('image'), products_controller_1.default.addProduct);
-// @route POST /api/products/images?productId=
-// @des Add a product images
-router.post('/images', (0, check_role_middleware_1.default)('ADMIN'), upload.array('image', 5), products_controller_1.default.addImage);
-// @route PUT /api/products?productId=
-// @des Update the product
-router.put('/', (0, check_role_middleware_1.default)('ADMIN'), upload.single('image'), products_controller_1.default.updateProduct);
-// @route DELETE /api/products?productId=
-// @des Delete a product
-router.delete('/', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.deleteProduct);
-// @route DELETE /api/products/images?productId=&imageId=
-// @des Delete a product's images
-router.delete('/images', (0, check_role_middleware_1.default)('ADMIN'), products_controller_1.default.deleteImage);
+router.use((0, check_role_middleware_1.default)('ADMIN'));
+router.get('/statistics', (0, async_handler_middleware_1.default)(products_controller_1.default.getStatistics));
+router.post('/', upload.single('image'), (0, async_handler_middleware_1.default)(products_controller_1.default.addProduct));
+// Add a product images
+router.post('/images', upload.array('image', 5), (0, async_handler_middleware_1.default)(products_controller_1.default.addImage));
+router.patch('/', upload.single('image'), (0, async_handler_middleware_1.default)(products_controller_1.default.updateProduct));
+router.delete('/', (0, async_handler_middleware_1.default)(products_controller_1.default.deleteProduct));
+// Delete a product's images
+router.delete('/images', (0, async_handler_middleware_1.default)(products_controller_1.default.deleteImage));
 exports.default = router;
 //# sourceMappingURL=products.router.js.map

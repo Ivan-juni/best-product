@@ -23,7 +23,7 @@ export default class CommentsService {
   }
 
   static async updateComment(id: number, changingValues: CommentChangingValues): Promise<AxiosResponse<IComment>> {
-    return $api.put<IComment>(`/comments?commentId=${id}`, changingValues)
+    return $api.patch<IComment>(`/comments?commentId=${id}`, changingValues)
   }
 
   static async deleteComment(id: number): Promise<AxiosResponse<DeleteResponse>> {

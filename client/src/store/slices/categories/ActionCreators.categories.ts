@@ -51,6 +51,25 @@ export const fetchSearchCategories = createAsyncThunk<void, FetchCategoriesType,
   }
 )
 
+export const fetchCategory = createAsyncThunk<void, FormikType & { id: number }, { rejectValue: string }>(
+  'categories/fetchCategory',
+  async (values, thunkApi) => {
+    try {
+      const { id, setSubmitting } = values
+
+      const response = await CategoriesService.getCategoryById(id)
+
+      thunkApi.dispatch(categoriesAction.setCategories({ results: [response.data], total: 1 }))
+      if (setSubmitting) {
+        setSubmitting(false)
+      }
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, values))
+    }
+  }
+)
+
 export const deleteCategory = createAsyncThunk<void, { id: number }, { rejectValue: string }>(
   'categories/deleteCategory',
   async ({ id }, thunkApi) => {

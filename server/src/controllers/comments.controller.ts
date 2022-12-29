@@ -1,9 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
+import * as yup from 'yup'
 import ApiError from '../errors/ApiError'
 import commentService from '../services/comments.service'
 import { ReturnType } from './types/return.type'
 import Comment from '../db/models/comment.model'
 import Objection from 'objection'
+import Product from '../db/models/product.model'
+import { commentSchema } from './types/schemas'
 
 export default class CommentsController {
   // comments
@@ -15,6 +18,12 @@ export default class CommentsController {
 
     if (!productId) {
       return next(ApiError.internal('Type the product id'))
+    }
+
+    const product = await Product.query().findById(+productId)
+
+    if (!product) {
+      return next(ApiError.internal("Can't find this product"))
     }
 
     if (orderByDate !== 'low' && orderByDate !== 'high') {
@@ -32,10 +41,6 @@ export default class CommentsController {
 
   static async getUserComments(req: Request, res: Response, next: NextFunction): ReturnType<Comment[]> {
     const { id } = req.user
-
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
 
     const comments = await commentService.getComments(+id)
 
@@ -55,13 +60,13 @@ export default class CommentsController {
       return next(ApiError.internal('Type product id'))
     }
 
-    if (!commentText) {
-      return next(ApiError.internal('Please, type the cooment text'))
+    const product = await Product.query().findById(+productId)
+
+    if (!product) {
+      return next(ApiError.internal("Can't find this product"))
     }
 
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
+    await commentSchema.validate({ commentText })
 
     const comment = await commentService.addComment(+id, +productId, commentText)
 
@@ -80,20 +85,24 @@ export default class CommentsController {
       return next(ApiError.internal('Type comment id'))
     }
 
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
+    if (role === 'ADMIN') {
+      const comment = await Comment.query().findOne({ id: +commentId })
+      if (!comment) {
+        return next(ApiError.internal("Can't find or delete this comment"))
+      }
+    } else if (role === 'USER') {
+      const comment = await Comment.query().findOne({ id: +commentId, userId: id })
+      if (!comment) {
+        return next(ApiError.internal("Can't find or delete this comment"))
+      }
     }
 
     const result = await commentService.deleteComment(+id, +commentId, role)
 
     if (!result) {
       return next(ApiError.badRequest(`Deletion comment error`))
-    }
-
-    if (typeof result == 'number') {
-      return res.json({ message: `Successfully deleted ${result} comments` })
     } else {
-      return res.json(result)
+      return res.json({ message: `Successfully deleted ${result} comments` })
     }
   }
 
@@ -106,13 +115,13 @@ export default class CommentsController {
       return next(ApiError.internal('Please, type the comment id'))
     }
 
-    if (!commentText) {
-      return next(ApiError.internal('Please, type the comment text'))
+    const oldComment = await Comment.query().findOne({ userId: id, id: +commentId })
+
+    if (!oldComment) {
+      return next(ApiError.internal("Can't find this comment"))
     }
 
-    if (!id) {
-      return next(ApiError.unAuthorizedError())
-    }
+    await commentSchema.validate({ commentText })
 
     const comment = await commentService.updateComment(+id, +commentId, commentText)
 

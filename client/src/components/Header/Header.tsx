@@ -8,7 +8,7 @@ import Auth from './Auth/Auth'
 import LoginModal from '../Modals/login-modal/LoginModal'
 import RegistrationModal from '../Modals/registration-modal/RegistrationModal'
 import { useActions, useAppSelector } from '../../hoooks/redux'
-import Preloader from '../Common/Preloader/Preloader'
+import Preloader from '../common/preloader/preloader'
 import Search from './Search/Search'
 import SearchModal from './Search/Modal/SearchModal'
 
@@ -19,7 +19,7 @@ type PropsType = {
 
 const Header: React.FC<PropsType> = ({ authOpen, setAuthOpen }) => {
   const { user, isAuth, isLoading, isNavbarOpen, isLogModalOpen, isRegModalOpen } = useAppSelector((state) => state.authReducer)
-  const [isModalOpen, setModalOpen] = useState(false)
+  const [isModalOpen, setModalOpen] = useState<boolean>(false)
 
   // burger menu
   const { setNavbarOpen } = useActions()

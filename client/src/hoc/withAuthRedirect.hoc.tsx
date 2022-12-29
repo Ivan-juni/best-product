@@ -8,7 +8,7 @@ export function withAuthRedirect<WCP extends JSX.IntrinsicAttributes>(WrappedCom
     const navigate = useNavigate()
     const { isLoading, isAuth } = useAppSelector((state) => state.authReducer)
     const { setLogModalOpen } = useActions()
-    const [redirect, setRedirect] = useState(false)
+    const [redirect, setRedirect] = useState<boolean>(false)
 
     useEffect(() => {
       setLogModalOpen(false)

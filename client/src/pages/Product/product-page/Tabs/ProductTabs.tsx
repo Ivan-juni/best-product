@@ -47,7 +47,7 @@ type PropsType = {
 }
 
 const ProductTabs: React.FC<PropsType> = ({ product, priceDynamics, productId, isEditMode }) => {
-  const [value, setValue] = useState(0)
+  const [value, setValue] = useState<number>(0)
   const { total } = useAppSelector((state) => state.commentsReducer)
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

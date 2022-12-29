@@ -1,25 +1,23 @@
 import express from 'express'
 import checkRole from '../middlewares/check-role.middleware'
+import asyncHandler from '../middlewares/async-handler.middleware'
 import categoriesController from '../controllers/categories.controller'
 
 const router = express.Router()
 
-// @route GET /api/categories?categoryId=
-// @des Get categories
-router.get('/', categoriesController.getCategories)
+router.get('/:id', asyncHandler(categoriesController.getCategoryById))
+
+router.get('/', asyncHandler(categoriesController.getCategories))
 
 // ! Admin panel
+router.use(checkRole('ADMIN'))
 
-// @route POST /api/categories
-// @des Add the category
-router.post('/', checkRole('ADMIN'), categoriesController.addCategory)
+router.post('/', asyncHandler(categoriesController.addCategory))
 
-// @route PUT /api/categories?categoryId=
-// @des Update the category
-router.put('/', checkRole('ADMIN'), categoriesController.updateCategory)
+// /api/categories?categoryId=
+router.patch('/', asyncHandler(categoriesController.updateCategory))
 
-// @route DELETE /api/categories?categoryId=
-// @des Delete the category
-router.delete('/', checkRole('ADMIN'), categoriesController.deleteCategory)
+// /api/categories?categoryId=
+router.delete('/', asyncHandler(categoriesController.deleteCategory))
 
 export default router

@@ -1,33 +1,29 @@
 import Router from 'express'
 import authMiddleware from '../middlewares/auth.middleware'
+import asyncHandler from '../middlewares/async-handler.middleware'
 import favoritesController from '../controllers/favorites.controller'
 
 const router = Router()
 
-// @route get /api/users/favorites?id= ?price= ?orderByPrice=
-// @des Get user's favorites
-router.get('/', authMiddleware, favoritesController.getUserFavorites)
+router.use(authMiddleware)
 
-// @route get /api/users/favorites/ids
-// @des Get favorite's ids
-router.get('/ids', authMiddleware, favoritesController.getUserFavoritesIds)
+router.get('/', asyncHandler(favoritesController.getUserFavorites))
 
-// @route POST /api/products/favorite?id=$productId$
-// @des Add product to user favorites
-router.post('/', authMiddleware, favoritesController.addToFavorite)
+// Get favorite's ids
+router.get('/ids', asyncHandler(favoritesController.getUserFavoritesIds))
 
-// @route DELETE /api/products/favorite?id=$productId$
-// @des Remove product from user favorites
-router.delete('/', authMiddleware, favoritesController.deleteFromFavorite)
+router.post('/', asyncHandler(favoritesController.addToFavorite))
+
+// ?id=$productId$
+router.delete('/', asyncHandler(favoritesController.deleteFromFavorite))
 
 // likes, dislikes, views
+router.post('/likes', asyncHandler(favoritesController.addLike))
+router.delete('/likes', asyncHandler(favoritesController.deleteLike))
 
-router.post('/likes', authMiddleware, favoritesController.addLike)
-router.delete('/likes', authMiddleware, favoritesController.deleteLike)
+router.post('/dislikes', asyncHandler(favoritesController.addDislike))
+router.delete('/dislikes', asyncHandler(favoritesController.deleteDislike))
 
-router.post('/dislikes', authMiddleware, favoritesController.addDislike)
-router.delete('/dislikes', authMiddleware, favoritesController.deleteDislike)
-
-router.post('/views', authMiddleware, favoritesController.addView)
+router.post('/views', asyncHandler(favoritesController.addView))
 
 export default router

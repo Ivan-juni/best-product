@@ -20,10 +20,10 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const router_1 = __importDefault(require("./routes/router"));
 const error_handling_middleware_1 = __importDefault(require("./middlewares/error-handling.middleware"));
 const path_1 = __importDefault(require("path"));
-const app = (0, express_1.default)();
-app.get('/', (req, res) => res.status(200).json({ message: 'Server is working' }));
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const app = (0, express_1.default)();
+        app.get('/', (req, res) => res.status(200).json({ message: 'Server is working' }));
         (0, db_setup_1.default)();
         dotenv_1.default.config();
         const port = process.env.PORT || 8000;

@@ -14,6 +14,7 @@ import {
   fetchPriceDynamics,
   fetchSearchProducts,
   fetchMenuInfo,
+  fetchProduct,
 } from './ActionCreators.product'
 
 export interface ProductState {
@@ -119,6 +120,7 @@ export const productSlice = createSlice({
   },
   extraReducers: {
     [fetchProducts.fulfilled.type]: fulfilledReducer,
+    [fetchProduct.fulfilled.type]: fulfilledReducer,
     [fetchMenuInfo.fulfilled.type]: fulfilledReducer,
     [deleteProduct.fulfilled.type]: fulfilledReducer,
     [editProduct.fulfilled.type]: fulfilledReducer,
@@ -133,6 +135,7 @@ export const productSlice = createSlice({
     },
 
     [fetchProducts.pending.type]: pendingReducer,
+    [fetchProduct.pending.type]: pendingReducer,
     [fetchMenuInfo.pending.type]: pendingReducer,
     [deleteProduct.pending.type]: pendingReducer,
     [editProduct.pending.type]: pendingReducer,
@@ -146,6 +149,7 @@ export const productSlice = createSlice({
     },
 
     [fetchProducts.rejected.type]: rejectionReducer,
+    [fetchProduct.rejected.type]: rejectionReducer,
     [fetchMenuInfo.rejected.type]: rejectionReducer,
     [deleteProduct.rejected.type]: rejectionReducer,
     [editProduct.rejected.type]: rejectionReducer,

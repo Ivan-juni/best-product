@@ -60,7 +60,6 @@ export type resultType = Promise<
       total: number
     }
   | Objection.Page<Product>
-  | null
 >
 
 export type StatisticsType = Promise<{
@@ -68,6 +67,6 @@ export type StatisticsType = Promise<{
   topLikes: Product[]
   topDislikes: Product[]
   topFavoriteStars: Product[]
-} | null>
+}>
 
-export type DeleteType = Promise<number | { message: string } | null>
+export type DeleteType = Promise<number>

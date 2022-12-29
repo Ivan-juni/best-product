@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import Preloader from '../../components/Common/Preloader/Preloader'
+import Preloader from '../../components/common/preloader/preloader'
 import ProductsComponent from '../../components/Products/ProductsComponent'
 import { withAuthRedirect } from '../../hoc/withAuthRedirect.hoc'
 import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'

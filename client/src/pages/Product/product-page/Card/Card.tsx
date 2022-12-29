@@ -6,7 +6,7 @@ import { ReactComponent as LikeIcon } from '../../../../assets/icons/stats/like-
 import { ReactComponent as DislikeIcon } from '../../../../assets/icons/stats/dislike-stats-icon.svg'
 import { ReactComponent as FavoriteIcon } from '../../../../assets/icons/stats/favorite-stats-icon.svg'
 import { IProduct } from '../../../../models/IProduct.model'
-import ImagesSlider from '../../../../components/Common/Slider/Slider'
+import ImagesSlider from '../../../../components/common/slider/slider'
 import { Field, ErrorMessage, Form, Formik } from 'formik'
 import { FormikType } from '../../../../models/Formik.model'
 import * as Yup from 'yup'

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import './App.scss'
 import AppRouter from './AppRouter'
-import Footer from './components/Footer/Footer'
+import Footer from './components/footer/Footer'
 import Header from './components/Header/Header'
 import Navbar from './components/Navbar/Navbar'
-import { useActions, useAppDispatch } from './hoooks/redux'
+import { useAppDispatch } from './hoooks/redux'
 import { checkAuth } from './store/slices/auth/ActionCreators.auth'
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-  const [authOpen, setAuthOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState<boolean>(false)
 
   useEffect(() => {
     if (localStorage.getItem('token')) {

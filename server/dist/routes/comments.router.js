@@ -5,22 +5,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = __importDefault(require("../middlewares/auth.middleware"));
+const async_handler_middleware_1 = __importDefault(require("../middlewares/async-handler.middleware"));
 const comments_controller_1 = __importDefault(require("../controllers/comments.controller"));
 const router = express_1.default.Router();
-// @route get /api/comments/user
-// @des Get user's comments
-router.get('/user', auth_middleware_1.default, comments_controller_1.default.getUserComments);
-// @route GET /api/comments?productId=
-// @des Get product comments
-router.get('/', comments_controller_1.default.getProductComments);
-// @route POST /api/comments?productId=
-// @des Add comment to product
-router.post('/', auth_middleware_1.default, comments_controller_1.default.addComment);
-// @route PUT /api/comments?commentId=
-// @des Update comment
-router.put('/', auth_middleware_1.default, comments_controller_1.default.updateComment);
-// @route DELETE /api/comments?commentId=
-// @des Delete comment
-router.delete('/', auth_middleware_1.default, comments_controller_1.default.deleteComment);
+// ?productId=
+router.get('/', (0, async_handler_middleware_1.default)(comments_controller_1.default.getProductComments));
+router.use(auth_middleware_1.default);
+router.get('/user', (0, async_handler_middleware_1.default)(comments_controller_1.default.getUserComments));
+// ?productId=
+router.post('/', (0, async_handler_middleware_1.default)(comments_controller_1.default.addComment));
+// ?commentId=
+router.patch('/', (0, async_handler_middleware_1.default)(comments_controller_1.default.updateComment));
+// ?commentId=
+router.delete('/', (0, async_handler_middleware_1.default)(comments_controller_1.default.deleteComment));
 exports.default = router;
 //# sourceMappingURL=comments.router.js.map

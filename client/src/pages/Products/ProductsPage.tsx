@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styles from './ProductsPage.module.scss'
-import Preloader from '../../components/Common/Preloader/Preloader'
+import Preloader from '../../components/common/preloader/preloader'
 import ProductsComponent from '../../components/Products/ProductsComponent'
 import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
 import { fetchMenuInfo, fetchProducts } from '../../store/slices/product/ActionCreators.product'

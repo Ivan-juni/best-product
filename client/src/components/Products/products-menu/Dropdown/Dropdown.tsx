@@ -13,7 +13,7 @@ type PropsType = {
 }
 
 const Dropdown: React.FC<PropsType> = ({ title, items, type, isReset, setReset }) => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false)
+  const [isDropdownOpen, setDropdownOpen] = useState<boolean>(false)
   const [searchParams, setSearchParams] = useSearchParams()
 
   const handleClick = (item: string) => {

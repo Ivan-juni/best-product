@@ -24,7 +24,7 @@ const formatDate = (date: string) => {
 const Comment: React.FC<PropsType> = ({ comment }) => {
   const dispatch = useAppDispatch()
   const { id: userId, role } = useAppSelector((state) => state.authReducer.user)
-  const [isEditMode, setEditMode] = useState(false)
+  const [isEditMode, setEditMode] = useState<boolean>(false)
 
   const deleteCommentHandler = () => {
     dispatch(deleteComment({ id: comment.id }))

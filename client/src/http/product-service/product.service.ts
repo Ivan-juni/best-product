@@ -7,6 +7,10 @@ import { IImages } from '../../models/IImages.model'
 import { IPriceDynamics, IStats } from '../../models/IStats.model'
 
 export default class ProductService {
+  static async getProductById(id: number): Promise<AxiosResponse<IProduct>> {
+    return $api.get<IProduct>(`/products/${id}`)
+  }
+
   static async getProducts(searchCriteria: IProductQuery): Promise<AxiosResponse<ProductResponse>> {
     if (!searchCriteria.limit) {
       searchCriteria.limit = 6
@@ -53,11 +57,11 @@ export default class ProductService {
     const formData = new FormData()
     if (changingValues.image) {
       formData.append('image', changingValues.image)
-      return $api.put<IProduct>(`/products?productId=${id}`, formData, {
+      return $api.patch<IProduct>(`/products?productId=${id}`, formData, {
         headers: { 'Content-type': 'multipart/form-data' },
       })
     } else {
-      return $api.put<IProduct>(`/products?productId=${id}`, changingValues, {
+      return $api.patch<IProduct>(`/products?productId=${id}`, changingValues, {
         headers: { 'Content-type': 'multipart/form-data' },
       })
     }

@@ -5,7 +5,7 @@ import { ReactComponent as SortIcon } from '../../../../../assets/icons/filters/
 import { ReactComponent as ArrowUpIcon } from '../../../../../assets/icons/other/arrows/white-arrow-top.svg'
 import Comment from './Comment/Comment'
 import { IComment } from '../../../../../models/IComment'
-import Paginator from '../../../../../components/Common/Paginator/Paginator'
+import Paginator from '../../../../../components/common/paginator/paginator'
 import { fetchComments } from '../../../../../store/slices/comments/ActionCreators.comments'
 import AddCommentForm from './add-comment/AddCommentForm'
 
@@ -16,7 +16,7 @@ type PropsType = {
 const Comments: React.FC<PropsType> = ({ productId }) => {
   const dispatch = useAppDispatch()
 
-  const [isSort, setSort] = useState(false)
+  const [isSort, setSort] = useState<boolean>(false)
   const { comments, total, page } = useAppSelector((state) => state.commentsReducer)
   const { isAuth } = useAppSelector((state) => state.authReducer)
 

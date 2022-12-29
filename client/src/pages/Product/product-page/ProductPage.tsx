@@ -7,7 +7,7 @@ import { addImage, deleteImage, editProduct } from '../../../store/slices/produc
 import { useNavigate } from 'react-router-dom'
 import ProductTabs from './Tabs/ProductTabs'
 import { ReactComponent as EditIcon } from '../../../assets/icons/other/edit-icon.svg'
-import Preloader from '../../../components/Common/Preloader/Preloader'
+import Preloader from '../../../components/common/preloader/preloader'
 
 const ProductPage: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -20,8 +20,8 @@ const ProductPage: React.FC = () => {
 
   const { setEditMode } = useActions()
 
-  const filteredProduct = products.filter((product: IProduct) => product.id === productId)
-  const product = filteredProduct[0]
+  const filteredProduct: IProduct[] = products.filter((product: IProduct) => product.id === productId)
+  const product: IProduct = filteredProduct[0]
 
   const editClickHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()

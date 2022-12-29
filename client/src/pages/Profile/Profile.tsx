@@ -2,10 +2,10 @@ import React from 'react'
 import styles from './Profile.module.scss'
 import avatar from '../../assets/images/large-avatar.png'
 import { useAppDispatch, useAppSelector } from '../../hoooks/redux'
-import Preloader from '../../components/Common/Preloader/Preloader'
+import Preloader from '../../components/common/preloader/preloader'
 import { editProfile } from '../../store/slices/users/ActionCreators.users'
 import ProfileForm from './profile-form/ProfileForm'
-import AdminPanel from '../../components/admin-panel/AdminPanel'
+import AdminPanel from '../../components/admin-panel/admin-panel'
 import { withAuthRedirect } from '../../hoc/withAuthRedirect.hoc'
 
 const Profile: React.FC = () => {

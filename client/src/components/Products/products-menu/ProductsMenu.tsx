@@ -26,9 +26,9 @@ const ProductsMenu: React.FC<PropsType> = ({ cardType, setCardType }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [params, setParams] = useState<Object>({})
 
-  const [isSidebarOpen, setSidebarOpen] = useState(false)
-  const [isSort, setSort] = useState(false)
-  const [isReset, setReset] = useState(false)
+  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false)
+  const [isSort, setSort] = useState<boolean>(false)
+  const [isReset, setReset] = useState<boolean>(false)
 
   useEffect(() => {
     dispatch(fetchCategories({}))

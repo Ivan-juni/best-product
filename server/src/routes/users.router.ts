@@ -1,6 +1,7 @@
 import Router from 'express'
 import usersController from '../controllers/users.controller'
 import authMiddleware from '../middlewares/auth.middleware'
+import asyncHandler from '../middlewares/async-handler.middleware'
 import checkRole from '../middlewares/check-role.middleware'
 import multer from 'multer'
 import path from 'path'
@@ -11,38 +12,25 @@ const router = Router()
 const storage = multer.diskStorage({
   destination: './assets/users/',
   filename: (req, file, callback) => {
-    callback(
-      null,
-      path.parse(file.originalname).name +
-        '-' +
-        Date.now() +
-        path.extname(file.originalname)
-    )
+    callback(null, path.parse(file.originalname).name + '-' + Date.now() + path.extname(file.originalname))
   },
 })
 
 const upload = multer({ storage })
 
-// @route put /api/users/changePassword
-// @des Change user role
-router.put(
-  '/editProfile',
-  authMiddleware,
-  upload.single('image'),
-  usersController.editProfile
-)
+router.use(authMiddleware)
+router.patch('/editProfile', upload.single('image'), asyncHandler(usersController.editProfile))
 
 // ! Admin panel
-// @route get /api/users || /api/users?id=
-// @des Get users
-router.get('/', checkRole('ADMIN'), usersController.getUsers)
+router.use(checkRole('ADMIN'))
 
-// @route delete /api/users?id=
-// @des Delete user by id
-router.delete('/', checkRole('ADMIN'), usersController.deleteUsers)
+router.get('/:id', asyncHandler(usersController.getUserById))
 
-// @route put /api/users/changeRole?id=3&role=ADMIN
-// @des Change user role
-router.put('/changeRole', checkRole('ADMIN'), usersController.changeRole)
+router.get('/', asyncHandler(usersController.getUsers))
+
+router.delete('/', asyncHandler(usersController.deleteUsers))
+
+// ?id=3&role=ADMIN
+router.patch('/changeRole', asyncHandler(usersController.changeRole))
 
 export default router

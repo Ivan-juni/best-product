@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ICategory } from '../../../models/ICategory'
 import { ObjectionPage } from '../../../models/ObjectionPage.model'
-import { addCategory, deleteCategory, fetchCategories, fetchSearchCategories, updateCategory } from './ActionCreators.categories'
+import { addCategory, deleteCategory, fetchCategories, fetchCategory, fetchSearchCategories, updateCategory } from './ActionCreators.categories'
 
 export interface CategoriesState {
   categories: ICategory[]
@@ -84,6 +84,7 @@ export const categoriesSlice = createSlice({
   },
   extraReducers: {
     [fetchCategories.fulfilled.type]: fulfilledReducer,
+    [fetchCategory.fulfilled.type]: fulfilledReducer,
     [deleteCategory.fulfilled.type]: fulfilledReducer,
     [updateCategory.fulfilled.type]: fulfilledReducer,
     [addCategory.fulfilled.type]: fulfilledReducer,
@@ -93,6 +94,7 @@ export const categoriesSlice = createSlice({
     },
 
     [fetchCategories.pending.type]: pendingReducer,
+    [fetchCategory.pending.type]: pendingReducer,
     [deleteCategory.pending.type]: pendingReducer,
     [updateCategory.pending.type]: pendingReducer,
     [addCategory.pending.type]: pendingReducer,
@@ -101,6 +103,7 @@ export const categoriesSlice = createSlice({
     },
 
     [fetchCategories.rejected.type]: rejectionReducer,
+    [fetchCategory.rejected.type]: rejectionReducer,
     [deleteCategory.rejected.type]: rejectionReducer,
     [updateCategory.rejected.type]: rejectionReducer,
     [addCategory.rejected.type]: rejectionReducer,

@@ -24,8 +24,8 @@ export const fetchProducts = createAsyncThunk<void, FetchProductsType, { rejectV
         thunkApi.dispatch(productAction.setLimit(searchCriteria.limit))
       }
 
-      if (searchCriteria.setSubmitting) {
-        searchCriteria.setSubmitting(false)
+      if (setSubmitting) {
+        setSubmitting(false)
       }
     } catch (error) {
       const typedError = error as ErrorType
@@ -47,6 +47,26 @@ export const fetchSearchProducts = createAsyncThunk<void, FetchProductsType, { r
 
       if (searchCriteria.setSubmitting) {
         searchCriteria.setSubmitting(false)
+      }
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, searchCriteria))
+    }
+  }
+)
+
+export const fetchProduct = createAsyncThunk<void, FormikType & { id: number }, { rejectValue: string }>(
+  'product/fetchProduct',
+  async (searchCriteria, thunkApi) => {
+    try {
+      const { id, setSubmitting } = searchCriteria
+
+      const response = await ProductService.getProductById(id)
+
+      thunkApi.dispatch(productAction.setProducts({ results: [response.data], total: 1 }))
+
+      if (setSubmitting) {
+        setSubmitting(false)
       }
     } catch (error) {
       const typedError = error as ErrorType

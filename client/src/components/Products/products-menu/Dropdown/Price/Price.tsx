@@ -15,7 +15,7 @@ type PropsType = {
 const Price: React.FC<PropsType> = ({ priceRange, isReset, setReset }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [price, setPrice] = useState<string[]>(priceRange)
-  const [isPriceDropdownOpen, setPriceDropdownOpen] = useState(false)
+  const [isPriceDropdownOpen, setPriceDropdownOpen] = useState<boolean>(false)
 
   useEffect(() => {
     const price = searchParams.get('price')

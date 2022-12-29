@@ -40,6 +40,7 @@ const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_model_1 = __importDefault(require("../db/models/user.model"));
 const auth_service_1 = __importDefault(require("../services/auth.service"));
+const token_service_1 = __importDefault(require("../services/token.service"));
 const registrationSchema = yup.object({
     email: yup.string().email().required(),
     phone: yup.number().nullable(),
@@ -143,9 +144,13 @@ class AuthController {
             if (!refreshToken) {
                 return next(ApiError_1.default.unAuthorizedError());
             }
+            // ищем токен в бд
+            const tokenFromDb = yield token_service_1.default.findToken(refreshToken);
+            // валидируем токен (не подделан и годен)
+            const data = yield token_service_1.default.validateRefreshToken(refreshToken);
             // обновляем refreshToken
-            const userData = yield auth_service_1.default.refresh(refreshToken);
-            if (!userData) {
+            const userData = yield auth_service_1.default.refresh(data);
+            if (!userData || !tokenFromDb || !data) {
                 return next(ApiError_1.default.badRequest(`Refresh token error`));
             }
             res.cookie('refreshToken', userData.refreshToken, {

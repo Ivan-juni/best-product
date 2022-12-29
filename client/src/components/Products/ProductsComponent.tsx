@@ -4,9 +4,9 @@ import ProductLong from './product-long/ProductLong'
 import ProductShort from './product-short/ProductShort'
 import ProductsMenu from './products-menu/ProductsMenu'
 import { IProduct } from '../../models/IProduct.model'
-import Preloader from '../Common/Preloader/Preloader'
+import Preloader from '../common/preloader/preloader'
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
-import Paginator from '../Common/Paginator/Paginator'
+import Paginator from '../common/paginator/paginator'
 
 type PropsType = {
   products: IProduct[]

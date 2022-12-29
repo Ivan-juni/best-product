@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import styles from './ProductContainer.module.scss'
 import { useActions, useAppDispatch, useAppSelector } from '../../hoooks/redux'
-import { fetchPriceDynamics, fetchProducts } from '../../store/slices/product/ActionCreators.product'
+import { fetchPriceDynamics, fetchProduct } from '../../store/slices/product/ActionCreators.product'
 import { useSearchParams } from 'react-router-dom'
 import { fetchComments } from '../../store/slices/comments/ActionCreators.comments'
 import ProductPage from './product-page/ProductPage'
@@ -19,16 +19,16 @@ const ProductContainer: React.FC = () => {
   const { setProductId } = useActions()
 
   useEffect(() => {
-    dispatch(fetchComments({ productId, page: page }))
+    if (productId !== 0) dispatch(fetchComments({ productId, page: page }))
   }, [page, total])
 
   useEffect(() => {
-    dispatch(fetchComments({ productId }))
+    if (productId !== 0) dispatch(fetchComments({ productId }))
     dispatch(fetchPriceDynamics({ productId }))
     if (!productId || productId === 0) {
       const id = searchParams.get('productId')
       if (id) {
-        dispatch(fetchProducts({ id: +id }))
+        dispatch(fetchProduct({ id: +id }))
         setProductId(+id)
       }
     }

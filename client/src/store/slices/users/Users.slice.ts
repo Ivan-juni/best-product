@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IUser } from '../../../models/IUser.model'
 import { ObjectionPage } from '../../../models/ObjectionPage.model'
-import { changeRole, deleteUser, editProfile, fetchUsers } from './ActionCreators.users'
+import { changeRole, deleteUser, editProfile, fetchUser, fetchUsers } from './ActionCreators.users'
 
 export interface UsersState {
   users: IUser[]
@@ -51,16 +51,19 @@ export const usersSlice = createSlice({
   },
   extraReducers: {
     [fetchUsers.fulfilled.type]: fulfilledReducer,
+    [fetchUser.fulfilled.type]: fulfilledReducer,
     [editProfile.fulfilled.type]: fulfilledReducer,
     [deleteUser.fulfilled.type]: fulfilledReducer,
     [changeRole.fulfilled.type]: fulfilledReducer,
 
     [fetchUsers.pending.type]: pendingReducer,
+    [fetchUser.pending.type]: pendingReducer,
     [editProfile.pending.type]: pendingReducer,
     [deleteUser.pending.type]: pendingReducer,
     [changeRole.pending.type]: pendingReducer,
 
     [fetchUsers.rejected.type]: rejectionReducer,
+    [fetchUser.rejected.type]: rejectionReducer,
     [editProfile.rejected.type]: rejectionReducer,
     [deleteUser.rejected.type]: rejectionReducer,
     [changeRole.rejected.type]: rejectionReducer,

@@ -7,8 +7,7 @@ import { FormikType } from '../../../models/Formik.model'
 import { ErrorType } from '../../../models/IError.model'
 import { errorLogic } from '../../utils/errorLogic'
 
-// тут setStatus, setSubmitting опциональные параметры, так как я использовую editProfile и в Formik и без него
-type EditProfileType = ChangingValues & { setStatus?: (arg0: string) => void; setSubmitting?: (arg0: boolean) => void }
+type EditProfileType = ChangingValues & FormikType
 
 export const editProfile = createAsyncThunk<void, EditProfileType, { rejectValue: string }>(
   'users/editProfile',
@@ -40,6 +39,23 @@ export const fetchUsers = createAsyncThunk<void, FetchUsersType, { rejectValue: 
       const response = await UsersService.getUsers(id, firstName, page, limit)
 
       thunkApi.dispatch(usersAction.setUsers(response.data))
+      if (setSubmitting) {
+        setSubmitting(false)
+      }
+    } catch (error) {
+      const typedError = error as ErrorType
+      return thunkApi.rejectWithValue(errorLogic(typedError, { setStatus, setSubmitting }))
+    }
+  }
+)
+
+export const fetchUser = createAsyncThunk<void, FormikType & { id: number }, { rejectValue: string }>(
+  'users/fetchUser',
+  async ({ id, setStatus, setSubmitting }, thunkApi) => {
+    try {
+      const response = await UsersService.getUserById(id)
+
+      thunkApi.dispatch(usersAction.setUsers({ results: [response.data], total: 1 }))
       if (setSubmitting) {
         setSubmitting(false)
       }

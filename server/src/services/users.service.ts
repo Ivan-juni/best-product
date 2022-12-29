@@ -7,73 +7,45 @@ import Favorite from '../db/models/favorite.model'
 import Objection from 'objection'
 
 class UserService {
-  static async getUsers(searchCriteria: IUsersQuery): Promise<Objection.Page<User> | null> {
+  static async getUserById(id: number): Promise<User> {
+    return User.query().findById(id)
+  }
+
+  static async getUsers(searchCriteria: IUsersQuery): Promise<Objection.Page<User>> {
     const limit = +searchCriteria.limit || 5
     const page = +searchCriteria.page || 0
 
-    try {
-      const users = await User.query()
-        .select('id', 'email', 'phone', 'photo', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
-        .where((qb) => {
-          if (searchCriteria.id) {
-            qb.where('users.id', '=', +searchCriteria.id)
-          }
+    return User.query()
+      .select('id', 'email', 'phone', 'photo', 'firstName', 'lastName', 'role', 'createdAt', 'updatedAt')
+      .where((qb) => {
+        if (searchCriteria.id) {
+          qb.where('users.id', '=', +searchCriteria.id)
+        }
 
-          if (searchCriteria.firstName) {
-            qb.orWhere('users.firstName', 'like', `%${searchCriteria.firstName}%`)
-          }
-        })
-        .page(page, limit)
-
-      return users
-    } catch (error) {
-      console.log('Error: ', error)
-      return null
-    }
+        if (searchCriteria.firstName) {
+          qb.orWhere('users.firstName', 'like', `%${searchCriteria.firstName}%`)
+        }
+      })
+      .page(page, limit)
   }
 
-  static async deleteUser(id: number): DeleteType {
-    try {
-      const user = await User.query().findById(id)
+  static async deleteUser(id: number, src: string): DeleteType {
+    await Comment.query().delete().where({ userId: id })
+    await Favorite.query().delete().where({ userId: id })
+    const deletedUser = await User.query().deleteById(id)
 
-      if (!user) {
-        return { message: "Can't find this user" }
-      }
+    // Remove photo
+    removePhoto(src, 'users')
 
-      // Remove photo
-      removePhoto(user.photo, 'users')
-
-      await Comment.query().delete().where({ userId: id })
-      await Favorite.query().delete().where({ userId: id })
-
-      return User.query().deleteById(id)
-    } catch (error) {
-      return null
-    }
+    return deletedUser
   }
 
-  static async changeRole(id: number, role: string): Promise<User | null> {
-    try {
-      return User.query().patchAndFetchById(id, { role: role })
-    } catch (error) {
-      console.log(error)
-      return null
-    }
+  static async changeRole(id: number, role: string): Promise<User> {
+    return User.query().patchAndFetchById(id, { role: role })
   }
 
-  static async editProfile(id: number, changingValues: changingValues): Promise<User | null> {
+  static async editProfile(id: number, src: string, changingValues: changingValues): Promise<User> {
     try {
-      const oldUser = await User.query().select().findById(id)
-
-      if (!oldUser) {
-        throw new Error("Can't find this user")
-      }
-
-      if (changingValues.photo) {
-        // Remove old photo
-        removePhoto(oldUser.photo, 'users')
-      }
-
       // filtering null values
       Object.keys(changingValues).forEach((key) => {
         if (changingValues[key] === null) {
@@ -81,13 +53,19 @@ class UserService {
         }
       })
 
-      return User.query().patchAndFetchById(id, changingValues)
+      const user = await User.query().patchAndFetchById(id, changingValues)
+
+      if (changingValues.photo) {
+        // Remove old photo
+        removePhoto(src, 'users')
+      }
+
+      return user
     } catch (error) {
       console.log('Error: ', error)
       if (changingValues.photo) {
         removePhoto(changingValues.photo, 'users')
       }
-      return null
     }
   }
 }
