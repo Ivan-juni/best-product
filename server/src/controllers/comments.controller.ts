@@ -7,6 +7,7 @@ import Comment from '../db/models/comment.model'
 import Objection from 'objection'
 import Product from '../db/models/product.model'
 import { commentSchema } from './types/schemas'
+import { ROLES } from './types/enums'
 
 export default class CommentsController {
   // comments
@@ -85,12 +86,12 @@ export default class CommentsController {
       return next(ApiError.internal('Type comment id'))
     }
 
-    if (role === 'ADMIN') {
+    if (role === ROLES.ADMIN) {
       const comment = await Comment.query().findOne({ id: +commentId })
       if (!comment) {
         return next(ApiError.internal("Can't find or delete this comment"))
       }
-    } else if (role === 'USER') {
+    } else if (role === ROLES.USER) {
       const comment = await Comment.query().findOne({ id: +commentId, userId: id })
       if (!comment) {
         return next(ApiError.internal("Can't find or delete this comment"))

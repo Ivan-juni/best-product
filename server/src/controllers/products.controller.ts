@@ -82,7 +82,7 @@ export default class ProductsController {
     connectionType: string[]
     display: string[]
     design: string[]
-    price: string[]
+    price: { min: string; max: string }
   }> {
     const info = await productsService.getMenuInfo(req.query)
 

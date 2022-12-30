@@ -1,18 +1,18 @@
 import express from 'express'
-import authRouter from './auth.router'
-import productsRouter from './products.router'
-import usersRouter from './users.router'
-import favoritesRouter from './favorites.router'
-import commentsRouter from './comments.router'
-import categoriesRouter from './categories.router'
+import { createAuthRoutes } from './auth.router'
+import { createProductsRoutes } from './products.router'
+import { createUsersRoutes } from './users.router'
+import { createFavoritesRoutes } from './favorites.router'
+import { createCommentsRoutes } from './comments.router'
+import { createCategoriesRoutes } from './categories.router'
 
 const router = express.Router()
 
-router.use('/auth', authRouter)
-router.use('/products', productsRouter)
-router.use('/users', usersRouter)
-router.use('/favorites', favoritesRouter)
-router.use('/comments', commentsRouter)
-router.use('/categories', categoriesRouter)
+router.use('/auth', createAuthRoutes())
+router.use('/products', createProductsRoutes())
+router.use('/users', createUsersRoutes())
+router.use('/favorites', createFavoritesRoutes())
+router.use('/comments', createCommentsRoutes())
+router.use('/categories', createCategoriesRoutes())
 
 export default router

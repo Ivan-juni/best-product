@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const enums_1 = require("../controllers/types/enums");
 const comment_model_1 = __importDefault(require("../db/models/comment.model"));
 const order_by_util_1 = require("../utils/order-by.util");
 class CommentService {
@@ -65,10 +66,10 @@ class CommentService {
     }
     static deleteComment(userId, commentId, role) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (role === 'ADMIN') {
+            if (role === enums_1.ROLES.ADMIN) {
                 return comment_model_1.default.query().delete().where({ id: commentId });
             }
-            else if (role === 'USER') {
+            else if (role === enums_1.ROLES.USER) {
                 return comment_model_1.default.query().delete().where({ id: commentId, userId });
             }
         });
