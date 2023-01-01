@@ -23,6 +23,10 @@ export default class Product extends Model {
   createdAt: Date
   updatedAt: Date
 
+  // price
+  min?: number
+  max?: number
+
   $beforeInsert() {
     this.createdAt = new Date()
   }

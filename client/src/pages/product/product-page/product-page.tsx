@@ -7,9 +7,10 @@ import { addImage, deleteImage, editProduct } from 'store/slices/product/product
 import { useNavigate } from 'react-router-dom'
 import ProductTabs from './tabs/product-tabs'
 import { ReactComponent as EditIcon } from 'assets/icons/other/edit-icon.svg'
-import Preloader from '../../../components/common/preloader/preloader'
+import Preloader from 'components/common/preloader/preloader'
 import { getUser } from 'store/slices/auth/auth.selectors'
 import { getProductState } from 'store/slices/product/product.selectors'
+import { ROLES } from 'models/user.model'
 
 const ProductPage: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -54,7 +55,7 @@ const ProductPage: React.FC = () => {
 
   return (
     <div className={styles.wrapper}>
-      {role === 'ADMIN' && (
+      {role === ROLES.ADMIN && (
         <div className={styles.menu}>
           <div className={styles.left} onClick={() => navigate(-1)}>
             <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='currentColor' viewBox='0 0 16 16'>

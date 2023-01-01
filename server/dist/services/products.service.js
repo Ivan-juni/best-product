@@ -27,13 +27,13 @@ const product_characteristics_model_1 = __importDefault(require("../db/models/pr
 const product_model_1 = __importDefault(require("../db/models/product.model"));
 const remove_photo_util_1 = require("../utils/remove-photo.util");
 const order_by_util_1 = require("../utils/order-by.util");
-const favorite_model_1 = __importDefault(require("../db/models/favorite.model"));
 const product_history_model_1 = __importDefault(require("../db/models/product-history.model"));
 const find_products_util_1 = require("../utils/find-products.util");
 const replace_spaces_util_1 = require("../utils/replace-spaces.util");
 const image_module_1 = __importDefault(require("../db/models/image.module"));
 const get_category_childs_ids_1 = require("../utils/get-category-childs-ids");
 const get_category_parents_1 = require("../utils/get-category-parents");
+const format_string_util_1 = require("../utils/format-string.util");
 class ProductService {
     static getProductById(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -122,14 +122,13 @@ class ProductService {
                 connectionType: [],
                 display: [],
                 design: [],
-                price: [],
+                price: {},
             };
             // введенная категория и её дочерние
             const categoryChilds = yield (0, get_category_childs_ids_1.getCategoryChilds)(searchCriteria);
-            // @ts-ignore
             const priceRange = yield product_model_1.default.query()
-                .min('products.price as minPrice')
-                .max('products.price as maxPrice')
+                .min('products.price as min')
+                .max('products.price as max')
                 .where((qb) => {
                 if (searchCriteria.category) {
                     qb.whereIn('categories.id', categoryChilds.categoryIds.split(','));
@@ -139,8 +138,8 @@ class ProductService {
                 .first()
                 .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
                 .innerJoin('categories', 'categories.id', 'products.categoryId');
-            info.price[0] = `${priceRange.minPrice}`;
-            info.price[1] = `${priceRange.maxPrice}`;
+            info.price.min = `${priceRange.min}`;
+            info.price.max = `${priceRange.max}`;
             const knex = product_characteristics_model_1.default.knex();
             const stats = yield product_characteristics_model_1.default.query()
                 .select(knex.raw(`GROUP_CONCAT(DISTINCT purpose ORDER BY purpose ASC SEPARATOR "," ) AS purpose, 
@@ -149,34 +148,16 @@ class ProductService {
           GROUP_CONCAT(DISTINCT design ORDER BY design ASC SEPARATOR "," ) AS design
         `))
                 .first();
-            // удаляем пробелы в начале строки (так как в одной ячейке может быть несколько значений), делаем первую букву большой
-            const format = (s) => {
-                while (s.charAt(0) === ' ') {
-                    return s.substring(1).charAt(0).toLocaleUpperCase() + s.slice(2);
-                }
-                return s.charAt(0).toLocaleUpperCase() + s.slice(1);
-            };
-            info.purpose = stats.purpose.split(',').map((s) => format(s));
-            info.connectionType = stats.connectionType
-                .split(',')
-                .map((s) => format(s))
-                .filter((s) => s !== 'null' && s !== 'Null');
-            info.display = stats.display
-                .split(',')
-                .map((s) => format(s))
-                .filter((s) => s !== 'null' && s !== 'Null');
-            info.design = stats.design
-                .split(',')
-                .map((s) => format(s))
-                .filter((s) => s !== 'null' && s !== 'Null');
+            info.purpose = (0, format_string_util_1.formatString)(stats.purpose);
+            info.connectionType = (0, format_string_util_1.formatString)(stats.connectionType);
+            info.display = (0, format_string_util_1.formatString)(stats.display);
+            info.design = (0, format_string_util_1.formatString)(stats.design);
             return info;
         });
     }
     static deleteProduct(productName, productId, characteristicsId) {
         return __awaiter(this, void 0, void 0, function* () {
             const deletedProducts = yield product_model_1.default.query().deleteById(productId);
-            yield product_characteristics_model_1.default.query().deleteById(characteristicsId);
-            yield favorite_model_1.default.query().delete().where({ productId });
             // Remove product folder with images from server
             (0, remove_photo_util_1.removePhoto)('', `products/${(0, replace_spaces_util_1.replaceSpaces)(productName)}`);
             // чтобы при ошибке удаления продукта фото не удалялось

@@ -1,4 +1,5 @@
 import Objection from 'objection'
+import { ROLES } from '../controllers/types/enums'
 import Comment from '../db/models/comment.model'
 import { sort } from '../utils/order-by.util'
 import { DeleteType } from './types/products.type'
@@ -64,9 +65,9 @@ export default class CommentService {
   }
 
   static async deleteComment(userId: number, commentId: number, role: string): DeleteType {
-    if (role === 'ADMIN') {
+    if (role === ROLES.ADMIN) {
       return Comment.query().delete().where({ id: commentId })
-    } else if (role === 'USER') {
+    } else if (role === ROLES.USER) {
       return Comment.query().delete().where({ id: commentId, userId })
     }
   }

@@ -10,6 +10,7 @@ import { replaceSpaces } from '../utils/replace-spaces.util'
 import Image from '../db/models/image.module'
 import { getCategoryChilds } from '../utils/get-category-childs-ids'
 import { getCategoryParents } from '../utils/get-category-parents'
+import { formatString } from '../utils/format-string.util'
 
 export default class ProductService {
   static async getProductById(id: number): Promise<Product> {
@@ -109,22 +110,21 @@ export default class ProductService {
     purpose: string[]
     connectionType: string[]
     display: string[]
-    price: string[]
+    price: { min: string; max: string }
   }> {
     const info = {
       purpose: [] as Array<string>,
       connectionType: [] as Array<string>,
       display: [] as Array<string>,
       design: [] as Array<string>,
-      price: [] as Array<string>,
+      price: {} as { min: string; max: string },
     }
     // введенная категория и её дочерние
     const categoryChilds = await getCategoryChilds(searchCriteria)
 
-    // @ts-ignore
-    const priceRange: { minPrice: number; maxPrice: number } = await Product.query()
-      .min('products.price as minPrice')
-      .max('products.price as maxPrice')
+    const priceRange = await Product.query()
+      .min('products.price as min')
+      .max('products.price as max')
       .where((qb) => {
         if (searchCriteria.category) {
           qb.whereIn('categories.id', categoryChilds.categoryIds.split(','))
@@ -136,8 +136,8 @@ export default class ProductService {
       .innerJoin('product_characteristics', 'product_characteristics.id', 'products.characteristicsId')
       .innerJoin('categories', 'categories.id', 'products.categoryId')
 
-    info.price[0] = `${priceRange.minPrice}`
-    info.price[1] = `${priceRange.maxPrice}`
+    info.price.min = `${priceRange.min}`
+    info.price.max = `${priceRange.max}`
 
     const knex = ProductCharacteristics.knex()
     const stats = await ProductCharacteristics.query()
@@ -150,27 +150,10 @@ export default class ProductService {
       )
       .first()
 
-    // удаляем пробелы в начале строки (так как в одной ячейке может быть несколько значений), делаем первую букву большой
-    const format = (s: string) => {
-      while (s.charAt(0) === ' ') {
-        return s.substring(1).charAt(0).toLocaleUpperCase() + s.slice(2)
-      }
-      return s.charAt(0).toLocaleUpperCase() + s.slice(1)
-    }
-
-    info.purpose = stats.purpose.split(',').map((s: string) => format(s))
-    info.connectionType = stats.connectionType
-      .split(',')
-      .map((s: string) => format(s))
-      .filter((s: string) => s !== 'null' && s !== 'Null')
-    info.display = stats.display
-      .split(',')
-      .map((s: string) => format(s))
-      .filter((s: string) => s !== 'null' && s !== 'Null')
-    info.design = stats.design
-      .split(',')
-      .map((s: string) => format(s))
-      .filter((s: string) => s !== 'null' && s !== 'Null')
+    info.purpose = formatString(stats.purpose)
+    info.connectionType = formatString(stats.connectionType)
+    info.display = formatString(stats.display)
+    info.design = formatString(stats.design)
 
     return info
   }
@@ -178,7 +161,6 @@ export default class ProductService {
   static async deleteProduct(productName: string, productId: number, characteristicsId: number): DeleteType {
     const deletedProducts = await Product.query().deleteById(productId)
     await ProductCharacteristics.query().deleteById(characteristicsId)
-    await Favorite.query().delete().where({ productId })
 
     // Remove product folder with images from server
     removePhoto('', `products/${replaceSpaces(productName)}`)

@@ -32,10 +32,15 @@ export interface ProductAddingValues {
   display: string | null
 }
 
+export type PriceRange = {
+  min: string
+  max: string
+}
+
 export interface ProductMenuInfo {
   purpose: Array<string>
   connectionType: Array<string>
   display: Array<string>
   design: Array<string>
-  price: Array<string>
+  price: PriceRange
 }

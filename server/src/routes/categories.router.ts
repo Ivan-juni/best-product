@@ -1,23 +1,26 @@
-import express from 'express'
+import { Router } from 'express'
 import checkRole from '../middlewares/check-role.middleware'
 import asyncHandler from '../middlewares/async-handler.middleware'
 import categoriesController from '../controllers/categories.controller'
+import { ROLES } from '../controllers/types/enums'
 
-const router = express.Router()
+export function createCategoriesRoutes(): Router {
+  const router = Router()
 
-router.get('/', asyncHandler(categoriesController.getCategories))
+  router.get('/', asyncHandler(categoriesController.getCategories))
 
-router.get('/:id', asyncHandler(categoriesController.getCategoryById))
+  router.get('/:id', asyncHandler(categoriesController.getCategoryById))
 
-// ! Admin panel
-router.use(checkRole('ADMIN'))
+  // ! Admin panel
+  router.use(checkRole(ROLES.ADMIN))
 
-router.post('/', asyncHandler(categoriesController.addCategory))
+  router.post('/', asyncHandler(categoriesController.addCategory))
 
-// /api/categories?categoryId=
-router.patch('/', asyncHandler(categoriesController.updateCategory))
+  // /api/categories?categoryId=
+  router.patch('/', asyncHandler(categoriesController.updateCategory))
 
-// /api/categories?categoryId=
-router.delete('/', asyncHandler(categoriesController.deleteCategory))
+  // /api/categories?categoryId=
+  router.delete('/', asyncHandler(categoriesController.deleteCategory))
 
-export default router
+  return router
+}

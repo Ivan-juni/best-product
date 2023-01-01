@@ -5,23 +5,25 @@ import { ReactComponent as PriceDividerIcon } from 'assets/icons/other/price-dep
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
 import { useSearchParams } from 'react-router-dom'
+import { PriceRange } from 'http/product-service/product.model'
 
 type PropsType = {
-  priceRange: string[]
+  priceRange: PriceRange
   isReset: boolean
   setReset: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Price: React.FC<PropsType> = ({ priceRange, isReset, setReset }) => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [price, setPrice] = useState<string[]>(priceRange)
+  const [price, setPrice] = useState<PriceRange>(priceRange)
   const [isPriceDropdownOpen, setPriceDropdownOpen] = useState<boolean>(false)
 
   useEffect(() => {
     const price = searchParams.get('price')
 
     if (price) {
-      setPrice(price.split('-'))
+      const priceArray = price.split('-')
+      setPrice({ min: priceArray[0], max: priceArray[1] })
     } else {
       setPrice(priceRange)
     }
@@ -33,8 +35,8 @@ const Price: React.FC<PropsType> = ({ priceRange, isReset, setReset }) => {
   }, [searchParams, priceRange])
 
   const initialValues = {
-    low: price.length > 0 ? price[0] : '10',
-    high: price.length > 0 ? price[1] : '1500',
+    low: Object.keys(price).length > 0 ? price.min : '10',
+    high: Object.keys(price).length > 0 ? price.max : '1500',
   }
 
   type InitialValuesType = typeof initialValues

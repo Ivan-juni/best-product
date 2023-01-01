@@ -104,7 +104,11 @@ const ProductsMenu: React.FC<PropsType> = ({ cardType, setCardType }) => {
               items={[...categories.map((category) => category.name)]}
             />
           </div>
-          <Price priceRange={menuInfo.price[0] !== 'null' ? menuInfo.price : ['0', '0']} isReset={isReset} setReset={setReset} />
+          <Price
+            priceRange={menuInfo.price.min !== 'null' && menuInfo.price.max !== 'null' ? menuInfo.price : { min: '0', max: '0' }}
+            isReset={isReset}
+            setReset={setReset}
+          />
           <div className={styles.connection__method}>
             <Dropdown
               isReset={isReset}

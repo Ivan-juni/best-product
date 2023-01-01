@@ -6,7 +6,7 @@ import { ReactComponent as LikeIcon } from 'assets/icons/stats/like-stats-icon.s
 import { ReactComponent as DislikeIcon } from 'assets/icons/stats/dislike-stats-icon.svg'
 import { ReactComponent as FavoriteIcon } from 'assets/icons/stats/favorite-stats-icon.svg'
 import { IProduct } from 'models/product.model'
-import ImagesSlider from '../../../../components/common/slider/slider'
+import ImagesSlider from 'components/common/slider/slider'
 import { Field, ErrorMessage, Form, Formik } from 'formik'
 import { FormikType } from 'models/formik.model'
 import * as Yup from 'yup'

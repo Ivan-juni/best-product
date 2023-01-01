@@ -13,7 +13,7 @@ exports.down = exports.up = void 0;
 function up(knex) {
     return __awaiter(this, void 0, void 0, function* () {
         return knex.schema.createTableIfNotExists('product_characteristics', (table) => {
-            table.increments();
+            table.increments('id').references('characteristicsId').inTable('products').onDelete('CASCADE');
             table.string('purpose').notNullable();
             table.string('description', 500).notNullable();
             table.string('design').nullable();

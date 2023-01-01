@@ -17,6 +17,7 @@ const comments_service_1 = __importDefault(require("../services/comments.service
 const comment_model_1 = __importDefault(require("../db/models/comment.model"));
 const product_model_1 = __importDefault(require("../db/models/product.model"));
 const schemas_1 = require("./types/schemas");
+const enums_1 = require("./types/enums");
 class CommentsController {
     // comments
     static getProductComments(req, res, next) {
@@ -79,13 +80,13 @@ class CommentsController {
             if (!commentId) {
                 return next(ApiError_1.default.internal('Type comment id'));
             }
-            if (role === 'ADMIN') {
+            if (role === enums_1.ROLES.ADMIN) {
                 const comment = yield comment_model_1.default.query().findOne({ id: +commentId });
                 if (!comment) {
                     return next(ApiError_1.default.internal("Can't find or delete this comment"));
                 }
             }
-            else if (role === 'USER') {
+            else if (role === enums_1.ROLES.USER) {
                 const comment = yield comment_model_1.default.query().findOne({ id: +commentId, userId: id });
                 if (!comment) {
                     return next(ApiError_1.default.internal("Can't find or delete this comment"));
