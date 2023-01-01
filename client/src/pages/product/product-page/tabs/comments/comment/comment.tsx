@@ -11,6 +11,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { FormikType } from 'models/formik.model'
 import { getUser } from 'store/slices/auth/auth.selectors'
+import { ROLES } from 'models/user.model'
 
 type PropsType = {
   comment: IComment
@@ -81,7 +82,7 @@ const Comment: React.FC<PropsType> = ({ comment }) => {
                 )}
               </div>
               <div className={styles.menu}>
-                {(userId === comment.userId || role === 'ADMIN') && (
+                {(userId === comment.userId || role === ROLES.ADMIN) && (
                   <DeleteIcon className={styles.deleteIcon} onClick={() => deleteCommentHandler()} />
                 )}
                 {userId === comment.userId && <EditIcon onClick={() => setEditMode((prev) => !prev)} />}

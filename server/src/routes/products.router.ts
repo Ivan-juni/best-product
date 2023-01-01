@@ -49,7 +49,7 @@ export function createProductsRoutes(): Router {
 
   router.get('/menuInfo', asyncHandler(productController.getDropdownMenuInfo))
 
-  router.get('/statistics', checkRole('ADMIN'), asyncHandler(productController.getStatistics))
+  router.get('/statistics', checkRole(ROLES.ADMIN), asyncHandler(productController.getStatistics))
 
   router.get('/:id', asyncHandler(productController.getProductById))
 

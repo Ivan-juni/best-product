@@ -8,6 +8,7 @@ import ProfileForm from './profile-form/profile-form'
 import AdminPanel from 'components/admin-panel/admin-panel'
 import { withAuthRedirect } from 'hoc/with-auth-redirect.hoc'
 import { getAuthState } from 'store/slices/auth/auth.selectors'
+import { ROLES } from 'models/user.model'
 
 const Profile: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -38,7 +39,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      {user.role === 'ADMIN' && (
+      {user.role === ROLES.ADMIN && (
         <div className={styles.admin}>
           <h1 className={styles.caption}>Admin panel</h1>
           <AdminPanel />
