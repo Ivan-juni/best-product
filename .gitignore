@@ -6,6 +6,6 @@
 /client/.env
 /server/.env
 /server/src/db/.env
-/server/dist/db/.env
+/server/dist/
 
 .vscode
